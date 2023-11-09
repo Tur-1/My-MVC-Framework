@@ -1,0 +1,28 @@
+{
+    "name": "tur1i/mvc",
+    "autoload": {
+        "psr-4": {
+            "src\\": "src/",
+            "App\\": "app/"
+             
+        },
+       
+        "files": [
+            "src/Support/Helpers.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "HP-Tur",
+            "email": "tur.1i@HOTMAIL.COM"
+        }
+    ],
+    "require":{
+        "php":"^8.1",
+        "vlucas/phpdotenv": "^5.5@dev"
+    },
+    "minimum-stability": "dev",
+    "require-dev": {
+        "symfony/var-dumper": "^6.3"
+    }
+}
