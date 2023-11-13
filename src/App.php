@@ -9,11 +9,18 @@ use src\Http\Response;
 class App
 {
 
+    private $route;
+
+    public function __construct()
+    {
+
+
+        $this->route =  new Route(new Request, new Response);
+        $this->route->loadAllRoutesFiles();
+    }
     public function run(): void
     {
 
-        $route = new Route(new Request, new Response);
-
-        $route->reslove();
+        $this->route->reslove();
     }
 }

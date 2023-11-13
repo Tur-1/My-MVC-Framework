@@ -4,17 +4,16 @@ namespace src\Router;
 
 use src\Http\Request;
 use src\Http\Response;
-use src\Router\Exception\RouteException;
+use src\Router\Exception\RouteNotFoundException;
 
 class Route implements RouteInterface
 {
-    private const METHOD_POST = 'post';
-    private const METHOD_GET = 'get';
 
     private Request $request;
     private Response $response;
 
     public static $routes = array();
+    public  $routesFiles = array();
 
 
 
@@ -30,11 +29,11 @@ class Route implements RouteInterface
 
     public static function get($route, $action)
     {
-        self::addRoute(self::METHOD_GET, $route, $action);
+        self::addRoute(Request::METHOD_GET, $route, $action);
     }
     public static function post($route, $action)
     {
-        self::addRoute(self::METHOD_POST, $route, $action);
+        self::addRoute(Request::METHOD_POST, $route, $action);
     }
 
 
@@ -42,6 +41,9 @@ class Route implements RouteInterface
     {
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
+
+
+
         $action = self::$routes[$method][$path] ?? false;
 
 
@@ -49,10 +51,22 @@ class Route implements RouteInterface
     }
 
 
+    public function loadAllRoutesFiles()
+    {
+        $this->routesFiles = get_all_php_files_in_directory(base_path('app/routes'));
+
+        if (empty($this->routesFiles)) {
+            throw new RouteNotFoundException('no routes dir in app folder');
+        }
+
+        foreach ($this->routesFiles as $routeFile) {
+            require_once $routeFile;
+        }
+    }
     private function handleAction($action)
     {
         if (!$action) {
-            throw new RouteException(message: 'page not found');
+            throw new RouteNotFoundException('page not found');
         }
 
         if (is_callable($action)) {

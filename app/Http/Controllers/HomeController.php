@@ -9,6 +9,9 @@ class HomeController
 
     public function index()
     {
-        echo 'HomeController';
+
+        return view('pages.HomePage.index', [
+            'name' => 'turki'
+        ]);
     }
 }
