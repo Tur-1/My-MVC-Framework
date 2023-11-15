@@ -11,13 +11,13 @@ class ComposerStaticInit427c8b7c03b4c416ee023fa53b836057
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '18a6c2596ff6f276dabc4c4d84cc8632' => __DIR__ . '/../..' . '/src/Support/Helpers.php',
+        'f15ecf273dd5e6ac27c3124e9fbc44ea' => __DIR__ . '/../..' . '/TurFramework/src/Support/Helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        's' => 
+        'T' => 
         array (
-            'src\\' => 4,
+            'TurFramework\\' => 13,
         ),
         'S' => 
         array (
@@ -45,9 +45,9 @@ class ComposerStaticInit427c8b7c03b4c416ee023fa53b836057
     );
 
     public static $prefixDirsPsr4 = array (
-        'src\\' => 
+        'TurFramework\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src',
+            0 => __DIR__ . '/../..' . '/TurFramework',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (

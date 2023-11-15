@@ -10,5 +10,5 @@ return array(
     '320cde22f66dd4f5d3fd621d3e88b98f' => $vendorDir . '/symfony/polyfill-ctype/bootstrap.php',
     'a4a119a56e50fbb293281d9a48007e0e' => $vendorDir . '/symfony/polyfill-php80/bootstrap.php',
     '667aeda72477189d0494fecd327c3641' => $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
-    '18a6c2596ff6f276dabc4c4d84cc8632' => $baseDir . '/src/Support/Helpers.php',
+    'f15ecf273dd5e6ac27c3124e9fbc44ea' => $baseDir . '/TurFramework/src/Support/Helpers.php',
 );

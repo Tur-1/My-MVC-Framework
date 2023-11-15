@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Router;
+namespace TurFramework\src\Router;
 
 interface RouteInterface
 {

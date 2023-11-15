@@ -1,22 +1,17 @@
 <?php
 
-namespace src\Views;
+namespace TurFramework\src\Views;
 
 class View
 {
-    private $viewPath;
-    private $viewData = [];
-
     public static function render($viewPath, array $params = [])
     {
-
         // Extract the path to the view file.
-        $viewFilePath = view_path($viewPath . '.php');
-
+        $viewFilePath = view_path($viewPath.'.php');
 
         // replace dot with slash, if view path contains dot
         if (str_contains($viewPath, '.')) {
-            $viewFilePath = view_path(str_replace('.', '/', $viewPath) . '.php');
+            $viewFilePath = view_path(str_replace('.', '/', $viewPath).'.php');
         }
 
         // Check if the view file exists.
@@ -25,23 +20,21 @@ class View
             throw new ViewNotFoundException('View file does not exist');
         }
 
-
-        // Extract params 
+        // Extract params
         extract($params);
 
         // Include the view file.
-        include($viewFilePath);
+        include $viewFilePath;
     }
 
-    public static function renderComponent($component, $data = [])
+    public static function importComponent($component, $data = [])
     {
         // Assume components are stored in a 'components' directory
-        $componentPath = view_path($component . '.php');
-
+        $componentPath = view_path($component.'.php');
 
         // replace dot with slash, if view path contains dot
         if (str_contains($component, '.')) {
-            $componentPath = view_path(str_replace('.', '/', $component) . '.php');
+            $componentPath = view_path(str_replace('.', '/', $component).'.php');
         }
 
         // Check if the component file exists

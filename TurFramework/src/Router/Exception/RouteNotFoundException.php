@@ -1,12 +1,13 @@
 <?php
 
-namespace src\Views;
+namespace TurFramework\src\Router\Exception;
 
-class ViewNotFoundException extends \Exception
+use Exception;
+
+class RouteNotFoundException extends Exception
 {
-
-
     public $message;
+
     public function __construct($message)
     {
         parent::__construct($message);

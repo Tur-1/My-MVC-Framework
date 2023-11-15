@@ -1,8 +1,6 @@
 <?php
 
-
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -15,7 +13,6 @@ return [
     */
 
     'default' => env('DB_CONNECTION', 'mysql'),
-
     /*
     |--------------------------------------------------------------------------
     | Database Connections
@@ -33,8 +30,6 @@ return [
     */
 
     'connections' => [
-
-
         'mysql' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -48,10 +43,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-
         ],
-
-
     ],
 
     /*
@@ -66,6 +58,4 @@ return [
     */
 
     'migrations' => 'migrations',
-
-
 ];

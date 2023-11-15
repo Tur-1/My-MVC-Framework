@@ -1,13 +1,13 @@
 <?php
 
-includeComponent('layouts.Header', [
-    'title' => 'Home'
+import('layouts.Header', [
+    'title' => 'Home',
 ]);
 
 ?>
 <main>
-    <h1>Hello, <?php echo $name ?> </h1>
+    <h1>Hello, <?php echo $name; ?> </h1>
 </main>
-<?php includeComponent('layouts.Footer', [
-    'name' => 'MVC'
+<?php import('layouts.Footer', [
+    'name' => 'MVC',
 ]); ?>

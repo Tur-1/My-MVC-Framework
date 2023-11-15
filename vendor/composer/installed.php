@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '4ad91e11b2694bd89b9367cc38b3140eaadf51d1',
+        'reference' => '987eb3e5db83cc9bc312d93d48a77009fc5d2146',
         'name' => 'tur1i/mvc',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../graham-campbell/result-type',
             'aliases' => array(),
-            'reference' => '60c5f57bee20beb1a4a3cc5fe9170de4a64521d2',
+            'reference' => 'fbd48bce38f73f8a4ec8583362e732e4095e5862',
             'dev_requirement' => false,
         ),
         'phpoption/phpoption' => array(
@@ -27,7 +27,7 @@
             'aliases' => array(
                 0 => '1.9.x-dev',
             ),
-            'reference' => 'dd3a383e599f49777d8b628dadbb90cae435b87e',
+            'reference' => '416ca2ac2a84555b785a98002d613fe13d1d1c2f',
             'dev_requirement' => false,
         ),
         'symfony/polyfill-ctype' => array(
@@ -72,7 +72,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '4ad91e11b2694bd89b9367cc38b3140eaadf51d1',
+            'reference' => '987eb3e5db83cc9bc312d93d48a77009fc5d2146',
             'dev_requirement' => false,
         ),
         'vlucas/phpdotenv' => array(
@@ -81,9 +81,9 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../vlucas/phpdotenv',
             'aliases' => array(
-                0 => '5.5.x-dev',
+                0 => '5.6.x-dev',
             ),
-            'reference' => '1a7ea2afc49c3ee6d87061f5a233e3a035d0eae7',
+            'reference' => '334f4952967f3ee6cdb2004e05e0bd01b525d56b',
             'dev_requirement' => false,
         ),
     ),

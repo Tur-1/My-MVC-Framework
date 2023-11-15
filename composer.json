@@ -2,13 +2,13 @@
     "name": "tur1i/mvc",
     "autoload": {
         "psr-4": {
-            "src\\": "src/",
+            "TurFramework\\": "TurFramework/",
             "App\\": "app/"
              
         },
        
         "files": [
-            "src/Support/Helpers.php"
+            "TurFramework/src/Support/Helpers.php"
         ]
     },
     "authors": [
