@@ -12,6 +12,8 @@ class ViewNotFoundException extends BaseException
 
         $errorMessage = $this->getMessage();
         $exceptionClass = 'ViewNotFoundException';
+        $trace = debug_backtrace();
+        // array_shift($trace);
         foreach (debug_backtrace() as $key => $value) {
             if (isset($value['file'])) {
                 $errorData[] = [
@@ -21,9 +23,7 @@ class ViewNotFoundException extends BaseException
             }
         }
 
-        ob_start(); // Start output buffering
-        include base_path('TurFramework/src/Exceptions/views/invalidArgument.php');  // Include HTML error page
-        $errorOutput = ob_get_clean(); // Get buffered HTML content
-        echo $errorOutput; // Display error output
+        include base_path('TurFramework/src/Exceptions/views/invalidArgument.php');
+        exit(); // Include HTML error page
     }
 }

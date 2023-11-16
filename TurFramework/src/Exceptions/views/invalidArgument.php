@@ -10,6 +10,16 @@
 </head>
 
 <style>
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    text-decoration: none !important;
+}
+
 html {
     background-color: #111827 !important;
 }
@@ -17,7 +27,6 @@ html {
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     background-color: #111827 !important;
 }
 
@@ -28,6 +37,15 @@ nav {
 footer {
     margin-top: auto;
 }
+
+.background-primary {
+    background-color: #18212F !important;
+}
+
+.background-secondary {
+    background-color: #1F2937 !important;
+}
+
 
 section {
     margin-top: 60px;
@@ -45,10 +63,9 @@ section {
 }
 
 .main-section {
-    height: 90vh;
+    height: 65vh;
     overflow-x: hidden;
-    overflow-y: auto;
-    margin-bottom: 80px;
+    overflow-y: auto; 
 }
 
 
@@ -62,7 +79,12 @@ section {
     background-clip: padding-box;
 
 }
-
+.background-red-color{
+    background-color: rgb(230 99 99 / 37%) !important;
+    color: white;
+    font-size: 16px !important;
+    display: flex;
+}
 .redckground {
     background-color: #6EE7B7 !important;
     background-clip: padding-box;
@@ -78,7 +100,14 @@ section {
 .nav-link.active {
     background-color: #EF4444 !important;
 }
+.lineheight{
+    line-height: 2;
+}
+.tab-pane>*{
+    font-size: 14px ;
+    line-height: 2;
 
+}
 main {
     min-height: 100%;
     display: flex;
@@ -94,20 +123,20 @@ main {
     </nav>
 
     <main class="container">
-        <section class="header-section">
+        <section class="header-section ">
             <div class="w-50">
-                <h5 class="ms-5 mb-3"> <?php echo $exceptionClass; ?>   </h5>
-                <h4>  <?php echo $errorMessage; ?>  </h4>
+                <h5 class="ms-5 mb-3"> <?php echo $exceptionClass; ?> </h5>
+                <h4> <?php echo $errorMessage; ?> </h4>
             </div>
             <div class="w-50  greenbackground text-dark">
-                <span><?php echo $errorMessage; ?>  </span>
-                <h5 class="mt-4">Are you sure the view exists  ?</h5>
+                <span><?php echo $errorMessage; ?> </span>
+                <h5 class="mt-4">Are you sure the view exists ?</h5>
             </div>
         </section>
 
         <section class="main-section">
             <div class="d-flex align-items-start">
-                <div class="nav flex-column nav-pills me-3 " id="v-pills-tab" role="tablist"
+                <div class="nav flex-column nav-pills me-3 background-secondary" id="v-pills-tab" role="tablist"
                     aria-orientation="vertical">
                     <?php
                 foreach ($errorData as $key => $value) {?>
@@ -119,7 +148,7 @@ main {
                     </button>
                     <?php }?>
                 </div>
-                <div class="tab-content w-100"  id="v-pills-tabContent">
+                <div class="tab-content w-100" id="v-pills-tabContent">
 
                     <?php foreach ($errorData as $key => $value) {
                     $file = $value['error_file'];
@@ -131,21 +160,25 @@ main {
 
                     ?>
 
-                    <div class="tab-pane w-100 fade <?php echo $key == 0 ? 'show active' : ''; ?>" style="font-size: 20px;"
-                        id="v-pills-<?php echo 'class-'.$key; ?>" role="tabpanel" aria-labelledby="v-pills-home-tab"
-                        tabindex="0">
-                         
+                    <div class="tab-pane  fade <?php echo $key == 0 ? 'show active' : ''; ?>"
+                        style="font-size: 20px;" id="v-pills-<?php echo 'class-'.$key; ?>" role="tabpanel"
+                        aria-labelledby="v-pills-home-tab" tabindex="0">
 
-                         
+
+
                         <?php
-                           echo '<pre class="w-100"> <code>';
+                           echo '<pre class="w-100"> <code class="w-100">';
                         for ($i = $startLine - 1; $i < $endLine; ++$i) {
                             $codeSnippet = htmlspecialchars($fileContent[$i]);
 
-                            echo "<span> {$i}: {$codeSnippet}</span>";
+                            if ($i + 1 === $line) {
+                                echo "<span class='background-red-color  '> {$i}: {$codeSnippet}</span>";
+                            } else {
+                                echo "<span class=' '></span> {$i}: {$codeSnippet}</span>";
+                            }
                         }
                         echo '</pre> </code>'; ?>
-                           
+
                     </div>
                     <?php
                     }
@@ -162,10 +195,3 @@ main {
 </body>
 
 </html>
-
-<!-- $codeSnippet = htmlspecialchars($fileContent[$i]);
-            if ($i + 1 === $line) {
-                echo "<strong>{$i}: {$codeSnippet}</strong>";
-            } else {
-                echo "{$i}: {$codeSnippet}";
-            } -->
