@@ -4,10 +4,10 @@ namespace TurFramework\src\Http;
 
 class Request
 {
-    public const METHOD_GET = 'get';
-    public const METHOD_POST = 'post';
-    public const METHOD_PUT = 'put';
-    public const METHOD_DELETE = 'delete';
+    public const METHOD_GET = 'GET';
+    public const METHOD_POST = 'POST';
+    public const METHOD_PUT = 'PUT';
+    public const METHOD_DELETE = 'DELETE';
     private array $server;
 
     public function __construct()
@@ -22,15 +22,44 @@ class Request
 
     public function getMethod()
     {
-        return strtolower($this->getServer('REQUEST_METHOD'));
+        return $this->getServer('REQUEST_METHOD');
     }
+
     public function getPath()
     {
-        $uri  = $this->getUri();
+        $uri = $this->getUri();
 
         return $uri['path'] ?? '/';
     }
 
+    /**
+     * Check if the request method matches the
+     * given method.
+     *
+     * @param string $method
+     *
+     * @return string
+     */
+    public function isMethod($method)
+    {
+        $method = strtoupper($method);
+
+        if (!in_array($method, $this->getValidMethods())) {
+            throw new \Exception('Invalid Request Method!');
+        }
+
+        return $this->getMethod() == $method ? true : false;
+    }
+
+    public function getValidMethods()
+    {
+        return [
+            self::METHOD_GET,
+            self::METHOD_POST,
+            self::METHOD_PUT,
+            self::METHOD_DELETE,
+            ];
+    }
 
     private function getServer($key)
     {

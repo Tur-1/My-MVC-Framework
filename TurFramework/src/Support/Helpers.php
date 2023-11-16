@@ -3,6 +3,8 @@
 use TurFramework\src\Application;
 use TurFramework\src\Views\View;
 
+error_reporting(E_ALL);
+
 if (!function_exists('app')) {
     function app()
     {

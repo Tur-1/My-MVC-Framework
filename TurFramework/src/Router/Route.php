@@ -4,7 +4,6 @@ namespace TurFramework\src\Router;
 
 use TurFramework\src\Http\Request;
 use TurFramework\src\Http\Response;
-use TurFramework\src\Router\Exception\RouteNotFoundException;
 
 class Route
 {
@@ -58,7 +57,7 @@ class Route
     private function handleAction($action)
     {
         if (!$action) {
-            throw new RouteNotFoundException('page not found');
+            throw new RouteNotFoundException();
         }
 
         if (is_callable($action)) {
