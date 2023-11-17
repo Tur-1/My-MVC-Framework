@@ -2,9 +2,9 @@
 
 namespace TurFramework\src\Router;
 
-use TurFramework\src\Exceptions\BaseException;
+use TurFramework\src\Exceptions\HttpResponseException;
 
-class RouteNotFoundException extends BaseException
+class RouteNotFoundException extends HttpResponseException
 {
     protected $message = 'page not found';
     protected $code = 404;

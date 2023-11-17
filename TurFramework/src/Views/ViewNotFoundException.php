@@ -2,28 +2,26 @@
 
 namespace TurFramework\src\Views;
 
-use TurFramework\src\Exceptions\BaseException;
+use Exception;
 
-class ViewNotFoundException extends BaseException
+class ViewNotFoundException extends Exception
 {
-    public function render()
+    protected $message = '';
+    protected $code = 404;
+
+    public $multipleMessages = [];
+
+    public function __construct($viewPath)
     {
-        $errorData = [];
+        $this->message = 'View['.$viewPath.'] not found.';
+        $this->multipleMessages = [
+            'View['.$viewPath.'] not found.',
+            'Are you sure the view exists ?',
+        ];
+    }
 
-        $errorMessage = $this->getMessage();
-        $exceptionClass = 'ViewNotFoundException';
-        $trace = debug_backtrace();
-        // array_shift($trace);
-        foreach (debug_backtrace() as $key => $value) {
-            if (isset($value['file'])) {
-                $errorData[] = [
-                     'error_file' => $value['file'],
-                     'error_line' => $value['line'],
-                    ];
-            }
-        }
-
-        include base_path('TurFramework/src/Exceptions/views/invalidArgument.php');
-        exit(); // Include HTML error page
+    public function getMultipleMessages()
+    {
+        return $this->multipleMessages;
     }
 }

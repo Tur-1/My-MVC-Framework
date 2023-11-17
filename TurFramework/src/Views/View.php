@@ -17,7 +17,7 @@ class View
         // Check if the view file exists.
 
         if (!file_exists($viewFilePath)) {
-            throw new ViewNotFoundException("View [{$viewPath}] not found.");
+            throw new ViewNotFoundException($viewPath);
         }
 
         // Extract params

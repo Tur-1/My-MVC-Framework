@@ -6,6 +6,7 @@ use TurFramework\src\Http\Request;
 use TurFramework\src\Router\Route;
 use TurFramework\src\Http\Response;
 use TurFramework\src\Support\Config;
+use TurFramework\src\Exceptions\ExceptionHandler;
 
 class Application
 {
@@ -23,6 +24,7 @@ class Application
 
     public function __construct()
     {
+        ExceptionHandler::registerExceptions();
         $this->request = new Request();
         $this->response = new Response();
 
