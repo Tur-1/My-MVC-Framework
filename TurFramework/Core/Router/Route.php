@@ -13,7 +13,6 @@ class Route
     private Request $request;
 
     public static $routes = [];
-    protected static $currentAction = '';
 
     public function __construct(Request $request, Response $response)
     {
@@ -34,11 +33,11 @@ class Route
      */
     public static function get(string $route, array|callable $callable)
     {
-        self::$instance = new static(new Request(),new Response());
+        //   /  self::$instance = new static(new Request(),new Response());
 
         self::addRoute(Request::METHOD_GET, $route, $callable);
 
-        return self::$instance;
+        // return self::$instance;
     }
 
     public static function controller()
