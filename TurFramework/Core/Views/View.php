@@ -4,7 +4,7 @@ namespace TurFramework\Core\Views;
 
 class View
 {
-    public static function render($viewPath, array $params = [])
+    public static function render($viewPath, array $data = [])
     {
         // Extract the path to the view file.
         $viewFilePath = view_path($viewPath.'.php');
@@ -20,10 +20,11 @@ class View
             throw new ViewNotFoundException($viewPath);
         }
 
-        // Extract params
-        extract($params);
+        // Extract data
+        extract($data, EXTR_SKIP);
 
         // Include the view file.
+
         include $viewFilePath;
     }
 
@@ -39,13 +40,14 @@ class View
 
         // Check if the component file exists
         if (!file_exists($componentPath)) {
-            echo "Component not found: $component";
+            throw new ViewNotFoundException($component);
         }
 
         // Extract the data to make it available within the component
-        extract($data);
+        extract($data, EXTR_SKIP);
 
         // Include the component file
+
         include $componentPath;
     }
 }

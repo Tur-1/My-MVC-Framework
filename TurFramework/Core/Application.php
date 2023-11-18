@@ -22,6 +22,11 @@ class Application
     protected Route $route;
     protected Config $config;
 
+    /**
+     * __construct.
+     *
+     * @return void
+     */
     public function __construct()
     {
         ExceptionHandler::registerExceptions();
@@ -31,9 +36,11 @@ class Application
         $this->route = new Route($this->request, $this->response);
 
         $this->config = new Config($this->loadConfig());
-        $this->loadAllRoutesFiles();
     }
 
+    /**
+     * run.
+     */
     public function run(): void
     {
         $this->route->reslove();
@@ -49,6 +56,13 @@ class Application
         return static::VERSION;
     }
 
+    /**
+     * Get app property.
+     *
+     * @param mixed name
+     *
+     * @return $name
+     */
     public function __get($name)
     {
         if (property_exists($this, $name)) {
@@ -89,23 +103,6 @@ class Application
             $fileName = explode('.', $configFile)[0];
 
             yield $fileName => require config_path().$configFile;
-        }
-    }
-
-    /**
-     * load all Routes files.
-     */
-    public function loadAllRoutesFiles()
-    {
-        $routesFiles = get_all_php_files_in_directory('app/routes');
-
-        if (empty($routesFiles)) {
-            echo 'no routes files found';
-            exit();
-        }
-
-        foreach ($routesFiles as $routeFile) {
-            require_once $routeFile;
         }
     }
 }

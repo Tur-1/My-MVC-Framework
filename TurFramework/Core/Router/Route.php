@@ -7,12 +7,12 @@ use TurFramework\Core\Http\Response;
 
 class Route
 {
+    private $routesFiles = [];
     protected static $instance;
     private Response $response;
     private Request $request;
 
     public static $routes = [];
-    public $routesFiles = [];
     protected static $currentAction = '';
 
     public function __construct(Request $request, Response $response)
@@ -75,6 +75,10 @@ class Route
      */
     public function reslove()
     {
+        if (empty($this->routesFiles)) {
+            $this->loadAllRoutesFiles();
+        }
+
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
 
@@ -115,6 +119,23 @@ class Route
             }
 
             call_user_func_array([$controller, $controllerMethod], []);
+        }
+    }
+
+    /**
+     * load all Routes files.
+     */
+    public function loadAllRoutesFiles()
+    {
+        $this->routesFiles = get_all_php_files_in_directory('app/routes');
+
+        if (empty($this->routesFiles)) {
+            echo 'no routes files found';
+            exit();
+        }
+
+        foreach ($this->routesFiles  as $routeFile) {
+            require_once $routeFile;
         }
     }
 }

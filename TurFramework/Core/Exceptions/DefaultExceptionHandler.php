@@ -34,8 +34,11 @@ class DefaultExceptionHandler
             }
         }
 
+        ob_start();
         include self::$exceptionViewPath;
-        exit();
+        $outbpot = ob_get_clean();
+        echo $outbpot;
+        exit; // Ensure that code below doesn't execute
     }
 
     private static function getMultipleMessages($exception)
