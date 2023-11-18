@@ -7,6 +7,7 @@ use TurFramework\Core\Http\Response;
 
 class Route
 {
+    protected static $instance;
     private Response $response;
     private Request $request;
 
@@ -30,12 +31,28 @@ class Route
      *
      * @param string route
      * @param array|callable callable
-     *
-     * @return void
      */
     public static function get(string $route, array|callable $callable)
     {
+        self::$instance = new static(new Request(),new Response());
+
         self::addRoute(Request::METHOD_GET, $route, $callable);
+
+        return self::$instance;
+    }
+
+    public static function controller()
+    {
+        self::$instance = new static(new Request(),new Response());
+
+        return self::$instance;
+    }
+
+    public static function group()
+    {
+        self::$instance = new static(new Request(),new Response());
+
+        return self::$instance;
     }
 
     /**
