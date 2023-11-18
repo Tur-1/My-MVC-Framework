@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'f682fa211a922963acb0f7a570c8812da2c8e5c8',
+        'reference' => '117b7848eb72f0d96434868b4602d740452abcaa',
         'name' => 'tur1i/mvc',
         'dev' => true,
     ),
@@ -72,7 +72,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'f682fa211a922963acb0f7a570c8812da2c8e5c8',
+            'reference' => '117b7848eb72f0d96434868b4602d740452abcaa',
             'dev_requirement' => false,
         ),
         'vlucas/phpdotenv' => array(

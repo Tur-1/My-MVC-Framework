@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Exceptions;
+namespace TurFramework\Core\Exceptions;
 
 class HttpResponseException extends \Exception
 {

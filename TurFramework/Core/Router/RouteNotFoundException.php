@@ -1,8 +1,8 @@
 <?php
 
-namespace TurFramework\src\Router;
+namespace TurFramework\Core\Router;
 
-use TurFramework\src\Exceptions\HttpResponseException;
+use TurFramework\Core\Exceptions\HttpResponseException;
 
 class RouteNotFoundException extends HttpResponseException
 {

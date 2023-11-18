@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Support;
+namespace TurFramework\Core\Support;
 
 class Config
 {

@@ -82,7 +82,7 @@
 
 
     section {
-        margin-top: 60px;
+        margin-top: 40px;
         border-radius: 10px;
         color: white;
         background-color: #18212F !important;
@@ -161,7 +161,7 @@
     }
 
     .errorMessage {
-        font-size: 16px;
+        font-size: 1.25rem;
         font-weight: 600;
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Session;
+namespace TurFramework\Core\Session;
 
 class Session
 {

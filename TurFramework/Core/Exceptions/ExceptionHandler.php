@@ -1,7 +1,8 @@
 <?php
 
-namespace TurFramework\src\Exceptions;
+namespace TurFramework\Core\Exceptions;
 
+use Error;
 use Exception;
 
 class ExceptionHandler
@@ -17,7 +18,7 @@ class ExceptionHandler
             self::handleHttpResponseException($exception);
         }
 
-        if ($exception instanceof Exception) {
+        if ($exception instanceof Exception || $exception instanceof Error) {
             DefaultExceptionHandler::handle($exception);
         }
     }

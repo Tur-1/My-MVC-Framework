@@ -1,9 +1,7 @@
 <?php
 
-use TurFramework\src\Application;
-use TurFramework\src\Views\View;
-
-error_reporting(E_ALL);
+use TurFramework\Core\Application;
+use TurFramework\Core\Views\View;
 
 if (!function_exists('app')) {
     function app()

@@ -2,7 +2,7 @@
 
 
 use App\Http\Controllers\ProductController;
-use TurFramework\src\Router\Route;
+use TurFramework\Core\Router\Route;
 
 
 

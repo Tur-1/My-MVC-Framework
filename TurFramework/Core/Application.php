@@ -1,12 +1,12 @@
 <?php
 
-namespace TurFramework\src;
+namespace TurFramework\Core;
 
-use TurFramework\src\Http\Request;
-use TurFramework\src\Router\Route;
-use TurFramework\src\Http\Response;
-use TurFramework\src\Support\Config;
-use TurFramework\src\Exceptions\ExceptionHandler;
+use TurFramework\Core\Http\Request;
+use TurFramework\Core\Router\Route;
+use TurFramework\Core\Http\Response;
+use TurFramework\Core\Support\Config;
+use TurFramework\Core\Exceptions\ExceptionHandler;
 
 class Application
 {

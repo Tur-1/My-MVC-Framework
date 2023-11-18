@@ -8,13 +8,13 @@
         },
        
         "files": [
-            "TurFramework/src/Support/Helpers.php"
+            "TurFramework/Core/Support/Helpers.php"
         ]
     },
     "authors": [
         {
-            "name": "HP-Tur",
-            "email": "tur.1i@HOTMAIL.COM"
+            "name": "Turki Alharbi",
+            "email": "alharbi.tur1@gmail.com"
         }
     ],
     "require":{
