@@ -33,11 +33,7 @@ class Route
      */
     public static function get(string $route, array|callable $callable)
     {
-        //   /  self::$instance = new static(new Request(),new Response());
-
         self::addRoute(Request::METHOD_GET, $route, $callable);
-
-        // return self::$instance;
     }
 
     public static function controller()
@@ -117,7 +113,7 @@ class Route
                 throw new \BadMethodCallException("Method  $controllerClass::$controllerMethod  does not exist!");
             }
 
-            call_user_func_array([$controller, $controllerMethod], []);
+            call_user_func_array([$controller, $controllerMethod], [$this->request]);
         }
     }
 
@@ -129,8 +125,7 @@ class Route
         $this->routesFiles = get_all_php_files_in_directory('app/routes');
 
         if (empty($this->routesFiles)) {
-            echo 'no routes files found';
-            exit();
+            throw new RouteNotFoundException('no routes files found');
         }
 
         foreach ($this->routesFiles  as $routeFile) {

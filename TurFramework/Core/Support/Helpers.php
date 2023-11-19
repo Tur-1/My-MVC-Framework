@@ -1,7 +1,8 @@
 <?php
 
-use TurFramework\Core\Application;
 use TurFramework\Core\Views\View;
+use TurFramework\Core\Application;
+use TurFramework\Core\Support\Redirect;
 
 if (!function_exists('app')) {
     function app()
@@ -88,15 +89,22 @@ if (!function_exists('view_path')) {
     }
 }
 if (!function_exists('view')) {
-    function view($viewPath, array $params = [])
+    function view($viewPath, array $data = [])
     {
-        return View::render($viewPath, $params);
+        return View::render($viewPath, $data);
     }
 }
 
 if (!function_exists('import')) {
-    function import($component, $data = [])
+    function import($component, array $data = [])
     {
-        return View::importComponent($component, $data);
+        return View::render($component, $data);
+    }
+}
+
+if (!function_exists('redirect')) {
+    function redirect(string $url)
+    {
+        return new Redirect($url);
     }
 }

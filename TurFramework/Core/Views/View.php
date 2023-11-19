@@ -4,50 +4,40 @@ namespace TurFramework\Core\Views;
 
 class View
 {
-    public static function render($viewPath, array $data = [])
+    public static function render($view, array $data = [])
     {
-        // Extract the path to the view file.
-        $viewFilePath = view_path($viewPath.'.php');
+        $viewPath = self::getViewPath($view);
 
-        // replace dot with slash, if view path contains dot
-        if (str_contains($viewPath, '.')) {
-            $viewFilePath = view_path(str_replace('.', '/', $viewPath).'.php');
-        }
-
-        // Check if the view file exists.
-
-        if (!file_exists($viewFilePath)) {
-            throw new ViewNotFoundException($viewPath);
+        // Check if view exists
+        if (!file_exists($viewPath)) {
+            throw new ViewNotFoundException($view);
         }
 
         // Extract data
         extract($data, EXTR_SKIP);
 
         // Include the view file.
-
-        include $viewFilePath;
+        include $viewPath;
     }
 
-    public static function importComponent($component, $data = [])
+    public static function getViewPath($view)
     {
-        // Assume components are stored in a 'components' directory
-        $componentPath = view_path($component.'.php');
+        $viewPath = view_path($view);
 
         // replace dot with slash, if view path contains dot
-        if (str_contains($component, '.')) {
-            $componentPath = view_path(str_replace('.', '/', $component).'.php');
+        if (str_contains($view, '.')) {
+            $viewPath = view_path(str_replace('.', '/', $view));
         }
 
-        // Check if the component file exists
-        if (!file_exists($componentPath)) {
-            throw new ViewNotFoundException($component);
+        // Check if the view path is a directory
+        if (is_dir($viewPath)) {
+            // Define the path to index.php within the directory
+            $viewPath = $viewPath.'/index';
         }
 
-        // Extract the data to make it available within the component
-        extract($data, EXTR_SKIP);
+        // add .php to view path => index.php
+        $viewPath .= '.php';
 
-        // Include the component file
-
-        include $componentPath;
+        return $viewPath;
     }
 }

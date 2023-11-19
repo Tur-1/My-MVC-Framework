@@ -44,8 +44,9 @@
         color: #E5E7EB !important;
     }
 
-    .hljs-string {
-        color: rgb(214 215 51);
+    .hljs-string,
+    .hljs-subst {
+        color: rgb(253 255 0 / 51%) !important;
     }
 
     html {
@@ -98,8 +99,7 @@
 
     .main-section {
         height: 65vh;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: auto !important;
     }
 
 
@@ -178,11 +178,35 @@
         font-size: small;
         color: #bbb;
     }
-    .nav-logo{
+
+    .nav-logo {
         font-size: 16px;
         font-weight: 600;
         color: #f0f0f0;
     }
+
+    .tab-content {
+        overflow-x: auto;
+
+    }
+
+    .sidebar {
+        overflow-y: auto !important;
+        height: 100%;
+    }
+
+    section::-webkit-scrollbar,
+    code::-webkit-scrollbar,
+    .sidebar::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        opacity: 0 !important;
+    }
+
+    code {
+        white-space: inherit !important;
+    }
+
     </style>
 </head>
 
@@ -190,7 +214,7 @@
 <body>
     <nav class="navbar navbar-expand-lg ">
         <div class="container">
-            <span class="nav-logo" >Tur Framework</span>
+            <span class="nav-logo">Tur Framework</span>
         </div>
     </nav>
 
@@ -216,10 +240,11 @@
             </div>
             <?php } ?>
         </section>
-
         <section class="main-section">
-            <div class="d-flex align-items-start">
-                <div class="nav flex-column nav-pills me-3 background-secondary" id="v-pills-tab" role="tablist"
+            <div class="d-flex align-items-start h-100">
+
+               
+                <div class="nav flex-column nav-pills me-3 background-secondary " id="v-pills-tab" role="tablist"
                     aria-orientation="vertical">
                     <?php
                     foreach ($errorData as $key => $value) { ?>
@@ -231,6 +256,8 @@
                     </button>
                     <?php } ?>
                 </div>
+
+              
                 <div class="tab-content w-100" id="v-pills-tabContent">
 
                     <?php foreach ($errorData as $key => $value) { ?>
@@ -255,8 +282,9 @@
 
 
                 </div>
-
-        </section>
+             
+            </div>
+            </section>
     </main>
     <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
@@ -267,7 +295,7 @@
     <script>
     hljs.highlightAll();
     </script>
-  
+
 </body>
 
 </html>
