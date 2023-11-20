@@ -99,6 +99,7 @@ class Route
             call_user_func_array($action, []);
         }
 
+        
         if (is_array($action)) {
             $controllerClass = $action[0];
             $controllerMethod = $action[1];

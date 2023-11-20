@@ -2,6 +2,9 @@
 
 namespace TurFramework\Core\Support;
 
+use TurFramework\Core\Support\Session;
+ 
+
 class Redirect
 {
     protected $url;
@@ -13,9 +16,10 @@ class Redirect
         $this->url = $url;
     }
 
-    public static function to($url)
+    public  function to($url)
     {
-        return new self($url);
+        $this->url = $url;
+        return $this;
     }
 
     /**
@@ -30,6 +34,7 @@ class Redirect
     {
         $this->withData = is_array($key) ? $key : [$key => $value];
 
+       
         return $this;
     }
 
@@ -53,11 +58,23 @@ class Redirect
 
         return $this;
     }
+   /**
+     * back.
+     *
+     * @access	public
+     *
+     */
+    public function back()
+    {
+        $this->url = $_SERVER['HTTP_REFERER'];
+
+        return $this;
+    }
 
     public function __destruct()
     {
         foreach ($this->withData as $key => $value) {
-            $_SESSION[$key] = $value;
+            Session::flash($key,$value);
         }
 
         header('Location: '.$this->url, true, $this->statusCode);

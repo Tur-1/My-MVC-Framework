@@ -8,14 +8,11 @@ class HomeController
 {
     public function index()
     {
-        return view('pages.HomePage', [
-            'name' => 'turki',
-        ]);
+        return view('pages.HomePage');
     }
 
-    public function form(Request $request)
+    public function store(Request $request)
     {
-        dd($request);
-        redirect('/products')->with(['message' => 'thean lsd', 'name' => 'turki']);
+        redirect()->back();
     }
 }
