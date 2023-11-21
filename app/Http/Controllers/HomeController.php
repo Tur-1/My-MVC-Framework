@@ -8,11 +8,11 @@ class HomeController
 {
     public function index()
     {
+
         return view('pages.HomePage');
     }
 
     public function store(Request $request)
     {
-        redirect()->back();
     }
 }

@@ -1,7 +1,12 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+
 use TurFramework\Core\Router\Route;
 
-Route::get('/', [HomeController::class, 'index']);
-Route::post('/store', [HomeController::class, 'store']);
+
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/items', 'getitems');
+    Route::get('/store', 'store');
+});

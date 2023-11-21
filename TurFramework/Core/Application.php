@@ -43,7 +43,7 @@ class Application
      */
     public function run(): void
     {
-        $this->route->reslove();
+        $this->route->resolve();
     }
 
     /**
@@ -102,7 +102,7 @@ class Application
 
             $fileName = explode('.', $configFile)[0];
 
-            yield $fileName => require config_path().$configFile;
+            yield $fileName => require config_path() . $configFile;
         }
     }
 }
