@@ -36,7 +36,26 @@ class Route
      * @var array
      */
     private $routesFiles = [];
+    /**
+     * 
+     *
+     * @var string
+     */
+    private $requestMethod;
 
+    /**
+     * 
+     *
+     * @var string
+     */
+    private $routeMethod;
+
+    /**
+     * 
+     *
+     * @var string
+     */
+    private $path;
     /**
      * The currently active controller.
      *
@@ -56,6 +75,27 @@ class Route
     {
         $this->request = $request;
         $this->response = $response;
+    }
+    /**
+     * Resolve the current request to find and handle the appropriate route.
+     *
+     * @return void
+     */
+    public function resolve()
+    {
+        // Check if routes files are not loaded, then load them.
+        if (empty($this->routesFiles)) {
+            $this->loadAllRoutesFiles();
+        }
+
+
+        $this->path = $this->request->getPath();
+        $this->requestMethod = $this->request->getMethod();
+
+        // Retrieve the callable associated with the requested method and path, if exists.
+        $route = $this->getRouteHandler($this->path);
+
+        $this->handleRoute($route);
     }
 
     /**
@@ -116,6 +156,28 @@ class Route
     }
 
     /**
+     * Register a Delete route with the specified route and associated callback.
+     *
+     * @param string  route the URL pattern for the route
+     * @param string|array|Closure $callable the callback function or controller action for the route
+     *
+     * @return void
+     */
+    public static function delete($route,  $callable)
+    {
+        self::addRoute(Request::METHOD_DELETE, $route, $callable);
+    }
+
+    public static function createNewRoute($method, $route, $callable)
+    {
+        return  [
+            'uri' => $route,
+            'method' => $method,
+            'controller' => $callable['controller'],
+            'action' =>  $callable['action'],
+        ];
+    }
+    /**
      * Add a route to the internal routes collection for a specific HTTP method.
      *
      * @param string $method The HTTP method (GET, POST, etc.) for the route.
@@ -125,38 +187,45 @@ class Route
      */
     private static function addRoute($method, $route, $callable)
     {
+        self::$routes[$method][$route] = self::createNewRoute($method, $route, self::getCallable($callable));
+    }
 
+    private static function getCallable($callable)
+    {
         if (!is_null(self::$controller) && is_string($callable)) {
-            self::$routes[$method][$route] =  [self::$controller, $callable];
-        } else {
+            return ['controller' =>  self::$controller, 'action' =>  $callable];
+        }
 
-            self::$routes[$method][$route] = $callable;
+        if (is_array($callable)) {
+            return ['controller' =>  $callable[0], 'action' =>  $callable[1]];
+        }
+
+        if (is_callable($callable)) {
+            return ['controller' => null, 'action' => $callable];
         }
     }
 
 
     /**
-     * Resolve the current request to find and handle the appropriate route.
+     * Retrieve the route handler associated with the given method and path.
      *
-     * @return void
+     * @param string $method The HTTP method of the route (e.g., GET, POST).
+     * @param string $path The URL path of the route.
+     * @return mixed|false The route handler associated with the route or false if not found.
      */
-    public function resolve()
+    public function getRouteHandler($path)
     {
-        // Check if routes files are not loaded, then load them.
-        if (empty($this->routesFiles)) {
-            $this->loadAllRoutesFiles();
+        $handler = null;
+
+        foreach (self::$routes as $verb => $route) {
+            if (isset($route[$path])) {
+                $handler = $route[$path];
+                break;
+            }
         }
 
-
-        $path = $this->request->getPath();
-        $method = $this->request->getMethod();
-
-        // Retrieve the callable associated with the requested method and path, if exists.
-        $callable = self::$routes[$method][$path] ?? false;
-
-        $this->handleAction($callable);
+        return $handler;
     }
-
     /**
      * Handle the resolved action (callable or controller method) based on the route.
      *
@@ -167,47 +236,67 @@ class Route
      * @throws ControllerNotFoundException If the specified controller class does not exist.
      * @throws \BadMethodCallException If the controller method does not exist.
      */
-    private function handleAction($action)
+    private function handleRoute($route)
     {
+
+        if ($this->isMethodNotAllowedForRoute($route)) {
+
+            throw new MethodNotAllowedHttpException($this->requestMethod, $route['uri'], $route['method']);
+        }
+
         // Check if no action is associated with the route, throw RouteNotFoundException.
-        if (!$action) {
+        if (is_null($route)) {
             throw new RouteNotFoundException();
         }
 
         // If the action is a callable function, execute it.
-        if (is_callable($action)) {
-            call_user_func_array($action, []);
+        if (is_callable($route['action'])) {
+            $this->invokeControllerMethod($route['action']);
+            return;
         }
 
 
-        if (is_string($action)) {
-            throw new \BadMethodCallException("Invalid route action: [ $action ].");
+        $controllerClass = $route['controller'];
+        $controllerMethod = $route['action'];
+
+        if ($this->isControllerNotExists($controllerClass)) {
+            throw new ControllerNotFoundException("Target class [$controllerClass] does not exist");
         }
-        // If the action is an array (controller class and method).
-        if (is_array($action)) {
-            $controllerClass = $action[0];
-            $controllerMethod = $action[1];
 
+        $controller = new $controllerClass();
 
-            // Check if the specified controller class exists.
-            if (!class_exists($controllerClass)) {
-                throw new ControllerNotFoundException("Target class [$controllerClass] does not exist");
-            }
-
-
-            $controller = new $controllerClass();
-
-
-            if (!method_exists($controller, $controllerMethod)) {
-                throw new \BadMethodCallException("Method  $controllerClass::$controllerMethod  does not exist!");
-            }
-
-
-            call_user_func_array([$controller, $controllerMethod], [$this->request]);
+        if ($this->isMethodNotExistsInController($controller, $controllerMethod)) {
+            throw new \BadMethodCallException("Method  $controllerClass::$controllerMethod  does not exist!");
         }
+
+        $this->invokeControllerMethod([$controller, $controllerMethod]);
+    }
+
+    private function invokeControllerMethod($callable)
+    {
+        return  call_user_func_array($callable, [$this->request]);
+    }
+    // Method to check if the requested method matches the route method
+    private function isMethodNotAllowedForRoute($action)
+    {
+
+        if (!is_null($action)  && $action['method'] !== $this->requestMethod) {
+            return true;
+        }
+
+        return false;
     }
 
 
+    private function isControllerNotExists($controllerClass)
+    {
+        return !is_null($controllerClass) && !class_exists($controllerClass);
+    }
+
+    private function isMethodNotExistsInController($controller, $methodName)
+    {
+        return !method_exists($controller, $methodName);
+    }
     /**
      * Get all registered routes.
      *

@@ -14,5 +14,11 @@ class HomeController
 
     public function store(Request $request)
     {
+        echo "store";
+    }
+
+    public function delete(Request $request)
+    {
+        echo "delete";
     }
 }

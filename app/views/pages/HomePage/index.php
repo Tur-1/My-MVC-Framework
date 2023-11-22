@@ -1,7 +1,6 @@
 <?php import('layouts.Header'); ?>
 <main>
 
- 
 
 </main>
 
