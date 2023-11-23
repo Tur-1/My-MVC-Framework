@@ -9,6 +9,7 @@ class HomeController
     public function index()
     {
 
+
         return view('pages.HomePage');
     }
 

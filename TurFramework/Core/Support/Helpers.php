@@ -2,6 +2,7 @@
 
 use TurFramework\Core\Views\View;
 use TurFramework\Core\Application;
+use TurFramework\Core\Exceptions\HttpResponseException;
 use TurFramework\Core\Support\Session;
 use TurFramework\Core\Support\Redirect;
 
@@ -74,19 +75,19 @@ if (!function_exists('get_all_php_files_in_directory')) {
 if (!function_exists('app_path')) {
     function app_path($path = '')
     {
-        return base_path('app/'.$path);
+        return base_path('app/' . $path);
     }
 }
 if (!function_exists('base_path')) {
     function base_path($path = '')
     {
-        return dirname(__DIR__).'/../../'.$path;
+        return dirname(__DIR__) . '/../../' . $path;
     }
 }
 if (!function_exists('view_path')) {
     function view_path($path)
     {
-        return base_path('app/views/'.$path);
+        return base_path('app/views/' . $path);
     }
 }
 if (!function_exists('view')) {
@@ -111,15 +112,29 @@ if (!function_exists('redirect')) {
 }
 
 if (!function_exists('session')) {
-    function session($key , $default = null)
+    function session($key, $default = null)
     {
         return Session::get($key);
     }
 }
 
 if (!function_exists('old')) {
-    function old($key , $default = null)
+    function old($key, $default = null)
     {
         return Session::get('old')[$key] ?? $default;
+    }
+}
+
+if (!function_exists('abort')) {
+    /**
+     * Throw an HttpException with the given data.
+     *
+     * @param  int  $code
+     * @param  string  $message
+     * @return never
+     */
+    function abort($code = 404, $message = '')
+    {
+        app()->abort($code, $message);
     }
 }

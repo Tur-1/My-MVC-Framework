@@ -33,8 +33,10 @@ class ExceptionHandler
 
     private static function handleHttpResponseException($exception)
     {
-        $message = $exception->getMessage();
+
         $code = $exception->getCode();
+        $message = $exception->getMessageForStatusCode($code);
+
         http_response_code($code);
 
         ob_start();

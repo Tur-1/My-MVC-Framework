@@ -7,6 +7,7 @@ use TurFramework\Core\Router\Route;
 use TurFramework\Core\Http\Response;
 use TurFramework\Core\Support\Config;
 use TurFramework\Core\Exceptions\ExceptionHandler;
+use TurFramework\Core\Exceptions\HttpResponseException;
 
 class Application
 {
@@ -90,6 +91,20 @@ class Application
         return env('APP_ENV') === 'production';
     }
 
+    /**
+     * Throw an HttpException with the given data.
+     *
+     * @param  int  $code
+     * @param  string  $message 
+     * @return never
+     *
+     * @throws HttpResponseException
+     *
+     */
+    public function abort($code, $message = '')
+    {
+        throw new HttpResponseException(message: $message, code: $code);
+    }
     /**
      * load all config files.
      */
