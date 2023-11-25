@@ -7,28 +7,31 @@ use Exception;
 use Throwable;
 use ErrorException;
 
+
 class ExceptionHandler
 {
+    private static $debugMode; // Set the default value here or retrieve it from your configuration
+
+
+
     public static function registerExceptions()
     {
-        error_reporting(-1);
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
-        });
-
+       
         set_exception_handler([self::class,  'customExceptionHandler']);
     }
 
     public static function customExceptionHandler($exception)
     {
-        if ($exception instanceof HttpResponseException) {
-            self::handleHttpResponseException($exception);
-        }
+   
 
-        if ($exception instanceof Exception || $exception instanceof Error || $exception instanceof ErrorException || $exception instanceof Throwable) {
-            ob_clean();
-            DefaultExceptionHandler::handle($exception);
-        }
+            if ($exception instanceof HttpResponseException) {
+                self::handleHttpResponseException($exception);
+            }
+            if ($exception instanceof Exception || $exception instanceof Error || $exception instanceof ErrorException || $exception instanceof Throwable) {
+                ob_clean();
+                DefaultExceptionHandler::handle($exception);
+            }
+
     }
 
     private static function handleHttpResponseException($exception)

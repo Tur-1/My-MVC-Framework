@@ -17,7 +17,7 @@ class Request
 
     public function getUri()
     {
-        return parse_url($this->getServer('REQUEST_URI'));
+        return parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH);
     }
 
     public function getMethod()
@@ -27,9 +27,9 @@ class Request
 
     public function getPath()
     {
-        $uri = $this->getUri();
+        $uri = urldecode($this->getUri());
 
-        return $uri['path'] ?? '/';
+        return $uri;
     }
 
     /**
@@ -58,7 +58,7 @@ class Request
             self::METHOD_POST,
             self::METHOD_PUT,
             self::METHOD_DELETE,
-            ];
+        ];
     }
 
     private function getServer($key)

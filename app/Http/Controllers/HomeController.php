@@ -6,20 +6,19 @@ use TurFramework\Core\Http\Request;
 
 class HomeController
 {
-    public function index()
+    public function index(Request $request)
     {
 
 
         return view('pages.HomePage');
     }
 
-    public function store(Request $request)
+    public function about(Request $request)
     {
-        echo "store";
+
+    
+        return view('pages.AboutPage');
     }
 
-    public function delete(Request $request)
-    {
-        echo "delete";
-    }
+   
 }

@@ -3,11 +3,13 @@
 namespace TurFramework\Core;
 
 use TurFramework\Core\Http\Request;
-use TurFramework\Core\Router\Route;
+use TurFramework\Core\Facades\Route;
 use TurFramework\Core\Http\Response;
+use TurFramework\Core\Router\Router;
 use TurFramework\Core\Support\Config;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Exceptions\HttpResponseException;
+
 
 class Application
 {
@@ -30,13 +32,17 @@ class Application
      */
     public function __construct()
     {
+
         ExceptionHandler::registerExceptions();
+        $this->config = new Config($this->loadConfig());
+
         $this->request = new Request();
         $this->response = new Response();
+        $this->route = new Route();
 
-        $this->route = new Route($this->request, $this->response);
+        $this->route->loadAllRoutesFiles();
 
-        $this->config = new Config($this->loadConfig());
+        $this->route::setFacadeRouter($this->request, $this->response);
     }
 
     /**
