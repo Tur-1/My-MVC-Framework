@@ -3,7 +3,7 @@
         'name' => 'tur1i/mvc',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'd1e09493262472678c8e7b73b6ca41f15b7fb6f8',
+        'reference' => 'eb1437e2d7f39930d55a95879d8003992837fd07',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -29,17 +29,6 @@
                 0 => '1.9.x-dev',
             ),
             'dev_requirement' => false,
-        ),
-        'symfony/deprecation-contracts' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
-            'reference' => '7c3aff79d10325257a001fcf92d991f24fc967cf',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
-            'aliases' => array(
-                0 => '3.4.x-dev',
-            ),
-            'dev_requirement' => true,
         ),
         'symfony/polyfill-ctype' => array(
             'pretty_version' => '1.x-dev',
@@ -69,9 +58,9 @@
             'dev_requirement' => false,
         ),
         'symfony/var-dumper' => array(
-            'pretty_version' => '6.4.x-dev',
-            'version' => '6.4.9999999.9999999-dev',
-            'reference' => 'c40f7d17e91d8b407582ed51a2bbf83c52c367f6',
+            'pretty_version' => '7.1.x-dev',
+            'version' => '7.1.9999999.9999999-dev',
+            'reference' => '5ce1a3befd8bb78188461e48cf35738505b6c4ae',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/var-dumper',
             'aliases' => array(),
@@ -80,7 +69,7 @@
         'tur1i/mvc' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'd1e09493262472678c8e7b73b6ca41f15b7fb6f8',
+            'reference' => 'eb1437e2d7f39930d55a95879d8003992837fd07',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
