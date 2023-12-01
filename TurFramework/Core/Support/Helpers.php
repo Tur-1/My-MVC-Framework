@@ -63,8 +63,8 @@ if (!function_exists('config_path')) {
     }
 }
 
-if (!function_exists('get_all_php_files_in_directory')) {
-    function get_all_php_files_in_directory($directory)
+if (!function_exists('get_files_in_directory')) {
+    function get_files_in_directory($directory)
     {
         $files = [];
 

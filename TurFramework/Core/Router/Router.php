@@ -260,7 +260,7 @@ class Router implements RouteInterface
      */
     public function loadAllRoutesFiles()
     {
-        $this->routesFiles = get_all_php_files_in_directory('app/routes');
+        $this->routesFiles = get_files_in_directory('app/routes');
 
         if (empty($this->routesFiles)) {
             throw new RouteNotFoundException('No route files found');
@@ -277,31 +277,33 @@ class Router implements RouteInterface
                 $this->nameList[$routeDetails['name']] = $routeDetails;
             }
         }
-
-        // $routesCacheFile = base_path('bootstrap/cache/routes.php');
-
-        // if (file_exists($routesCacheFile)) {
-
-        //     self::$routes = require_once $routesCacheFile;
-        // } else {
-
-
-        //     $this->routesFiles = get_all_php_files_in_directory('app/routes');
-
-        //     if (empty($this->routesFiles)) {
-        //         throw new RouteNotFoundException('No route files found');
-        //     }
-
-        //     foreach ($this->routesFiles as $routeFile) {
-        //         self::$routes[] = require_once $routeFile;
-        //     }
-
-
-        //     // After loading, create a cache file for subsequent requests
-        //     $this->cacheRoutes($routesCacheFile);
-        // }
     }
 
+    private function loadRotues()
+    {
+        $routesCacheFile = base_path('bootstrap/cache/routes.php');
+
+        if (file_exists($routesCacheFile)) {
+
+            self::$routes = require_once $routesCacheFile;
+        } else {
+
+
+            $this->routesFiles = get_files_in_directory('app/routes');
+
+            if (empty($this->routesFiles)) {
+                throw new RouteNotFoundException('No route files found');
+            }
+
+            foreach ($this->routesFiles as $routeFile) {
+                self::$routes[] = require_once $routeFile;
+            }
+
+
+            // After loading, create a cache file for subsequent requests
+            $this->cacheRoutes($routesCacheFile);
+        }
+    }
     /**
      * Add a route to the internal routes collection for a specific HTTP method.
      *

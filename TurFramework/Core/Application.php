@@ -5,7 +5,6 @@ namespace TurFramework\Core;
 use TurFramework\Core\Http\Request;
 use TurFramework\Core\Facades\Route;
 use TurFramework\Core\Http\Response;
-use TurFramework\Core\Router\Router;
 use TurFramework\Core\Support\Config;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Exceptions\HttpResponseException;
@@ -119,6 +118,7 @@ class Application
      */
     protected function loadConfig()
     {
+
         foreach (scandir(config_path()) as $configFile) {
             if ($configFile == '.' || $configFile == '..') {
                 continue;
