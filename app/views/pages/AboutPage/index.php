@@ -1,4 +1,6 @@
-<?php import('layouts.Header'); ?>
+<?php import('layouts.Header', [
+    'title' => 'about'
+]); ?>
 <main>
 
     <h1>about</h1>

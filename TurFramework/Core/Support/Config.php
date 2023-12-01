@@ -20,6 +20,7 @@ class Config
 
         $item = $this->configFiles;
 
+
         foreach ($keys as $value) {
             if (isset($item[$value])) {
                 $item = $item[$value];

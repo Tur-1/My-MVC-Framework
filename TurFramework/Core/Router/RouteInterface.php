@@ -2,18 +2,27 @@
 
 namespace TurFramework\Core\Router;
 
+use Closure;
+
 interface RouteInterface
 {
     public function resolve();
 
     /**
+     * Add or change the route name.
+     *
+     * @param  string  $name
+     * 
+     */
+    public  function name($routeName);
+    /**
      * Create a route group 
      *
-     * @param \Closure|array|string $callback
+     * @param callable $callback
      *
-     * @return $instance
+     * @return $this
      */
-    public static function group($callback);
+    public  function group(callable $callback);
     /**
      * Create a new instance of the Route class and set the current controller.
      *
@@ -21,7 +30,7 @@ interface RouteInterface
      *
      * @return Route an instance of the Route class with the current controller set
      */
-    public static function controller($controller);
+    public static function controller(string $controller);
     /**
      * Register a GET route with the specified route and associated callback.
      *

@@ -2,13 +2,22 @@
 
 namespace TurFramework\Core\Router;
 
+use Error;
 use Closure;
+use TypeError;
+use ErrorException;
+use InvalidArgumentException;
+use function PHPSTORM_META\type;
 use TurFramework\Core\Http\Request;
+
 use TurFramework\Core\Http\Response;
 use TurFramework\Core\Exceptions\BadMethodCallException;
 
 class Router implements RouteInterface
 {
+
+    private static $instance;
+
     /**
      * The Response object used to handle HTTP responses.
      *
@@ -24,11 +33,11 @@ class Router implements RouteInterface
     private Request $request;
 
     /**
-     * An array containing HTTP verbs for reference.
+     * route key
      *
      * @var array
      */
-    public static $verbs = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
+    public static $route;
 
     /**
      * An array to store route files loaded for caching.
@@ -42,25 +51,27 @@ class Router implements RouteInterface
      * @var string
      */
     private $requestMethod;
-    private static $instance;
+
+
     /**
-     * 
+     * A look-up table of routes by their names.
      *
-     * @var string
+     * @var \Illuminate\Routing\Route[]
      */
-    private static $name;
+    protected $nameList = [];
     /**
      * 
      *
      * @var string
      */
     private $path;
+
     /**
      * The currently active controller.
      *
      * @var mixed
      */
-    public static $controller;
+    public  $controller;
 
     /**
      * An array containing registered routes.
@@ -68,12 +79,13 @@ class Router implements RouteInterface
      * @var array
      */
     public static $routes = [];
-    private static $lastAddedRoute = null;
+
 
     public function __construct(Request $request, Response $response)
     {
         $this->request = $request;
         $this->response = $response;
+        self::$instance = $this;
     }
 
     /**
@@ -88,8 +100,10 @@ class Router implements RouteInterface
         $this->path = $this->request->getPath();
         $this->requestMethod = $this->request->getMethod();
 
-        // Retrieve the callable associated with the requested method and path, if exists.
+        //  match the incoming URL to the defined routes 
         $route = $this->matchRoute($this->path);
+
+
 
         $this->handleRoute($route);
     }
@@ -97,17 +111,15 @@ class Router implements RouteInterface
     /**
      * Create a route group 
      *
-     * @param \Closure|array|string $callback
+     * @param callable $callback
      *
-     * @return $instance
+     * @return $this
      */
-    public static function group($callback)
+    public  function group(callable $callback)
     {
-        $instance = new self(new Request(), new Response());
 
-        $callback();
-
-        return $instance;
+        call_user_func($callback);
+        return self::$instance;
     }
 
     /**
@@ -117,11 +129,11 @@ class Router implements RouteInterface
      *
      * @return Route an instance of the Route class with the current controller set
      */
-    public static function controller($controller)
+    public static function controller(string $controller)
     {
-        $instance = new self(new Request(), new Response());
-        $instance::$controller = $controller;
-        return  $instance;
+
+        self::$instance->controller = $controller;
+        return  self::$instance;
     }
 
     /**
@@ -134,9 +146,8 @@ class Router implements RouteInterface
      */
     public static function get($route, $callable)
     {
-        $instance = new self(new Request(), new Response());
-        self::addRoute(Request::METHOD_GET, $route, $callable);
-        return  $instance;
+
+        return self::addRoute(Request::METHOD_GET, $route, $callable);
     }
 
     /**
@@ -149,9 +160,8 @@ class Router implements RouteInterface
      */
     public static function post($route,  $callable)
     {
-        $instance = new self(new Request(), new Response());
-        self::addRoute(Request::METHOD_POST, $route, $callable);
-        return  $instance;
+
+        return  self::addRoute(Request::METHOD_POST, $route, $callable);
     }
 
     /**
@@ -173,16 +183,22 @@ class Router implements RouteInterface
      * @param  string  $name
      * 
      */
-    public static function name($routeName)
+    public  function name($routeName)
     {
-        // This method will set a name for the last added route
 
-        if (!is_null(self::$lastAddedRoute) && isset(self::$routes[self::$lastAddedRoute])) {
-            self::$routes[self::$lastAddedRoute]['name'] = $routeName;
-        }
-        return new self(new Request(), new Response());
+        $this->setRouteName($routeName);
+
+        return self::$instance;
+    }
+    public function getByName($routeName)
+    {
+        return $this->nameList[$routeName];
     }
 
+    private function setRouteName($routeName)
+    {
+        return self::$routes[self::$route]['name'] = $routeName;
+    }
     /**
      * Retrieve the route handler associated with the given method and path.
      *
@@ -197,6 +213,9 @@ class Router implements RouteInterface
 
         foreach (self::$routes as $route => $routeDetails) {
 
+            if (!is_null($routeDetails['name'])) {
+                $this->nameList[$routeDetails['name']] = $routeDetails;
+            }
             // Replace route parameters with regex patterns to match dynamic values
             $pattern = preg_replace_callback('/\{(\w+)\}/', function ($matches) {
 
@@ -248,8 +267,17 @@ class Router implements RouteInterface
         }
 
         foreach ($this->routesFiles as $routeFile) {
-            self::$routes[] = require_once $routeFile;
+            if (!is_int($routeFile)) {
+                self::$routes[] = require_once $routeFile;
+            }
         }
+
+        foreach (self::$routes as $route => $routeDetails) {
+            if (!is_int($routeDetails) && !is_null($routeDetails['name'])) {
+                $this->nameList[$routeDetails['name']] = $routeDetails;
+            }
+        }
+
         // $routesCacheFile = base_path('bootstrap/cache/routes.php');
 
         // if (file_exists($routesCacheFile)) {
@@ -284,9 +312,12 @@ class Router implements RouteInterface
      */
     private static function addRoute($method, $route, $callable, $name = null)
     {
-        self::$lastAddedRoute = $route; // Set the last added route
+
+        self::$route = $route;
+
         self::$routes[$route] = self::createNewRoute($method, $route, self::getCallable($callable), $name);
-        return new self(new Request(), new Response()); // Return the Router object for method chaining
+
+        return  self::$instance;
     }
     /**
      * Creates a new route array based on the provided method, route, and callable.
@@ -341,8 +372,8 @@ class Router implements RouteInterface
      */
     private static function getCallable($callable)
     {
-        if (!is_null(self::$controller) && is_string($callable)) {
-            return ['controller' =>  self::$controller, 'action' =>  $callable];
+        if (!is_null(self::$instance->controller) && is_string($callable)) {
+            return ['controller' =>  self::$instance->controller, 'action' =>  $callable];
         }
 
         if (is_array($callable)) {
@@ -366,8 +397,8 @@ class Router implements RouteInterface
     private function handleRoute($route)
     {
 
+        // Check if the route method is not allowed
         if ($this->isMethodNotAllowedForRoute($route)) {
-
             throw new MethodNotAllowedHttpException($this->requestMethod, $this->path, $route['method']);
         }
 
@@ -376,26 +407,30 @@ class Router implements RouteInterface
             throw new RouteNotFoundException();
         }
 
-        // If the action is a callable function, execute it.
+        // If the action is a callable function, execute it
         if (is_callable($route['action'])) {
             $this->invokeControllerMethod($route['action'], $route['parameters']);
             return;
         }
 
-
+        // Extract controller class and method from the route
         $controllerClass = $route['controller'];
         $controllerMethod = $route['action'];
 
+
+        // Check if the controller class exists
         if ($this->isControllerNotExists($controllerClass)) {
             throw new ControllerNotFoundException("Target class [$controllerClass] does not exist");
         }
 
         $controller = new $controllerClass();
 
+        // Check if the method exists in the controller
         if ($this->isMethodNotExistsInController($controller, $controllerMethod)) {
             throw new \BadMethodCallException("Method  $controllerClass::$controllerMethod  does not exist!");
         }
 
+        // Invoke the controller method
         $this->invokeControllerMethod([$controller, $controllerMethod], $route['parameters']);
     }
 

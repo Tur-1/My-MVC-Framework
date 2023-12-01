@@ -50,6 +50,26 @@ class Request
 
         return $this->getMethod() == $method ? true : false;
     }
+    public function is($pattern)
+    {
+        $path = $this->getPath();
+
+        // Check if the pattern ends with a wildcard *
+        $endsWithWildcard = substr($pattern, -2) === '/*';
+
+        // If the pattern ends with a wildcard *, remove it
+        if ($endsWithWildcard) {
+            $pattern = substr($pattern, 0, -2);
+        }
+
+        // Perform the comparison to check if the path starts with the pattern
+        if ($pattern === '/') {
+            return $path === '/';
+        }
+
+        // Check if the path starts with the pattern (including /)
+        return strpos($path, $pattern) === 0 || $path === $pattern;
+    }
 
     public function getValidMethods()
     {

@@ -35,14 +35,11 @@ class Application
 
         ExceptionHandler::registerExceptions();
         $this->config = new Config($this->loadConfig());
-
         $this->request = new Request();
         $this->response = new Response();
-        $this->route = new Route();
+        $this->route = new Route($this->request, $this->response);
 
         $this->route->loadAllRoutesFiles();
-
-        $this->route::setFacadeRouter($this->request, $this->response);
     }
 
     /**
@@ -110,6 +107,12 @@ class Application
     public function abort($code, $message = '')
     {
         throw new HttpResponseException(message: $message, code: $code);
+    }
+
+    public function route($routeName)
+    {
+
+        return $this->route->getByName($routeName)['uri'];
     }
     /**
      * load all config files.

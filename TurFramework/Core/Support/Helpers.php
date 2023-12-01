@@ -30,7 +30,15 @@ if (!function_exists('env')) {
      */
     function env($key, $default = null)
     {
-        return $_ENV[$key] ?? $default;
+        return $_ENV[$key] ?? value($default);
+    }
+}
+
+if (!function_exists('value')) {
+
+    function value($value)
+    {
+        return ($value instanceof Closure) ? $value() : $value;
     }
 }
 if (!function_exists('config')) {
@@ -136,5 +144,25 @@ if (!function_exists('abort')) {
     function abort($code = 404, $message = '')
     {
         app()->abort($code, $message);
+    }
+}
+if (!function_exists('request')) {
+    /**
+     *
+     *
+     */
+    function request()
+    {
+        return app()->request;
+    }
+}
+if (!function_exists('route')) {
+    /**
+     *
+     *
+     */
+    function route($routeName)
+    {
+        return app()->route($routeName);
     }
 }
