@@ -14,6 +14,7 @@ use TurFramework\Core\Http\Response;
  * @method  TurFramework\Core\Router\Router group($callback) 
  * @method  TurFramework\Core\Router\Router name($name) 
  * @method  TurFramework\Core\Router\Router getRoutes() 
+ * @method  TurFramework\Core\Router\Router getNameList() 
  * @method  TurFramework\Core\Router\Router loadAllRoutesFiles() 
  * @method  TurFramework\Core\Router\Router resolve() 
  * @method  TurFramework\Core\Router\Router getByName($routeName)

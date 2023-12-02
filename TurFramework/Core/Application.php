@@ -2,11 +2,13 @@
 
 namespace TurFramework\Core;
 
+use InvalidArgumentException;
 use TurFramework\Core\Http\Request;
 use TurFramework\Core\Facades\Route;
 use TurFramework\Core\Http\Response;
 use TurFramework\Core\Support\Config;
 use TurFramework\Core\Exceptions\ExceptionHandler;
+use TurFramework\Core\Router\RouteNotDefinedException;
 use TurFramework\Core\Exceptions\HttpResponseException;
 
 
@@ -107,12 +109,44 @@ class Application
     {
         throw new HttpResponseException(message: $message, code: $code);
     }
-
-    public function route($routeName)
+    public function route($routeName, $parameters = [])
     {
 
-        return $this->route->getByName($routeName)['uri'];
+        $route = $this->route->getByName($routeName);
+        //"Missing required parameter for [Route: $routeName] [URI: home/{user_id}] [Missing parameter: user_id]."
+        if (is_null($route)) {
+            throw new RouteNotDefinedException("Route [ $routeName ] not defined.");
+        }
+
+        // "uri" => "/about/{name}"
+        // "method" => "POST"
+        // "controller" => "App\Http\Controllers\HomeController"
+        // "action" => "about"
+        // "parameters" => array:1 [▼
+        //   0 => "name"
+        // ]
+        // "name" => "aboutPage"
+
+        foreach ($parameters as $key => $value) {
+            if (!in_array($key, $route['parameters'])) {
+                throw new InvalidArgumentException("Missing required parameter for [Route: $routeName] [URI: " . $route['uri'] . " ] [Missing parameter: $key].");
+            }
+        }
+
+
+        // foreach ($this->route->getNameList() as $route => $routeDetails) {
+        //     if ($routeDetails['name'] === $routeName) {
+        //         $url = $routeDetails['uri'];
+        //         foreach ($parameters as $key => $value) {
+        //             $url = str_replace('{' . $key . '}', $value, $url);
+        //         }
+        //         return $url;
+        //         break;
+        //     }
+        // }
+        return '';
     }
+
     /**
      * load all config files.
      */

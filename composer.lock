@@ -489,12 +489,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "5ce1a3befd8bb78188461e48cf35738505b6c4ae"
+                "reference": "cf0220fc7607476fd0d001ab3ed9e830d1fdda56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/5ce1a3befd8bb78188461e48cf35738505b6c4ae",
-                "reference": "5ce1a3befd8bb78188461e48cf35738505b6c4ae",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/cf0220fc7607476fd0d001ab3ed9e830d1fdda56",
+                "reference": "cf0220fc7607476fd0d001ab3ed9e830d1fdda56",
                 "shasum": ""
             },
             "require": {
@@ -564,13 +564,14 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-26T15:16:53+00:00"
+            "time": "2023-11-27T12:39:18+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "vlucas/phpdotenv": 20
+        "vlucas/phpdotenv": 20,
+        "symfony/var-dumper": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

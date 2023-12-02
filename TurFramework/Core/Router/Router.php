@@ -7,7 +7,6 @@ use Closure;
 use TypeError;
 use ErrorException;
 use InvalidArgumentException;
-use function PHPSTORM_META\type;
 use TurFramework\Core\Http\Request;
 
 use TurFramework\Core\Http\Response;
@@ -192,7 +191,7 @@ class Router implements RouteInterface
     }
     public function getByName($routeName)
     {
-        return $this->nameList[$routeName];
+        return $this->nameList[$routeName] ?? null;
     }
 
     private function setRouteName($routeName)
@@ -241,69 +240,9 @@ class Router implements RouteInterface
 
         return $handler;
     }
-    /**
-     * Get all registered routes.
-     *
-     * @return array All registered routes.
-     */
-    public function getRoutes()
-    {
-
-        return self::$routes;
-    }
-    /**
-     * Load all route files from the 'app/routes' directory.
-     *
-     * @return void
-     *
-     * @throws RouteNotFoundException If no routes files are found.
-     */
-    public function loadAllRoutesFiles()
-    {
-        $this->routesFiles = get_files_in_directory('app/routes');
-
-        if (empty($this->routesFiles)) {
-            throw new RouteNotFoundException('No route files found');
-        }
-
-        foreach ($this->routesFiles as $routeFile) {
-            if (!is_int($routeFile)) {
-                self::$routes[] = require_once $routeFile;
-            }
-        }
-
-        foreach (self::$routes as $route => $routeDetails) {
-            if (!is_int($routeDetails) && !is_null($routeDetails['name'])) {
-                $this->nameList[$routeDetails['name']] = $routeDetails;
-            }
-        }
-    }
-
-    private function loadRotues()
-    {
-        $routesCacheFile = base_path('bootstrap/cache/routes.php');
-
-        if (file_exists($routesCacheFile)) {
-
-            self::$routes = require_once $routesCacheFile;
-        } else {
 
 
-            $this->routesFiles = get_files_in_directory('app/routes');
 
-            if (empty($this->routesFiles)) {
-                throw new RouteNotFoundException('No route files found');
-            }
-
-            foreach ($this->routesFiles as $routeFile) {
-                self::$routes[] = require_once $routeFile;
-            }
-
-
-            // After loading, create a cache file for subsequent requests
-            $this->cacheRoutes($routesCacheFile);
-        }
-    }
     /**
      * Add a route to the internal routes collection for a specific HTTP method.
      *
@@ -452,7 +391,80 @@ class Router implements RouteInterface
         return false;
     }
 
+    /**
+     * Get all registered routes.
+     *
+     * @return array All registered routes.
+     */
+    public function getRoutes()
+    {
 
+        return self::$routes;
+    }
+    /**
+     * Get all registered routes by names.
+     *
+     * @return array All registered routes.
+     */
+    public function getNameList()
+    {
+        return $this->nameList;
+    }
+
+
+    /**
+     * Load all route files from the 'app/routes' directory.
+     *
+     * @return void
+     *
+     * @throws RouteNotFoundException If no routes files are found.
+     */
+    public function loadAllRoutesFiles()
+    {
+        $this->routesFiles = get_files_in_directory('app/routes');
+
+        if (empty($this->routesFiles)) {
+            throw new RouteNotFoundException('No route files found');
+        }
+
+        foreach ($this->routesFiles as $routeFile) {
+            if (!is_int($routeFile)) {
+                self::$routes[] = require_once $routeFile;
+            }
+        }
+
+        foreach (self::$routes as $route => $routeDetails) {
+            if (!is_int($routeDetails) && !is_null($routeDetails['name'])) {
+                $this->nameList[$routeDetails['name']] = $routeDetails;
+            }
+        }
+    }
+
+    private function loadRotues()
+    {
+        $routesCacheFile = base_path('bootstrap/cache/routes.php');
+
+        if (file_exists($routesCacheFile)) {
+
+            self::$routes = require_once $routesCacheFile;
+        } else {
+
+
+            $this->routesFiles = get_files_in_directory('app/routes');
+
+            if (empty($this->routesFiles)) {
+                throw new RouteNotFoundException('No route files found');
+            }
+
+            foreach ($this->routesFiles as $routeFile) {
+                self::$routes[] = require_once $routeFile;
+            }
+
+
+            // After loading, create a cache file for subsequent requests
+            $this->cacheRoutes($routesCacheFile);
+        }
+    }
     private function isControllerNotExists($controllerClass)
     {
         return !is_null($controllerClass) && !class_exists($controllerClass);
