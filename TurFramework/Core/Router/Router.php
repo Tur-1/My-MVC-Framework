@@ -428,43 +428,41 @@ class Router implements RouteInterface
         }
 
         foreach ($this->routesFiles as $routeFile) {
-            if (!is_int($routeFile)) {
-                self::$routes[] = require_once $routeFile;
-            }
+            require_once $routeFile;
         }
 
         foreach (self::$routes as $route => $routeDetails) {
-            if (!is_int($routeDetails) && !is_null($routeDetails['name'])) {
+            if (!is_null($routeDetails['name'])) {
                 $this->nameList[$routeDetails['name']] = $routeDetails;
             }
-        }
+        };
     }
 
-    private function loadRotues()
-    {
-        $routesCacheFile = base_path('bootstrap/cache/routes.php');
+    // private function loadRotues()
+    // {
+    //     $routesCacheFile = base_path('bootstrap/cache/routes.php');
 
-        if (file_exists($routesCacheFile)) {
+    //     if (file_exists($routesCacheFile)) {
 
-            self::$routes = require_once $routesCacheFile;
-        } else {
-
-
-            $this->routesFiles = get_files_in_directory('app/routes');
-
-            if (empty($this->routesFiles)) {
-                throw new RouteNotFoundException('No route files found');
-            }
-
-            foreach ($this->routesFiles as $routeFile) {
-                self::$routes[] = require_once $routeFile;
-            }
+    //         self::$routes = require_once $routesCacheFile;
+    //     } else {
 
 
-            // After loading, create a cache file for subsequent requests
-            $this->cacheRoutes($routesCacheFile);
-        }
-    }
+    //         $this->routesFiles = get_files_in_directory('app/routes');
+
+    //         if (empty($this->routesFiles)) {
+    //             throw new RouteNotFoundException('No route files found');
+    //         }
+
+    //         foreach ($this->routesFiles as $routeFile) {
+    //             self::$routes[] = require_once $routeFile;
+    //         }
+
+
+    //         // After loading, create a cache file for subsequent requests
+    //         $this->cacheRoutes($routesCacheFile);
+    //     }
+    // }
     private function isControllerNotExists($controllerClass)
     {
         return !is_null($controllerClass) && !class_exists($controllerClass);

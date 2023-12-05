@@ -109,42 +109,35 @@ class Application
     {
         throw new HttpResponseException(message: $message, code: $code);
     }
+
+    /**
+     * Generates a URL based on the route name and parameters.
+     *
+     * @param string $routeName The name of the route
+     * @param array $parameters (Optional) Parameters for the route
+     * @return string The generated URL
+     * @throws RouteNotDefinedException When the route is not defined
+     * @throws InvalidArgumentException When required parameters are missing
+     */
     public function route($routeName, $parameters = [])
     {
 
         $route = $this->route->getByName($routeName);
-        //"Missing required parameter for [Route: $routeName] [URI: home/{user_id}] [Missing parameter: user_id]."
+
         if (is_null($route)) {
             throw new RouteNotDefinedException("Route [ $routeName ] not defined.");
         }
-
-        // "uri" => "/about/{name}"
-        // "method" => "POST"
-        // "controller" => "App\Http\Controllers\HomeController"
-        // "action" => "about"
-        // "parameters" => array:1 [▼
-        //   0 => "name"
-        // ]
-        // "name" => "aboutPage"
-
-        foreach ($parameters as $key => $value) {
-            if (!in_array($key, $route['parameters'])) {
-                throw new InvalidArgumentException("Missing required parameter for [Route: $routeName] [URI: " . $route['uri'] . " ] [Missing parameter: $key].");
+        foreach ($route['parameters'] as $key => $value) {
+            if (!in_array($value, array_keys($parameters))) {
+                throw new InvalidArgumentException("Missing required parameter for [Route: $routeName] [URI: " . $route['uri'] . " ]  [ Missing parameter: $value ].");
             }
         }
 
-
-        // foreach ($this->route->getNameList() as $route => $routeDetails) {
-        //     if ($routeDetails['name'] === $routeName) {
-        //         $url = $routeDetails['uri'];
-        //         foreach ($parameters as $key => $value) {
-        //             $url = str_replace('{' . $key . '}', $value, $url);
-        //         }
-        //         return $url;
-        //         break;
-        //     }
-        // }
-        return '';
+        $url = $route['uri'];
+        foreach ($parameters as $key => $value) {
+            $url = str_replace('{' . $key . '}', $value, $url);
+        }
+        return $url;
     }
 
     /**
