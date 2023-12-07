@@ -36,6 +36,55 @@ class Request
     }
 
     /**
+     * Get the previous path from the referer URL in the server array.
+     *
+     * @return string|null The path of the previous URL if available, otherwise null
+     */
+    public function previousUrl()
+    {
+        // Get the referer URL from the server array
+        $referer = $this->getServer('HTTP_REFERER');
+
+        // Parse the referer URL to extract its components
+        $parsedReferer = parse_url($referer);
+
+        // Get the path from the referer URL
+        $refererPath = $parsedReferer['path'] ?? '';
+
+        return $refererPath;
+    }
+
+    /**
+     * Get the previous URL with query string from the referer URL in the server array.
+     *
+     * @return string|null The previous URL with query string if available, otherwise null
+     */
+    public function previousUrlWithQuery()
+    {
+        // Get the referer URL from the server array
+        $referer = $this->getServer('HTTP_REFERER');
+
+        if (!$referer) {
+            return null; // Return null if no referer URL is found
+        }
+
+        // Parse the referer URL to extract its components
+        $parsedReferer = parse_url($referer);
+
+        // Get the path and query string from the referer URL
+        $refererPath = $parsedReferer['path'] ?? '';
+        $refererQueryString = $parsedReferer['query'] ?? '';
+
+        // Construct the full URL with the path and query string
+        $urlWithQuery = $refererPath;
+
+        if (!empty($refererQueryString)) {
+            $urlWithQuery .= '?' . $refererQueryString;
+        }
+
+        return $urlWithQuery;
+    }
+    /**
      * Get the protocol (HTTP or HTTPS) of the current request.
      *
      * @return string The protocol
