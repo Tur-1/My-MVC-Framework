@@ -2,17 +2,29 @@
 
 namespace TurFramework\Core\Exceptions;
 
+use CompileError;
 use DateError;
 use Error;
 use Exception;
 use Throwable;
 use ErrorException;
 use ParseError;
+use TypeError;
 
 class ExceptionHandler
 {
     private static $debugMode; // Set the default value here or retrieve it from your configuration
+    private static $Exceptions = [
+        DateError::class,
+        CompileError::class,
+        Exception::class,
+        Error::class,
+        ErrorException::class,
+        Throwable::class,
+        ParseError::class,
+        TypeError::class,
 
+    ];
 
 
     public static function registerExceptions()
@@ -28,12 +40,22 @@ class ExceptionHandler
         if ($exception instanceof HttpResponseException) {
             self::handleHttpResponseException($exception);
         }
-        if ($exception instanceof Exception || $exception instanceof Error || $exception instanceof ErrorException || $exception instanceof Throwable || $exception instanceof ParseError) {
-            ob_clean();
-            DefaultExceptionHandler::handle($exception);
-        }
+
+        self::getDefaultExceptionHandler($exception);
     }
 
+
+    private static function getDefaultExceptionHandler($exception)
+    {
+
+        foreach (self::$Exceptions as $key => $class) {
+            if ($exception instanceof $class) {
+                ob_clean();
+                DefaultExceptionHandler::handle($exception);
+                break;
+            }
+        }
+    }
     private static function handleHttpResponseException($exception)
     {
 

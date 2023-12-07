@@ -40,6 +40,7 @@ class Application
         $this->response = new Response();
         $this->route = new Route($this->request, $this->response);
 
+
         $this->route->loadAllRoutesFiles();
     }
 
@@ -48,6 +49,7 @@ class Application
      */
     public function run(): void
     {
+
         $this->route->resolve();
     }
 
