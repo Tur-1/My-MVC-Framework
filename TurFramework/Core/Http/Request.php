@@ -24,7 +24,95 @@ class Request
     {
         return parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH);
     }
+    /**
+     * Get the host name from the current request.
+     *
+     * @return string The host name
+     */
+    public function getHost(): string
+    {
+        // Retrieve the host from the HTTP_HOST server variable
+        return $this->getServer('HTTP_HOST') ?? '';
+    }
 
+    /**
+     * Get the protocol (HTTP or HTTPS) of the current request.
+     *
+     * @return string The protocol
+     */
+    public function getProtocol(): string
+    {
+
+
+        // Check if HTTPS is on to determine the protocol
+        return !is_null($this->getServer('HTTPS')) && $this->getServer('HTTPS') === 'on' ? 'https://' : 'http://';
+    }
+
+    /**
+     * Get the full URL of the current request, including the query string.
+     *
+     * @return string The full URL with query string
+     */
+    public function fullUrlWithQuery(): string
+    {
+        // Retrieve the protocol, host, and URI using their respective methods
+        $protocol = $this->getProtocol();
+        $host = $this->getHost();
+        $uri = $this->getUri();
+
+        // Get the query string
+        $queryString = $this->getQueryString();
+
+        // Construct the full URL with the query string
+        $urlWithQuery = $protocol . $host . $uri;
+
+        // Append the query string if it exists
+        if (!empty($queryString)) {
+            $urlWithQuery .= '?' . $queryString;
+        }
+
+        return $urlWithQuery;
+    }
+    /**
+     * Get the query string from the current request.
+     *
+     * @return string The query string
+     */
+    public function getQueryString(): string
+    {
+
+        $queryString = !is_null($this->getServer('QUERY_STRING')) ? $this->getServer('QUERY_STRING') : '';
+
+        // Parse the query string into an array
+        parse_str($queryString, $params);
+
+        // Remove the 'route' parameter from the query parameters array, if it exists
+        if (isset($params['route'])) {
+            unset($params['route']);
+        }
+
+        // Reconstruct the query string without the 'route' parameter
+        $updatedQueryString = http_build_query($params);
+
+        return $updatedQueryString;
+    }
+    /**
+     * Get the full URL of the current request.
+     *
+     * @return string The full URL
+     */
+    public function fullUrl(): string
+    {
+        // Retrieve the protocol and host using the respective methods
+        $protocol = $this->getProtocol();
+        $host = $this->getHost();
+
+        // Retrieve the URI from the REQUEST_URI server variable
+        $uri = $this->getUri();
+
+        // Concatenate protocol, host, and URI to reconstruct the full URL
+        return $protocol . $host . $uri;
+    }
     /**
      * Get the request method used for the current request.
      *
@@ -77,6 +165,7 @@ class Request
     {
         // Get the current path from the request
         $path = $this->getPath();
+
 
         // Check if the pattern ends with a wildcard *
         $endsWithWildcard = substr($pattern, -2) === '/*';
@@ -159,10 +248,41 @@ class Request
         // Return the sanitized request parameters or an empty array if none found
         return $body ?? [];
     }
+    /**
+     * Retrieve a specific sanitized input parameter by its key.
+     *
+     * @param string $key The key of the input parameter to retrieve
+     * @return mixed|null The value of the input parameter or default if not found
+     */
+    public function get($key, $default = null)
+    {
+        // Retrieve all sanitized request parameters
+        $allParams = $this->all();
+
+        // Check if the provided input key exists 
+        // If found, return the value; otherwise, return default
+        if ($this->has($key)) {
+            return $allParams[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Check if a sanitized input parameter exists by its key.
+     *
+     * @param string $param The key of the input parameter to check
+     * @return bool True if the parameter exists, false otherwise
+     */
     public function has($param): bool
     {
-        return array_key_exists($param, $this->all());
+        // Retrieve all sanitized request parameters into an array
+        $allParams = $this->all();
+
+        // Check if the provided parameter key exists in the sanitized parameters array
+        return array_key_exists($param, $allParams);
     }
+
     /**
      * Get the $_SERVER values.
      *

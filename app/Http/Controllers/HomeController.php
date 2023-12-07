@@ -10,6 +10,7 @@ class HomeController
     {
 
 
+
         return view('pages.HomePage');
     }
 
@@ -17,5 +18,9 @@ class HomeController
     {
 
         return view('pages.AboutPage');
+    }
+
+    public function users(Request $request)
+    {
     }
 }

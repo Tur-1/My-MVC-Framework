@@ -13,7 +13,6 @@ use TypeError;
 
 class ExceptionHandler
 {
-    private static $debugMode; // Set the default value here or retrieve it from your configuration
     private static $Exceptions = [
         DateError::class,
         CompileError::class,
@@ -30,9 +29,18 @@ class ExceptionHandler
     public static function registerExceptions()
     {
 
+        set_error_handler([self::class,  'errorHandler']);
         set_exception_handler([self::class,  'customExceptionHandler']);
     }
 
+
+    public static function errorHandler($serverty, $message, $file, $line)
+    {
+
+        if (error_reporting() && $serverty) {
+            throw new ErrorException($message, 0, $serverty, $file, $line);
+        }
+    }
     public static function customExceptionHandler($exception)
     {
 
