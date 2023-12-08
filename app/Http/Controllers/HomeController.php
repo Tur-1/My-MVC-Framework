@@ -16,7 +16,6 @@ class HomeController
     public function about(Request $request)
     {
 
-
         return view('pages.AboutPage');
     }
 }

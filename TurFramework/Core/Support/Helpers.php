@@ -2,7 +2,6 @@
 
 use TurFramework\Core\Views\View;
 use TurFramework\Core\Application;
-use TurFramework\Core\Exceptions\HttpResponseException;
 use TurFramework\Core\Support\Session;
 use TurFramework\Core\Support\Redirect;
 
@@ -113,16 +112,16 @@ if (!function_exists('import')) {
 }
 
 if (!function_exists('redirect')) {
-    function redirect(string $url = null)
+    function redirect()
     {
-        return new Redirect($url);
+        return new Redirect();
     }
 }
 
 if (!function_exists('session')) {
     function session($key, $default = null)
     {
-        return Session::get($key);
+        return Session::get($key, $default);
     }
 }
 
