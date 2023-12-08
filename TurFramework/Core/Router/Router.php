@@ -7,9 +7,8 @@ use Closure;
 use TypeError;
 use ErrorException;
 use InvalidArgumentException;
-use TurFramework\Core\Http\Request;
 
-use TurFramework\Core\Http\Response;
+use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Exceptions\BadMethodCallException;
 
 class Router implements RouteInterface
@@ -17,12 +16,7 @@ class Router implements RouteInterface
 
     private static $instance;
 
-    /**
-     * The Response object used to handle HTTP responses.
-     *
-     * @var Response
-     */
-    private Response $response;
+
 
     /**
      * The Request object used to handle HTTP requests.
@@ -80,10 +74,9 @@ class Router implements RouteInterface
     public static $routes = [];
 
 
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->response = $response;
         self::$instance = $this;
     }
 
@@ -173,7 +166,7 @@ class Router implements RouteInterface
      */
     public static function delete($route,  $callable)
     {
-        self::addRoute(Request::METHOD_DELETE, $route, $callable);
+        return self::addRoute(Request::METHOD_DELETE, $route, $callable);
     }
 
     /**
@@ -212,9 +205,6 @@ class Router implements RouteInterface
 
         foreach (self::$routes as $route => $routeDetails) {
 
-            if (!is_null($routeDetails['name'])) {
-                $this->nameList[$routeDetails['name']] = $routeDetails;
-            }
             // Replace route parameters with regex patterns to match dynamic values
             $pattern = preg_replace_callback('/\{(\w+)\}/', function ($matches) {
 

@@ -3,11 +3,10 @@
 namespace TurFramework\Core\Facades;
 
 use TurFramework\Core\Router\Router;
-use TurFramework\Core\Http\Request;
-use TurFramework\Core\Http\Response;
+use TurFramework\Core\Facades\Request;
 
 /**
- * @method static TurFramework\Core\Router\Router get(string $uri, array|string|callable|null $action = null)
+ * @method static TurFramework\Core\Router\Router get(string $uri, string|array|Closure $action = null)
  * @method static TurFramework\Core\Router\Router post(string $uri, array|string|callable|null $action = null)
  * @method static TurFramework\Core\Router\Router delete(string $uri, array|string|callable|null $action = null)
  * @method static TurFramework\Core\Router\Router controller($controller) 
@@ -25,9 +24,9 @@ class Route
 {
     protected static $routerInstance = null;
 
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request)
     {
-        static::$routerInstance =  new Router($request, $response);
+        static::$routerInstance =  new Router($request);
     }
 
     public static function __callStatic($method, $args)

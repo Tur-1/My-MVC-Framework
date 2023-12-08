@@ -3,10 +3,9 @@
 namespace TurFramework\Core;
 
 use InvalidArgumentException;
-use TurFramework\Core\Http\Request;
 use TurFramework\Core\Facades\Route;
-use TurFramework\Core\Http\Response;
 use TurFramework\Core\Support\Config;
+use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Router\RouteNotDefinedException;
 use TurFramework\Core\Exceptions\HttpResponseException;
@@ -22,7 +21,6 @@ class Application
     public const VERSION = '1.0';
 
     protected Request $request;
-    protected Response $response;
     protected Route $route;
     protected Config $config;
 
@@ -37,8 +35,7 @@ class Application
         ExceptionHandler::registerExceptions();
         $this->config = new Config($this->loadConfig());
         $this->request = new Request();
-        $this->response = new Response();
-        $this->route = new Route($this->request, $this->response);
+        $this->route = new Route($this->request);
 
 
         $this->route->loadAllRoutesFiles();

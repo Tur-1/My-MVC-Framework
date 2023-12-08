@@ -2,7 +2,7 @@
 
 namespace TurFramework\Core\Http;
 
-class Request
+class HttpRequest
 {
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
@@ -20,9 +20,13 @@ class Request
      *
      * @return string The requested URI path.
      */
-    public function getUri()
+    public function getUri(): string
     {
-        return parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH);
+        $uri = urldecode(
+            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+        );
+
+        return $uri;
     }
     /**
      * Get the host name from the current request.
@@ -40,7 +44,7 @@ class Request
      *
      * @return string|null The path of the previous URL if available, otherwise null
      */
-    public function previousUrl()
+    public function previousUrl(): string|null
     {
         // Get the referer URL from the server array
         $referer = $this->getServer('HTTP_REFERER');
@@ -59,7 +63,7 @@ class Request
      *
      * @return string|null The previous URL with query string if available, otherwise null
      */
-    public function previousUrlWithQuery()
+    public function previousUrlWithQuery(): string|null
     {
         // Get the referer URL from the server array
         $referer = $this->getServer('HTTP_REFERER');
@@ -130,20 +134,7 @@ class Request
     public function getQueryString(): string
     {
 
-        $queryString = !is_null($this->getServer('QUERY_STRING')) ? $this->getServer('QUERY_STRING') : '';
-
-        // Parse the query string into an array
-        parse_str($queryString, $params);
-
-        // Remove the 'route' parameter from the query parameters array, if it exists
-        if (isset($params['route'])) {
-            unset($params['route']);
-        }
-
-        // Reconstruct the query string without the 'route' parameter
-        $updatedQueryString = http_build_query($params);
-
-        return $updatedQueryString;
+        return !is_null($this->getServer('QUERY_STRING')) ? $this->getServer('QUERY_STRING') : '';
     }
     /**
      * Get the full URL of the current request.
@@ -167,7 +158,7 @@ class Request
      *
      * @return string The request method (e.g., GET, POST, PUT, DELETE, etc.).
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->getServer('REQUEST_METHOD');
     }
@@ -177,12 +168,9 @@ class Request
      *
      * @return string The decoded path from the requested URI.
      */
-    public function getPath()
+    public function getPath(): string
     {
-
-        $uri = urldecode($this->getUri());
-
-        return $uri;
+        return $this->getUri();
     }
 
     /**
@@ -191,9 +179,9 @@ class Request
      *
      * @param string $method
      *
-     * @return string
+     * @return bool
      */
-    public function isMethod($method)
+    public function isMethod($method): bool
     {
         $method = strtoupper($method);
 
@@ -210,7 +198,7 @@ class Request
      *
      * @return bool True if the request path matches the pattern, false otherwise.
      */
-    public function is($pattern)
+    public function is($pattern): bool
     {
         // Get the current path from the request
         $path = $this->getPath();
@@ -262,7 +250,7 @@ class Request
      *
      * @return array An array containing valid HTTP request methods
      */
-    public function getValidMethods()
+    public function getValidMethods(): array
     {
         return [
             self::METHOD_GET,
@@ -276,7 +264,7 @@ class Request
      *
      * @return array An array containing all sanitized request parameters.
      */
-    public function all()
+    public function all(): array
     {
         $body = [];
 
