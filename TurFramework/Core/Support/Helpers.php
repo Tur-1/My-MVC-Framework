@@ -1,9 +1,9 @@
 <?php
 
-use TurFramework\Core\Views\View;
 use TurFramework\Core\Application;
-use TurFramework\Core\Support\Session;
-use TurFramework\Core\Support\Redirect;
+use TurFramework\Core\Facades\View;
+use TurFramework\Core\Facades\Session;
+use TurFramework\Core\Facades\Redirect;
 
 if (!function_exists('app')) {
     function app()
@@ -100,14 +100,14 @@ if (!function_exists('view_path')) {
 if (!function_exists('view')) {
     function view($viewPath, array $data = [])
     {
-        return new View($viewPath, $data);
+        return View::make($viewPath, $data);
     }
 }
 
 if (!function_exists('import')) {
     function import($viewPath, array $data = [])
     {
-        return new View($viewPath, $data);
+        return View::make($viewPath, $data);
     }
 }
 

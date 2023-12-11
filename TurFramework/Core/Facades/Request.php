@@ -5,23 +5,28 @@ namespace TurFramework\Core\Facades;
 use TurFramework\Core\Http\HttpRequest;
 
 /**
-
- * @method TurFramework\Core\Http\HttpRequest previousUrl()
- * @method TurFramework\Core\Http\HttpRequest all()
- * @method TurFramework\Core\Http\HttpRequest isPost()
- * @method TurFramework\Core\Http\HttpRequest isGet()
- * @method TurFramework\Core\Http\HttpRequest getMethod()
- * @method TurFramework\Core\Http\HttpRequest previousUrlWithQuery()
- * @method TurFramework\Core\Http\HttpRequest fullUrlWithQuery()
- * @method TurFramework\Core\Http\HttpRequest fullUrl()
- * @method TurFramework\Core\Http\HttpRequest is()
- * @method TurFramework\Core\Http\HttpRequest get()
- * @method TurFramework\Core\Http\HttpRequest has()
- * @method TurFramework\Core\Http\HttpRequest isMethod()
- * @method TurFramework\Core\Http\HttpRequest getPath()
+ * @method bool is(string $url)
+ * @method mixed|null get(string $key, $default = null)
+ * @method bool has(string $key)
+ * @method bool isMethod(string $method)
+ * @method string|null previousUrl()
+ * @method array all()
+ * @method bool isPost()
+ * @method bool isGet()
+ * @method string getMethod()
+ * @method string|null previousUrlWithQuery()
+ * @method string fullUrlWithQuery()
+ * @method string fullUrl() 
+ * @method string getPath()
+ * @method array getValidMethods()
  * 
- * @see TurFramework\Core\Http\Request
+ * @see \TurFramework\Core\Http\HttpRequest
  */
-class Request extends HttpRequest
+class Request extends Facade
 {
+
+    protected static function getFacadeAccessor()
+    {
+        return new HttpRequest();
+    }
 }

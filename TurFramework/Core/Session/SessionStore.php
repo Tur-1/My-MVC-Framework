@@ -1,13 +1,13 @@
 <?php
 
-namespace TurFramework\Core\Support;
+namespace TurFramework\Core\Session;
 
-class Session
+class SessionStore
 {
     /**
      * Start the session.
      */
-    public static function start()
+    public function start()
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
@@ -19,10 +19,11 @@ class Session
      *
      * @param string $key
      * @param mixed $value
+     * 
+     * @return void
      */
-    public static function put($key, $value): void
+    public function put(string $key, $value): void
     {
-
         $_SESSION[$key] = $value;
     }
 
@@ -31,9 +32,9 @@ class Session
      *
      * @param string $key
      * @param mixed $default
-     * @return mixed|null
+     * @return mixed
      */
-    public static function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         if (isset($_SESSION['_flash'][$key])) {
             $sestion = $_SESSION['_flash'][$key];
@@ -49,7 +50,7 @@ class Session
      * @param string $key
      * @return bool
      */
-    public static function has($key): bool
+    public function has(string $key): bool
     {
         if (isset($_SESSION['_flash'][$key])) {
             return (bool) isset($_SESSION['_flash'][$key]);
@@ -57,15 +58,15 @@ class Session
         return (bool) isset($_SESSION[$key]);
     }
 
-   /**
+    /**
      * Remove one or many items from the session.
      *
-     * @param  string|array  $keys
+     * @param  array  $keys
      * @return void
      */
-    public static function forget(array $keys)
+    public function forget(array $keys)
     {
-        
+
         if (count($keys) === 0) {
             return;
         }
@@ -82,7 +83,7 @@ class Session
      *
      * @return void
      */
-    public static function remove(string $key)
+    public function remove(string $key)
     {
         unset($_SESSION[$key]);
     }
@@ -96,9 +97,8 @@ class Session
      * @param string|null $value
      * @return mixed
      */
-    public static function flash($key, $value = null)
+    public function flash(string $key, $value = null)
     {
         $_SESSION['_flash'][$key] = $value;
     }
-
 }

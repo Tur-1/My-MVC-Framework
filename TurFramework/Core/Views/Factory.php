@@ -2,15 +2,23 @@
 
 namespace TurFramework\Core\Views;
 
-class View
+use TurFramework\Core\Views\ViewFactory;
+
+class Factory
 {
-    protected $viewPath;
-    protected $data = [];
+    public $viewPath;
+    public $data = [];
+
 
     /**
-     * Constructor to initialize the View class.
+     * Create a new view instance.
+     *
+     * @param string $view The view file to be rendered.
+     * @param array $data An array of data to be passed to the view. 
+     * @throws ViewNotFoundException If the specified view file doesn't exist.
+     * @return \TurFramework\Core\Views\ViewFactory
      */
-    public function __construct($view, array $data = [])
+    public function make($view, array $data = [])
     {
         $viewPath = $this->getViewPath($view);
 
@@ -22,48 +30,23 @@ class View
         $this->viewPath = $viewPath;
 
         $this->data = array_merge($this->data, $data);
+
+        // Return a new instance of View
+        return $this->ViewInstance($this->viewPath,  $this->data);
     }
 
     /**
-     * Render the view file.
-     */
-    public function render()
-    {
-        // Extract data variables to be accessible in the view file
-        extract($this->data, EXTR_SKIP);
-
-        // Include the view file
-        include $this->viewPath;
-    }
-
-    /**
-     * Add a piece of data to the view.
+     * Create a new View instance.
      *
-     * @param string|array $key
-     *
-     * @return $this
+     * @param Factory $Factory The Factory instance.
+     * @param string $viewPath The path to the view file.
+     * @param array $data An array of data to be passed to the view.
+     * @return \TurFramework\Core\Views\ViewFactory
      */
-    public function with($key, $value = null)
+    public function ViewInstance($viewPath,  $data)
     {
-        // Merge data if an array is provided
-        if (is_array($key)) {
-            $this->data = array_merge($this->data, $key);
-        } else {
-            // Set key-value pair in data array
-            $this->data[$key] = $value;
-        }
-
-        return $this;
+        return new ViewFactory($viewPath, $data);
     }
-
-    /**
-     * Automatically render the view when the object is destroyed.
-     */
-    public function __destruct()
-    {
-        $this->render();
-    }
-
 
     /**
      * Get the path of the view file.

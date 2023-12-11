@@ -36,8 +36,6 @@ class Application
         $this->config = new Config($this->loadConfig());
         $this->request = new Request();
         $this->route = new Route($this->request);
-
-
         $this->route->loadAllRoutesFiles();
     }
 
@@ -122,6 +120,7 @@ class Application
     {
 
         $route = $this->route->getByName($routeName);
+
 
         if (is_null($route)) {
             throw new RouteNotDefinedException("Route [ $routeName ] not defined.");

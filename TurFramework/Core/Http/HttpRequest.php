@@ -181,7 +181,7 @@ class HttpRequest
      *
      * @return bool
      */
-    public function isMethod($method): bool
+    public function isMethod(string $method): bool
     {
         $method = strtoupper($method);
 
@@ -198,30 +198,30 @@ class HttpRequest
      *
      * @return bool True if the request path matches the pattern, false otherwise.
      */
-    public function is($pattern): bool
+    public function is(string $url): bool
     {
         // Get the current path from the request
         $path = $this->getPath();
 
 
         // Check if the pattern ends with a wildcard *
-        $endsWithWildcard = substr($pattern, -2) === '/*';
+        $endsWithWildcard = substr($url, -2) === '/*';
 
         // If the pattern ends with a wildcard *, remove it
         if ($endsWithWildcard) {
-            $pattern = substr($pattern, 0, -2);
+            $url = substr($url, 0, -2);
         }
 
         // Perform the comparison to check if the path starts with the pattern
 
         // If the pattern is just '/', check if the path is also '/'
-        if ($pattern === '/') {
+        if ($url === '/') {
             return $path === '/';
         }
 
         // Check if the path starts with the pattern (including /)
         // Also, if the path matches the pattern exactly
-        return strpos($path, $pattern) === 0 || $path === $pattern;
+        return strpos($path, $url) === 0 || $path === $url;
     }
 
     /**
@@ -291,7 +291,7 @@ class HttpRequest
      * @param string $key The key of the input parameter to retrieve
      * @return mixed|null The value of the input parameter or default if not found
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         // Retrieve all sanitized request parameters
         $allParams = $this->all();
@@ -311,13 +311,13 @@ class HttpRequest
      * @param string $param The key of the input parameter to check
      * @return bool True if the parameter exists, false otherwise
      */
-    public function has($param): bool
+    public function has(string $key): bool
     {
         // Retrieve all sanitized request parameters into an array
         $allParams = $this->all();
 
         // Check if the provided parameter key exists in the sanitized parameters array
-        return array_key_exists($param, $allParams);
+        return array_key_exists($key, $allParams);
     }
 
     /**

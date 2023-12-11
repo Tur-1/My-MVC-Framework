@@ -19,7 +19,6 @@ class RedirectResponse
     {
         $this->withData = is_array($key) ? $key : [$key => $value];
 
-
         return $this;
     }
 
