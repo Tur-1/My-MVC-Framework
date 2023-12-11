@@ -36,7 +36,6 @@ class Application
         $this->config = new Config($this->loadConfig());
         $this->request = new Request();
         $this->route = new Route($this->request);
-        $this->route->loadAllRoutesFiles();
     }
 
     /**
@@ -44,8 +43,7 @@ class Application
      */
     public function run(): void
     {
-
-        $this->route->resolve();
+        $this->route::loadRotues()->resolve();
     }
 
     /**

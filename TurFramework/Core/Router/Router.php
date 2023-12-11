@@ -407,24 +407,59 @@ class Router
     }
 
 
-    /**
-     * Load all route files from the 'app/routes' directory.
-     *
-     * @throws RouteNotFoundException If no routes files are found.
-     */
-    public function loadAllRoutesFiles()
-    {
-        $this->routesFiles = get_files_in_directory('app/routes');
 
-        if (empty($this->routesFiles)) {
+    /**
+     * Loads route files from the 'app/routes' directory.
+     * Throws an exception if no route files are found.
+     */
+    public function loadRoutesFiles()
+    {
+        $routesFiles = get_files_in_directory('app/routes');
+
+        if (empty($routesFiles)) {
             throw new RouteNotFoundException('No route files found');
         }
 
-        foreach ($this->routesFiles as $routeFile) {
+        foreach ($routesFiles as $routeFile) {
             require_once $routeFile;
         }
+    }
 
+    /**
+     * Loads cached routes from a specified file.
+     * @param string $routesCacheFile Path to the cached routes file.
+     */
+    public function loadCachedRotues($routesCacheFile)
+    {
+        $this->routes = require_once $routesCacheFile;
+    }
 
+    /**
+     * Loads routes.
+     * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
+     * @return $this
+     */
+    public function loadRotues()
+    {
+        $routesCacheFile = base_path('bootstrap/cache/routes.php');
+
+        if (file_exists($routesCacheFile)) {
+            $this->loadCachedRotues($routesCacheFile);
+        } else {
+            $this->loadRoutesFiles();
+            // After loading, create a cache file for routes
+            $this->cacheRoutes($routesCacheFile, $this->routes);
+        }
+
+        $this->loadRoutesByNames();
+        return $this;
+    }
+
+    /**
+     * Loads routes by their names into a separate list.
+     */
+    private function loadRoutesByNames()
+    {
         foreach ($this->routes as $route => $routeDetails) {
             if (!is_null($routeDetails['name'])) {
                 $this->nameList[$routeDetails['name']] = $routeDetails;
@@ -432,46 +467,34 @@ class Router
         };
     }
 
-    // private function loadRotues()
-    // {
-    //     $routesCacheFile = base_path('bootstrap/cache/routes.php');
-
-    //     if (file_exists($routesCacheFile)) {
-
-    //         self::$routes = require_once $routesCacheFile;
-    //     } else {
-
-
-    //         $this->routesFiles = get_files_in_directory('app/routes');
-
-    //         if (empty($this->routesFiles)) {
-    //             throw new RouteNotFoundException('No route files found');
-    //         }
-
-    //         foreach ($this->routesFiles as $routeFile) {
-    //             self::$routes[] = require_once $routeFile;
-    //         }
-
-
-    //         // After loading, create a cache file for subsequent requests
-    //         $this->cacheRoutes($routesCacheFile);
-    //     }
-    // }
+    /**
+     * Checks if the controller class doesn't exist.
+     * @param string|null $controllerClass Name of the controller class.
+     * @return bool
+     */
     private function isControllerNotExists($controllerClass)
     {
         return !is_null($controllerClass) && !class_exists($controllerClass);
     }
 
+    /**
+     * Checks if the method doesn't exist in the controller.
+     * @param object $controller Controller object.
+     * @param string $methodName Name of the method.
+     * @return bool
+     */
     private function isMethodNotExistsInController($controller, $methodName)
     {
         return !method_exists($controller, $methodName);
     }
 
-
-    private function cacheRoutes($cacheFile)
+    /**
+     * Caches routes by writing them into a PHP file.
+     * @param string $cacheFile Path to the cache file.
+     * @param array $routes Array of routes to be cached.
+     */
+    private function cacheRoutes(string $cacheFile, array $routes)
     {
-        // Dump the routes into a cache file
-        $routes = $this->getRoutes(); // Assuming $this->routesFiles contains loaded routes
         file_put_contents($cacheFile, '<?php return ' . var_export($routes, true) . ';');
     }
 }

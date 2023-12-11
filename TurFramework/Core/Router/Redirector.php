@@ -14,7 +14,8 @@ class Redirector
     /**
      * Set the URL to redirect to.
      *
-     * @param string $url The URL to redirect to.
+     * @param string $url
+     * @param int $status
      * @return \TurFramework\Core\Http\RedirectResponse The RedirectResponse instance.
      */
     public function to(string $url, $status = 302)
@@ -28,7 +29,7 @@ class Redirector
     /**
      * Redirect back to the previous URL.
      *
-     * @return \TurFramework\Core\Http\RedirectResponse The RedirectResponse instance.
+     * @return \TurFramework\Core\Http\RedirectResponse
      */
     public function back()
     {
@@ -39,7 +40,7 @@ class Redirector
     /**
      * Create a RedirectResponse instance.
      *
-     * @return RedirectResponse The RedirectResponse instance.
+     * @return \TurFramework\Core\Http\RedirectResponse
      */
     public function createRedirect()
     {

@@ -15,7 +15,7 @@ use TurFramework\Core\Facades\Request;
  * @method static \TurFramework\Core\Router\Router name(string $name) 
  * @method array getRoutes() 
  * @method array getNameList() 
- * @method void loadAllRoutesFiles() 
+ * @method static \TurFramework\Core\Router\Router loadRotues() 
  * @method void resolve() 
  * @method array|null getByName(string $routeName)
  * 
