@@ -15,6 +15,6 @@ class View extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return new Factory();
+        return Factory::class;
     }
 }

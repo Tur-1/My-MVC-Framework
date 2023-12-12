@@ -8,11 +8,10 @@ class HttpRequest
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
-    private array $server;
+
 
     public function __construct()
     {
-        $this->server = $_SERVER;
     }
 
     /**
@@ -23,7 +22,7 @@ class HttpRequest
     public function getUri(): string
     {
         $uri = urldecode(
-            parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
+            parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH)
         );
 
         return $uri;
@@ -329,6 +328,6 @@ class HttpRequest
      */
     private function getServer($key)
     {
-        return $this->server[$key] ?? null;
+        return Server::get($key);
     }
 }

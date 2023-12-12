@@ -38,4 +38,5 @@ abstract class Facade
 
         return $instance->{$method}(...$args);
     }
+  
 }
