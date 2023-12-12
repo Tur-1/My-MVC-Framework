@@ -1,20 +1,14 @@
 <?php
 
-use TurFramework\Core\Application;
 use TurFramework\Core\Facades\View;
 use TurFramework\Core\Facades\Session;
 use TurFramework\Core\Facades\Redirect;
+use TurFramework\Core\Application\Application;
 
 if (!function_exists('app')) {
-    function app()
+    function app(): Application
     {
-        static $instance = null;
-
-        if (!$instance) {
-            $instance = new Application();
-        }
-
-        return $instance;
+        return Application::getInstance();
     }
 }
 
@@ -49,9 +43,9 @@ if (!function_exists('config')) {
      *
      * @return mixed
      */
-    function config($key)
+    function config($key, $value = null)
     {
-        return app()->config->get($key);
+        return app()->config->get($key, $value);
     }
 }
 
@@ -162,6 +156,7 @@ if (!function_exists('route')) {
      */
     function route($routeName, $parameters = [])
     {
+
         return app()->route($routeName, $parameters);
     }
 }

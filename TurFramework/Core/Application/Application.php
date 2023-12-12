@@ -1,10 +1,10 @@
 <?php
 
-namespace TurFramework\Core;
+namespace TurFramework\Core\Application;
 
 use InvalidArgumentException;
 use TurFramework\Core\Facades\Route;
-use TurFramework\Core\Support\Config;
+use TurFramework\Core\Configurations\Repository as Config;
 use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Router\RouteNotDefinedException;
@@ -13,6 +13,9 @@ use TurFramework\Core\Exceptions\HttpResponseException;
 
 class Application
 {
+
+    private static ?Application $instance = null;
+
     /**
      * The Tur framework version.
      *
@@ -21,21 +24,13 @@ class Application
     public const VERSION = '1.0';
 
     protected Request $request;
-    protected Route $route;
+    protected Route $router;
     protected Config $config;
 
-    /**
-     * __construct.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
 
-        ExceptionHandler::registerExceptions();
-        $this->config = new Config($this->loadConfig());
-        $this->request = new Request();
-        $this->route = new Route($this->request);
+    // Prevent direct instantiation of the class
+    private function __construct()
+    {
     }
 
     /**
@@ -43,7 +38,39 @@ class Application
      */
     public function run(): void
     {
-        $this->route::loadRotues()->resolve();
+        ExceptionHandler::registerExceptions();
+
+        $this->config = new Config();
+        $this->request = new Request();
+        $this->router = new Route($this->request);
+
+        $this->router::loadRotues()->resolve();
+    }
+    /**
+     * Get the singleton instance of Application.
+     * 
+     * @return Application The singleton instance of the Application class.
+     */
+    public static function getInstance(): Application
+    {
+        // If no instance exists, create a new one
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+
+    /**
+     * Method to start the application.
+     * 
+     * Starts the application by invoking the run method on the singleton instance.
+     */
+    public static function start(): void
+    {
+        // Start the application by running the run method of the singleton instance
+        self::getInstance()->run();
     }
 
     /**
@@ -117,7 +144,8 @@ class Application
     public function route($routeName, $parameters = [])
     {
 
-        $route = $this->route->getByName($routeName);
+
+        $route = $this->router->getByName($routeName);
 
 
         if (is_null($route)) {
@@ -134,22 +162,5 @@ class Application
             $url = str_replace('{' . $key . '}', $value, $url);
         }
         return $url;
-    }
-
-    /**
-     * load all config files.
-     */
-    protected function loadConfig()
-    {
-
-        foreach (scandir(config_path()) as $configFile) {
-            if ($configFile == '.' || $configFile == '..') {
-                continue;
-            }
-
-            $fileName = explode('.', $configFile)[0];
-
-            yield $fileName => require config_path() . $configFile;
-        }
     }
 }

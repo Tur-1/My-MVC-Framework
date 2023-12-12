@@ -21,7 +21,7 @@ use TurFramework\Core\Facades\Request;
  * 
  * @see \TurFramework\Core\Router\Router
  */
-class Route
+class Route extends Facade
 {
     protected static $routerInstance = null;
 
@@ -30,13 +30,8 @@ class Route
         static::$routerInstance =  new Router($request);
     }
 
-    public static function __callStatic($method, $args)
+    protected static function getFacadeAccessor()
     {
-        return  static::$routerInstance->$method(...$args);
-    }
-
-    public function __call($method, $args)
-    {
-        return  static::$routerInstance->$method(...$args);
+        return  static::$routerInstance;
     }
 }

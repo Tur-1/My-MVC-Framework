@@ -1,8 +1,12 @@
 <?php
 
 
-
+/**
+ * Require the composer autoload File.
+ */
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/bootstrap/app.php';
 
-app()->run();
+/**
+ * Bootstrap the Application.
+ */
+require_once __DIR__ . '/bootstrap/app.php';

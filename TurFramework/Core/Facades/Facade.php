@@ -6,38 +6,36 @@ use BadMethodCallException;
 
 abstract class Facade
 {
-
-    protected static $resolvedInstance;
+    protected static $resolvedInstances;
 
     abstract protected static function getFacadeAccessor();
 
-    protected static function resolveFacadeInstance()
+
+    protected static function createFacadeInstance()
     {
-
-        static::$resolvedInstance = static::getFacadeAccessor();
-
-        return static::$resolvedInstance;
+        return new static::$resolvedInstances();
     }
 
-    public static function __callStatic($method, $args)
-    {
-        $instance = static::resolveFacadeInstance();
 
-        if (method_exists($instance, $method)) {
-            return $instance->{$method}(...$args);
+    protected static function getResolvedInstance($facadeAccessor)
+    {
+        if (!isset(static::$resolvedInstances[$facadeAccessor])) {
+            static::$resolvedInstances[$facadeAccessor] = static::createFacadeInstance($facadeAccessor);
         }
 
-        throw new BadMethodCallException("Method {$method} does not exist.");
+        return static::$resolvedInstances[$facadeAccessor];
+    }
+    public static function __callStatic($method, $args)
+    {
+        $instance = static::getFacadeAccessor();
+
+        return $instance->{$method}(...$args);
     }
 
     public function __call($method, $args)
     {
-        $instance = static::resolveFacadeInstance();
+        $instance = static::getFacadeAccessor();
 
-        if (method_exists($instance, $method)) {
-            return $instance->{$method}(...$args);
-        }
-
-        throw new BadMethodCallException("Method {$method} does not exist.");
+        return $instance->{$method}(...$args);
     }
 }

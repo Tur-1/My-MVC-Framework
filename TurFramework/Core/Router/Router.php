@@ -10,6 +10,7 @@ use InvalidArgumentException;
 
 use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Exceptions\BadMethodCallException;
+use TurFramework\Core\Facades\Cache;
 
 class Router
 {
@@ -425,14 +426,6 @@ class Router
         }
     }
 
-    /**
-     * Loads cached routes from a specified file.
-     * @param string $routesCacheFile Path to the cached routes file.
-     */
-    public function loadCachedRotues($routesCacheFile)
-    {
-        $this->routes = require_once $routesCacheFile;
-    }
 
     /**
      * Loads routes.
@@ -444,11 +437,12 @@ class Router
         $routesCacheFile = base_path('bootstrap/cache/routes.php');
 
         if (file_exists($routesCacheFile)) {
-            $this->loadCachedRotues($routesCacheFile);
+            $this->routes =  Cache::loadCachedFile($routesCacheFile);
         } else {
             $this->loadRoutesFiles();
+
             // After loading, create a cache file for routes
-            $this->cacheRoutes($routesCacheFile, $this->routes);
+            Cache::cacheFile($routesCacheFile, $this->routes);
         }
 
         $this->loadRoutesByNames();
@@ -486,15 +480,5 @@ class Router
     private function isMethodNotExistsInController($controller, $methodName)
     {
         return !method_exists($controller, $methodName);
-    }
-
-    /**
-     * Caches routes by writing them into a PHP file.
-     * @param string $cacheFile Path to the cache file.
-     * @param array $routes Array of routes to be cached.
-     */
-    private function cacheRoutes(string $cacheFile, array $routes)
-    {
-        file_put_contents($cacheFile, '<?php return ' . var_export($routes, true) . ';');
     }
 }

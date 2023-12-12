@@ -9,7 +9,6 @@ class HomeController
     public function index(Request $request)
     {
 
-
         return view('pages.HomePage')->with('name', 'turki');
     }
 

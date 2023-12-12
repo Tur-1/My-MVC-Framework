@@ -5,20 +5,20 @@ namespace TurFramework\Core\Facades;
 use TurFramework\Core\Http\HttpRequest;
 
 /**
- * @method bool is(string $url)
- * @method mixed|null get(string $key, $default = null)
- * @method bool has(string $key)
- * @method bool isMethod(string $method)
- * @method string|null previousUrl()
- * @method array all()
- * @method bool isPost()
- * @method bool isGet()
- * @method string getMethod()
- * @method string|null previousUrlWithQuery()
- * @method string fullUrlWithQuery()
- * @method string fullUrl() 
- * @method string getPath()
- * @method array getValidMethods()
+ * @method static bool is(string $url)
+ * @method static mixed|null get(string $key, $default = null)
+ * @method static bool has(string $key)
+ * @method static bool isMethod(string $method)
+ * @method static string|null previousUrl()
+ * @method static array all()
+ * @method static bool isPost()
+ * @method static bool isGet()
+ * @method static string getMethod()
+ * @method static string|null previousUrlWithQuery()
+ * @method static string fullUrlWithQuery()
+ * @method static string fullUrl() 
+ * @method static string getPath()
+ * @method static array getValidMethods()
  * 
  * @see \TurFramework\Core\Http\HttpRequest
  */
