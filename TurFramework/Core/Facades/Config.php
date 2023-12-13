@@ -4,7 +4,6 @@
 namespace TurFramework\Core\Facades;
 
 
-use TurFramework\Core\Configurations\Repository;
 
 /**
  * Facade for interacting with the Repository class.
@@ -13,12 +12,12 @@ use TurFramework\Core\Configurations\Repository;
  * @method static array getConfigurations() Get all configurations.
  * @method static void loadConfigurations() Load configurations from the Repository class.
  * 
- * @see \TurFramework\Core\Configurations\Repository
+ * @see \TurFramework\Core\Configurations\Config
  */
 class Config extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return new Repository();
+        return 'config';
     }
 }

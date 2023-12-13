@@ -10,7 +10,7 @@ class Server
      * @param string $key The key to retrieve from $_SERVER.
      * @return mixed|null The value if found, otherwise null.
      */
-    public static function get($key): mixed|null
+    public static function get($key): mixed
     {
         return static::has($key) ? $_SERVER[$key] : null;
     }

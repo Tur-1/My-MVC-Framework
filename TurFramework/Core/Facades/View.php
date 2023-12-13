@@ -2,7 +2,6 @@
 
 namespace TurFramework\Core\Facades;
 
-use TurFramework\Core\Views\Factory;
 
 /**
 
@@ -15,6 +14,6 @@ class View extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return Factory::class;
+        return 'view';
     }
 }

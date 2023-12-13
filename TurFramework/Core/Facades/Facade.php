@@ -6,16 +6,15 @@ use BadMethodCallException;
 
 abstract class Facade
 {
-    protected static $resolvedInstances;
+    protected static $resolvedInstances = [];
 
     abstract protected static function getFacadeAccessor();
 
-
     protected static function createFacadeInstance()
     {
-        return new static::$resolvedInstances();
-    }
 
+        return app()->resolve(static::getFacadeAccessor());
+    }
 
     protected static function getResolvedInstance($facadeAccessor)
     {
@@ -23,20 +22,22 @@ abstract class Facade
             static::$resolvedInstances[$facadeAccessor] = static::createFacadeInstance($facadeAccessor);
         }
 
+
         return static::$resolvedInstances[$facadeAccessor];
     }
+
     public static function __callStatic($method, $args)
     {
-        $instance = static::getFacadeAccessor();
+
+        $instance = static::getResolvedInstance(static::getFacadeAccessor());
 
         return $instance->{$method}(...$args);
     }
 
     public function __call($method, $args)
     {
-        $instance = static::getFacadeAccessor();
+        $instance = static::getResolvedInstance(static::getFacadeAccessor());
 
         return $instance->{$method}(...$args);
     }
-  
 }

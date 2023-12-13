@@ -4,14 +4,13 @@ namespace TurFramework\Core\Configurations;
 
 use TurFramework\Core\Facades\Cache;
 
-class Repository
+class Config
 {
     private $configurations = [];
 
 
     public function __construct()
     {
-        $this->loadConfigurations();
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace TurFramework\Core\Facades;
 
-use TurFramework\Core\Router\Redirector;
-
 
 /**
 
@@ -19,6 +17,6 @@ class Redirect extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return new Redirector();
+        return 'redirect';
     }
 }

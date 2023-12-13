@@ -7,10 +7,10 @@ use Closure;
 use TypeError;
 use ErrorException;
 use InvalidArgumentException;
-
-use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Exceptions\BadMethodCallException;
 use TurFramework\Core\Facades\Cache;
+use TurFramework\Core\Facades\Request;
+use TurFramework\Core\Router\RouteNotDefinedException;
 
 class Router
 {
@@ -23,9 +23,9 @@ class Router
     /**
      * The Request object used to handle HTTP requests.
      *
-     * @var Request
+     * @var 
      */
-    private Request $request;
+    private  $request;
 
     /**
      * route key
@@ -76,7 +76,7 @@ class Router
     public  $routes = [];
 
 
-    public function __construct(Request $request)
+    public function __construct($request)
     {
         $this->request = $request;
     }

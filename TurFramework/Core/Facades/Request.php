@@ -2,7 +2,6 @@
 
 namespace TurFramework\Core\Facades;
 
-use TurFramework\Core\Http\HttpRequest;
 
 /**
  * @method static bool is(string $url)
@@ -27,6 +26,6 @@ class Request extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return new HttpRequest();
+        return 'request';
     }
 }

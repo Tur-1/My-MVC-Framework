@@ -2,7 +2,7 @@
 
 namespace TurFramework\Core\Session;
 
-class SessionStore
+class Store
 {
     /**
      * Start the session.

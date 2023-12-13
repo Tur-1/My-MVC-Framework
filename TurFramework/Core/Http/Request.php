@@ -2,8 +2,9 @@
 
 namespace TurFramework\Core\Http;
 
-class HttpRequest
+class Request
 {
+    private static  $instance = null;
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
@@ -12,6 +13,15 @@ class HttpRequest
 
     public function __construct()
     {
+    }
+    public static function getInstance()
+    {
+        // If no instance exists, create a new one
+        if (is_null(static::$instance)) {
+            static::$instance = new static;
+        }
+
+        return static::$instance;
     }
 
     /**
@@ -329,5 +339,17 @@ class HttpRequest
     private function getServer($key)
     {
         return Server::get($key);
+    }
+
+    public static function __callStatic($method, $args)
+    {
+
+        return static::$instance->{$method}(...$args);
+    }
+
+    public function __call($method, $args)
+    {
+
+        return static::$instance->{$method}(...$args);
     }
 }

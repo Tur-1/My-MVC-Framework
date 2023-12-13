@@ -4,12 +4,11 @@ namespace TurFramework\Core\Application;
 
 use InvalidArgumentException;
 use TurFramework\Core\Facades\Route;
-use TurFramework\Core\Configurations\Repository as Config;
-use TurFramework\Core\Facades\Request;
+use TurFramework\Core\Container\Container;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Router\RouteNotDefinedException;
 use TurFramework\Core\Exceptions\HttpResponseException;
-
+use TurFramework\Core\Facades\Config;
 
 class Application
 {
@@ -22,29 +21,35 @@ class Application
      * @var string
      */
     public const VERSION = '1.0';
+    protected Container $container;
 
-    protected Request $request;
-    protected Route $router;
-    protected Config $config;
 
 
     // Prevent direct instantiation of the class
+
+
     private function __construct()
     {
+        // Register exceptions with the ExceptionHandler
+        ExceptionHandler::registerExceptions();
+        // Create a new container instance
+        $this->setContainer(new Container);
+        // Register core aliases into the container
+        $this->container->registerCoreAliases($this->coreAliases());
     }
+
+
 
     /**
      * run.
      */
     public function run(): void
     {
-        ExceptionHandler::registerExceptions();
+        // Load configurations using the Config class
+        Config::loadConfigurations();
 
-        $this->config = new Config();
-        $this->request = new Request();
-        $this->router = new Route($this->request);
-
-        $this->router::loadRotues()->resolve();
+        Route::loadRotues()->resolve();
+       
     }
     /**
      * Get the singleton instance of Application.
@@ -54,11 +59,30 @@ class Application
     public static function getInstance(): Application
     {
         // If no instance exists, create a new one
-        if (self::$instance === null) {
-            self::$instance = new self();
+        if (is_null(static::$instance)) {
+            static::$instance = new static;
         }
 
-        return self::$instance;
+        return static::$instance;
+    }
+
+    public function bind($key, $value)
+    {
+        $this->container->bind($key, $value);
+    }
+    public function setContainer($container)
+    {
+        $this->container = $container;
+    }
+
+    public function resolve($key)
+    {
+        return $this->container->resolve($key);
+    }
+
+    public static function __callStatic($method, $args)
+    {
+        return static::getInstance()->resolve($method);
     }
 
 
@@ -143,10 +167,7 @@ class Application
      */
     public function route($routeName, $parameters = [])
     {
-
-
-        $route = $this->router->getByName($routeName);
-
+        $route = Route::getByName($routeName);
 
         if (is_null($route)) {
             throw new RouteNotDefinedException("Route [ $routeName ] not defined.");
@@ -162,5 +183,23 @@ class Application
             $url = str_replace('{' . $key . '}', $value, $url);
         }
         return $url;
+    }
+
+    protected function coreAliases(): array
+    {
+        return [
+            'cache' => \TurFramework\Core\Cache\Cache::class,
+            'view' => \TurFramework\Core\Views\Factory::class,
+            'session' => \TurFramework\Core\Session\Store::class,
+            'redirect' => \TurFramework\Core\Router\Redirector::class,
+            'config' => \TurFramework\Core\Configurations\Config::class,
+            'request' => \TurFramework\Core\Http\Request::class,
+            'route' => [
+                'class' => \TurFramework\Core\Router\Router::class,
+                'dependencies' => [
+                    'request'
+                ],
+            ],
+        ];
     }
 }

@@ -2,9 +2,6 @@
 
 namespace TurFramework\Core\Facades;
 
-use TurFramework\Core\Router\Router;
-use TurFramework\Core\Facades\Request;
-
 
 /**
  * @method static \TurFramework\Core\Router\Router get(string $uri, string|array|Closure $action = null)
@@ -17,21 +14,15 @@ use TurFramework\Core\Facades\Request;
  * @method array getNameList() 
  * @method static \TurFramework\Core\Router\Router loadRotues() 
  * @method void resolve() 
- * @method array|null getByName(string $routeName)
- * 
+ * @method static array|null getByName(string $routeName)
+ * @method static mixed route($routeName, $parameters = [])
  * @see \TurFramework\Core\Router\Router
  */
 class Route extends Facade
 {
-    protected static $routerInstance = null;
-
-    public function __construct(Request $request)
-    {
-        static::$routerInstance =  new Router($request);
-    }
 
     protected static function getFacadeAccessor()
     {
-        return  static::$routerInstance;
+        return 'route';
     }
 }

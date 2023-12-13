@@ -2,7 +2,7 @@
 
 namespace TurFramework\Core\Cache;
 
-class CacheManager
+class Cache
 {
 
     public function loadCachedFile(string $cacheFile)

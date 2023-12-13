@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use TurFramework\Core\Facades\Request;
+use TurFramework\Core\Http\Request;
 
 class HomeController
 {
-    public function index(Request $request)
+    public function index()
     {
 
         return view('pages.HomePage')->with('name', 'turki');
     }
 
-    public function about(Request $request)
+    public function about()
     {
-
         return view('pages.aboutPage')->with('message', 'you are the greatest developer in the whole world !');
     }
 }
