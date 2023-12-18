@@ -2,6 +2,8 @@
 
 namespace TurFramework\Core\Http;
 
+use TurFramework\Core\Facades\Route;
+
 class Request
 {
     private static  $instance = null;
@@ -23,6 +25,18 @@ class Request
 
         return static::$instance;
     }
+
+    /**
+     * Send the given request through the middleware / router.
+     *
+     * @param  Request  $request
+     * 
+     */
+    public function sendRequestThroughRouter()
+    {
+        Route::loadRotues()->resolve($this);
+    }
+
 
     /**
      * Get the requested URI (Uniform Resource Identifier) from the server.

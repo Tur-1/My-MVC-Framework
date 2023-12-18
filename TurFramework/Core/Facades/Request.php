@@ -3,6 +3,7 @@
 namespace TurFramework\Core\Facades;
 
 
+
 /**
  * @method static bool is(string $url)
  * @method static mixed|null get(string $key, $default = null)
@@ -18,7 +19,7 @@ namespace TurFramework\Core\Facades;
  * @method static string fullUrl() 
  * @method static string getPath()
  * @method static array getValidMethods()
- * 
+ * @method static void sendRequestThroughRouter()
  * @see \TurFramework\Core\Http\HttpRequest
  */
 class Request extends Facade

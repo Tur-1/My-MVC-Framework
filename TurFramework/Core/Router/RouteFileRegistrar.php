@@ -1,0 +1,101 @@
+<?php
+
+namespace TurFramework\Core\Router;
+
+use TurFramework\Core\Cache\Cache;
+
+
+class RouteFileRegistrar
+{
+    protected $routes;
+    /**
+     * The router instance.
+     *
+     * @var \TurFramework\Core\Router\Router
+     */
+    protected $router;
+
+    public function __construct(Router $router)
+    {
+        $this->router = $router;
+    }
+
+
+    /**
+     * Loads routes.
+     * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
+     * @return array $routes
+     */
+    public function loadRotues(): array
+    {
+        if ($this->routesAreCached()) {
+            $this->routes =  $this->loadCachedRoutes();
+        } else {
+
+            $this->loadRoutesFiles();
+
+            // After loading, create a cache file for routes
+            Cache::cacheFile($this->getCachedRoutesPath(), $this->router->getRoutes());
+        }
+
+        return $this->routes;
+    }
+
+    /**
+     * Loads route files from the 'app/routes' directory.
+     * Throws an exception if no route files are found.
+     */
+    protected function loadRoutesFiles()
+    {
+
+        if (empty($this->getRoutesFiles())) {
+            throw new RouteNotFoundException('No route files found in routes directory');
+        }
+
+
+        foreach ($this->getRoutesFiles() as $routeFile) {
+            require_once $routeFile;
+        }
+    }
+
+    protected function getCachedRoutesPath()
+    {
+        return base_path('bootstrap/cache/routes.php');
+    }
+
+    /**
+     * Determine if the application routes are cached.
+     *
+     * @return bool
+     */
+    protected function routesAreCached()
+    {
+        return file_exists($this->getCachedRoutesPath());
+    }
+    /**
+     * Load the cached routes for the application.
+     *
+     * @return void
+     */
+    protected function loadCachedRoutes()
+    {
+
+        return $this->register($this->getCachedRoutesPath());
+    }
+
+
+    /**
+     * Require the given routes file.
+     *
+     * @param  string  $routes
+     * @return void
+     */
+    public function register($routeFile)
+    {
+        return require_once $routeFile;
+    }
+    protected function getRoutesFiles()
+    {
+        return get_files_in_directory('app/routes');
+    }
+}

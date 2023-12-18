@@ -7,10 +7,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo request()->is(route('homePage')) ? 'active': ''?>" aria-current="page" href="<?php echo route('homePage') ?>">Home</a>
+                    <a class="nav-link <?php echo request()->is('/') ? 'active' : '' ?>" aria-current="page" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo request()->is(route('aboutPage')) ? 'active': ''?>" aria-current="page" href="<?php echo route('aboutPage') ?>">About</a>
+                    <a class="nav-link <?php echo request()->is('/about') ? 'active' : '' ?>" aria-current="page" href="/about">About</a>
                 </li>
             </ul>
         </div>

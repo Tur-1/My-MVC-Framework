@@ -35,15 +35,15 @@ class Container
     }
 
     /**
-     * Bind a key to a value within the container.
+     * Register a binding with the container.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $abstract
+     * @param  callable
      * @return void
      */
-    public function bind($key, $value)
+    public function bind($key, callable $callable)
     {
-        $this->add($key, $value);
+        $this->add($key, $callable);
     }
 
     /**
@@ -59,7 +59,8 @@ class Container
             throw new \InvalidArgumentException("Binding for '$key' not found in the container.");
         }
 
-        return call_user_func($this->bindings[$key], $this);
+
+        return call_user_func($this->bindings[$key]);
     }
 
     /**
@@ -79,21 +80,21 @@ class Container
      * @param string $key
      * @return mixed
      */
-    private function getBindings($key)
+    public function getBindings()
     {
-        return $this->bindings[$key];
+        return $this->bindings;
     }
 
     /**
-     * Add a key-value pair to the container bindings.
+     * Add a key-callable pair to the container bindings.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed $callable
      * @return void
      */
-    private function add($key, $value)
+    private function add($key, callable $callable)
     {
-        $this->bindings[$key] = $value;
+        $this->bindings[$key] = $callable;
     }
 
 
@@ -106,6 +107,7 @@ class Container
     public function registerCoreAliases(array $aliases): void
     {
         // 
+
         foreach ($aliases as $key => $alias) {
             if ($this->hasDependencies($alias)) {
                 $this->bind($key, function () use ($alias) {
@@ -117,7 +119,6 @@ class Container
                 });
             }
         }
-       
     }
     private function hasDependencies($alias)
     {
@@ -127,7 +128,7 @@ class Container
     {
         $dependencies = [];
         foreach ($alias['dependencies'] as $dependency) {
-            
+
             $dependencies[] = $this->resolve($dependency);
         }
 

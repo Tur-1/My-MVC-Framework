@@ -3,12 +3,12 @@
 namespace TurFramework\Core\Application;
 
 use InvalidArgumentException;
-use TurFramework\Core\Facades\Route;
+use TurFramework\Core\Facades\Config;
+use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Container\Container;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Router\RouteNotDefinedException;
 use TurFramework\Core\Exceptions\HttpResponseException;
-use TurFramework\Core\Facades\Config;
 
 class Application
 {
@@ -21,7 +21,7 @@ class Application
      * @var string
      */
     public const VERSION = '1.0';
-    protected Container $container;
+    public Container $container;
 
 
 
@@ -30,12 +30,13 @@ class Application
 
     private function __construct()
     {
+
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
         // Create a new container instance
         $this->setContainer(new Container);
         // Register core aliases into the container
-        $this->container->registerCoreAliases($this->coreAliases());
+        $this->container->registerCoreAliases($this->getCoreAliases());
     }
 
 
@@ -48,8 +49,7 @@ class Application
         // Load configurations using the Config class
         Config::loadConfigurations();
 
-        Route::loadRotues()->resolve();
-       
+        Request::sendRequestThroughRouter();
     }
     /**
      * Get the singleton instance of Application.
@@ -169,6 +169,8 @@ class Application
     {
         $route = Route::getByName($routeName);
 
+        dd($route);
+
         if (is_null($route)) {
             throw new RouteNotDefinedException("Route [ $routeName ] not defined.");
         }
@@ -185,21 +187,16 @@ class Application
         return $url;
     }
 
-    protected function coreAliases(): array
+    protected function getCoreAliases(): array
     {
-        return [
+        return   [
             'cache' => \TurFramework\Core\Cache\Cache::class,
             'view' => \TurFramework\Core\Views\Factory::class,
             'session' => \TurFramework\Core\Session\Store::class,
             'redirect' => \TurFramework\Core\Router\Redirector::class,
             'config' => \TurFramework\Core\Configurations\Config::class,
             'request' => \TurFramework\Core\Http\Request::class,
-            'route' => [
-                'class' => \TurFramework\Core\Router\Router::class,
-                'dependencies' => [
-                    'request'
-                ],
-            ],
+            'route' => \TurFramework\Core\Router\Router::class,
         ];
     }
 }

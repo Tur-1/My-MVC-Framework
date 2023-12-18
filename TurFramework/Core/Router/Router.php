@@ -75,18 +75,19 @@ class Router
      */
     public  $routes = [];
 
-
-    public function __construct($request)
+    public  $container;
+    public function __construct()
     {
-        $this->request = $request;
+        $this->container = app()->container;
     }
 
     /**
      * Resolve the current request to find and handle the appropriate route.
      * 
      */
-    public function resolve()
+    public function resolve($request)
     {
+        $this->request =  $request;
         $this->path = $this->request->getPath();
         $this->requestMethod = $this->request->getMethod();
 
@@ -407,26 +408,6 @@ class Router
         return $this->nameList;
     }
 
-
-
-    /**
-     * Loads route files from the 'app/routes' directory.
-     * Throws an exception if no route files are found.
-     */
-    public function loadRoutesFiles()
-    {
-        $routesFiles = get_files_in_directory('app/routes');
-
-        if (empty($routesFiles)) {
-            throw new RouteNotFoundException('No route files found');
-        }
-
-        foreach ($routesFiles as $routeFile) {
-            require_once $routeFile;
-        }
-    }
-
-
     /**
      * Loads routes.
      * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
@@ -434,20 +415,13 @@ class Router
      */
     public function loadRotues()
     {
-        $routesCacheFile = base_path('bootstrap/cache/routes.php');
 
-        if (file_exists($routesCacheFile)) {
-            $this->routes =  Cache::loadCachedFile($routesCacheFile);
-        } else {
-            $this->loadRoutesFiles();
-
-            // After loading, create a cache file for routes
-            Cache::cacheFile($routesCacheFile, $this->routes);
-        }
+        $this->routes = (new RouteFileRegistrar($this))->loadRotues();
 
         $this->loadRoutesByNames();
         return $this;
     }
+
 
     /**
      * Loads routes by their names into a separate list.
