@@ -5,13 +5,21 @@ namespace TurFramework\Core\Cache;
 class Cache
 {
 
-    public static function loadCachedFile(string $cacheFile)
+    public function exists(string $file)
     {
-        return require $cacheFile;
+        return file_exists(base_path($file));
+    }
+    public  function loadFile(string $file)
+    {
+
+        if (!$this->exists($file)) {
+            throw CacheException::fileNotFound($file);
+        }
+        return require base_path($file);
     }
 
-    public static function cacheFile(string $file, array $content)
+    public function store(string $file, array $content)
     {
-        file_put_contents($file, '<?php return ' . var_export($content, true) . ';');
+        file_put_contents(base_path($file), '<?php return ' . var_export($content, true) . ';');
     }
 }

@@ -2,29 +2,29 @@
 
 use TurFramework\Core\Facades\Config;
 use TurFramework\Core\Application\Application;
-
+use TurFramework\Core\Container\Container;
 
 if (!function_exists('app')) {
-      /**
+    /**
      * Get the available container instance or resolve an abstract.
      *
      * @param  string|null  $abstract
      * @return \TurFramework\Core\Application\Application|mixed
      */
-    
+
     function app($abstract = null)
     {
 
         if (is_null($abstract)) {
-            return Application::getInstance();
+            return Application::getApplicationInstance();
         }
 
-        return Application::getInstance()->resolve($abstract);
+        return Application::getApplicationInstance()->resolve($abstract);
     }
 }
 
 if (!function_exists('env')) {
-      /**
+    /**
      * Gets the value of an environment variable.
      *
      * @param string $key
@@ -38,7 +38,7 @@ if (!function_exists('env')) {
 }
 
 if (!function_exists('value')) {
- /**
+    /**
      * Gets the value or executes a closure if the value is a closure.
      *
      * @param mixed $value
@@ -50,17 +50,17 @@ if (!function_exists('value')) {
     }
 }
 if (!function_exists('config')) {
-     /**
-     * Gets the value of a config variable.
+    /**
+     * Get the specified configuration value.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param  mixed $default
      * @return mixed
      */
-    function config($key, $value = null)
-    { 
+    function config($key = null, $default = null)
+    {
 
-        return Config::get($key, $value);
+        return app('config')->get($key, $default);
     }
 }
 
@@ -89,7 +89,7 @@ if (!function_exists('get_files_in_directory')) {
 }
 
 if (!function_exists('app_path')) {
-     /**
+    /**
      * Gets the path to the application directory.
      *
      * @param string $path
@@ -101,7 +101,7 @@ if (!function_exists('app_path')) {
     }
 }
 if (!function_exists('base_path')) {
-      /**
+    /**
      * Gets the base path of the application.
      *
      * @param string $path
@@ -113,7 +113,7 @@ if (!function_exists('base_path')) {
     }
 }
 if (!function_exists('view_path')) {
-      /**
+    /**
      * Gets the path to a view file.
      *
      * @param string $path
@@ -126,14 +126,14 @@ if (!function_exists('view_path')) {
 }
 if (!function_exists('config_path')) {
     /**
-    * Gets the path to the configuration directory.
-    *
-    * @return string
-    */
-   function config_path()
-   {
-       return base_path('config/');
-   }
+     * Gets the path to the configuration directory.
+     *
+     * @return string
+     */
+    function config_path()
+    {
+        return base_path('config/');
+    }
 }
 
 if (!function_exists('view')) {
@@ -219,7 +219,7 @@ if (!function_exists('old')) {
 
 
 if (!function_exists('abort')) {
-   /**
+    /**
      * Throws an HttpException with the given data.
      *
      * @param int    $code
@@ -232,7 +232,7 @@ if (!function_exists('abort')) {
     }
 }
 if (!function_exists('request')) {
-   /**
+    /**
      * Retrieves an instance of the current request or an input item from the request.
      *
      * @return \TurFramework\Core\Http\Request
@@ -244,7 +244,7 @@ if (!function_exists('request')) {
     }
 }
 if (!function_exists('route')) {
-      /**
+    /**
      * Retrieves a route by name and parameters.
      *
      * @param string $routeName

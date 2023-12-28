@@ -2,14 +2,14 @@
 
 namespace TurFramework\Core\Exceptions;
 
-use CompileError;
-use DateError;
 use Error;
+use DateError;
 use Exception;
 use Throwable;
-use ErrorException;
-use ParseError;
 use TypeError;
+use ParseError;
+use CompileError;
+use ErrorException;
 
 class ExceptionHandler
 {
@@ -34,11 +34,11 @@ class ExceptionHandler
     }
 
 
-    public static function errorHandler($serverty, $message, $file, $line)
+    public static function errorHandler($severity, $message, $file, $line)
     {
 
-        if (error_reporting() && $serverty) {
-            throw new ErrorException($message, 0, $serverty, $file, $line);
+        if (error_reporting() && $severity) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
         }
     }
     public static function customExceptionHandler($exception)

@@ -2,13 +2,23 @@
 
 namespace TurFramework\Core\Facades;
 
-use BadMethodCallException;
+use RuntimeException;
 
 abstract class Facade
 {
     protected static $resolvedInstances = [];
 
-    abstract protected static function getFacadeAccessor();
+    /**
+     * Get the registered name of the component.
+     *
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    protected static function getFacadeAccessor()
+    {
+        throw new RuntimeException('Facade does not implement getFacadeAccessor method.');
+    }
 
     protected static function createFacadeInstance()
     {

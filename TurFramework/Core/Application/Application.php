@@ -3,17 +3,17 @@
 namespace TurFramework\Core\Application;
 
 use InvalidArgumentException;
-use TurFramework\Core\Facades\Config;
-use TurFramework\Core\Facades\Request;
+use TurFramework\Core\Facades\Route;
+use TurFramework\Core\Http\Request;
 use TurFramework\Core\Container\Container;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Router\RouteNotDefinedException;
 use TurFramework\Core\Exceptions\HttpResponseException;
 
-class Application
+class Application extends Container
 {
 
-    private static ?Application $instance = null;
+    public static ?Application $appInstance = null;
 
     /**
      * The Tur framework version.
@@ -21,22 +21,15 @@ class Application
      * @var string
      */
     public const VERSION = '1.0';
-    public Container $container;
 
-
-
-    // Prevent direct instantiation of the class
-
-
-    private function __construct()
+    public function __construct()
     {
 
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
-        // Create a new container instance
-        $this->setContainer(new Container);
+
         // Register core aliases into the container
-        $this->container->registerCoreAliases($this->getCoreAliases());
+        $this->registerCoreContainerAliases($this->getCoreAliases());
     }
 
 
@@ -46,46 +39,52 @@ class Application
      */
     public function run(): void
     {
-        // Load configurations using the Config class
-        Config::loadConfigurations();
 
-        Request::sendRequestThroughRouter();
+        Request::getInstance()->sendRequestThroughRouter();
     }
+
+
+    /**
+     * Binds a specified key to a particular value within the container.
+     *
+     * @param string $key   The key to bind.
+     * @param mixed  $value The value to associate with the key.
+     * @return void
+     */
+    public function bind($key, $value)
+    {
+        parent::bind($key, $value);
+    }
+    public function make($key)
+    {
+        return parent::make($key);
+    }
+
+    /**
+     * Resolves and retrieves the value associated with the given key from the container.
+     *
+     * @param string $key The key whose value needs to be resolved.
+     * @return mixed|null The resolved value if found; otherwise, returns null.
+     */
+    public function resolve($key)
+    {
+        return parent::resolve($key);
+    }
+
     /**
      * Get the singleton instance of Application.
      * 
      * @return Application The singleton instance of the Application class.
      */
-    public static function getInstance(): Application
+    public static function getApplicationInstance(): Application
     {
         // If no instance exists, create a new one
-        if (is_null(static::$instance)) {
-            static::$instance = new static;
+        if (is_null(static::$appInstance)) {
+            static::$appInstance = new static;
         }
 
-        return static::$instance;
+        return static::$appInstance;
     }
-
-    public function bind($key, $value)
-    {
-        $this->container->bind($key, $value);
-    }
-    public function setContainer($container)
-    {
-        $this->container = $container;
-    }
-
-    public function resolve($key)
-    {
-        return $this->container->resolve($key);
-    }
-
-    public static function __callStatic($method, $args)
-    {
-        return static::getInstance()->resolve($method);
-    }
-
-
     /**
      * Method to start the application.
      * 
@@ -93,8 +92,7 @@ class Application
      */
     public static function start(): void
     {
-        // Start the application by running the run method of the singleton instance
-        self::getInstance()->run();
+        self::getApplicationInstance()->run();
     }
 
     /**
@@ -198,5 +196,44 @@ class Application
             'request' => \TurFramework\Core\Http\Request::class,
             'route' => \TurFramework\Core\Router\Router::class,
         ];
+    }
+
+    /**
+     * Register core aliases and their dependencies into the container.
+     *
+     * @param array $aliases
+     * @return void
+     */
+    public function registerCoreContainerAliases($aliases)
+    {
+        // 
+
+        foreach ($aliases as $key => $alias) {
+            if ($this->hasDependencies($alias)) {
+                $this->bind($key, function () use ($alias) {
+                    return new $alias['class'](...$this->resolveDependencies($alias));
+                });
+            } else {
+                $this->bind($key, function () use ($alias) {
+                    return new $alias();
+                });
+            }
+        }
+    }
+
+
+    private function hasDependencies($alias)
+    {
+        return is_array($alias) && $alias['dependencies'];
+    }
+    private function resolveDependencies($alias)
+    {
+        $dependencies = [];
+        foreach ($alias['dependencies'] as $dependency) {
+
+            $dependencies[] = $this->resolve($dependency);
+        }
+
+        return $dependencies;
     }
 }

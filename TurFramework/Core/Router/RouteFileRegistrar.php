@@ -2,8 +2,7 @@
 
 namespace TurFramework\Core\Router;
 
-use TurFramework\Core\Cache\Cache;
-
+use TurFramework\Core\Facades\Cache;
 
 class RouteFileRegistrar
 {
@@ -29,13 +28,13 @@ class RouteFileRegistrar
     public function loadRotues(): array
     {
         if ($this->routesAreCached()) {
-            $this->routes =  $this->loadCachedRoutes();
+            $this->routes = $this->loadCachedRoutes();
         } else {
 
             $this->loadRoutesFiles();
 
             // After loading, create a cache file for routes
-            Cache::cacheFile($this->getCachedRoutesPath(), $this->router->getRoutes());
+            Cache::store($this->getCachedRoutesPath(), $this->router->getRoutes());
         }
 
         return $this->routes;
@@ -60,7 +59,7 @@ class RouteFileRegistrar
 
     protected function getCachedRoutesPath()
     {
-        return base_path('bootstrap/cache/routes.php');
+        return 'bootstrap/cache/routes.php';
     }
 
     /**
@@ -70,7 +69,7 @@ class RouteFileRegistrar
      */
     protected function routesAreCached()
     {
-        return file_exists($this->getCachedRoutesPath());
+        return Cache::exists($this->getCachedRoutesPath());
     }
     /**
      * Load the cached routes for the application.
@@ -80,7 +79,7 @@ class RouteFileRegistrar
     protected function loadCachedRoutes()
     {
 
-        return $this->register($this->getCachedRoutesPath());
+        return Cache::loadFile($this->getCachedRoutesPath());
     }
 
 

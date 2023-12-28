@@ -18,8 +18,7 @@ namespace TurFramework\Core\Facades;
  * @method static string fullUrlWithQuery()
  * @method static string fullUrl() 
  * @method static string getPath()
- * @method static array getValidMethods()
- * @method static void sendRequestThroughRouter()
+ * @method static array getValidMethods() 
  * @see \TurFramework\Core\Http\HttpRequest
  */
 class Request extends Facade

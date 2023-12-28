@@ -4,14 +4,17 @@ namespace TurFramework\Core\Configurations;
 
 use TurFramework\Core\Facades\Cache;
 
+
 class Config
 {
-    private $configurations = [];
+    protected $configurations = [];
 
 
     public function __construct()
     {
+        $this->loadConfigurations();
     }
+
 
     /**
      * Load all configurations from files into an associative array.
@@ -19,9 +22,8 @@ class Config
      * This method scans the config directory, reads each file, and extracts configurations.
      * The configurations are associated with their respective filenames in an array.
      *
-     * @return array Associative array containing configurations keyed by filenames
      */
-    protected function loadConfigFiles(): array
+    protected function loadConfigFiles()
     {
         // Initialize an empty array to store configurations
         $configurations = [];
@@ -43,7 +45,7 @@ class Config
         }
 
         // Return the associative array containing configurations keyed by filenames
-        return $configurations;
+        $this->configurations = $configurations;
     }
 
     /**
@@ -55,18 +57,15 @@ class Config
     public function loadConfigurations()
     {
 
-        $configFile = base_path('bootstrap/cache/config.php');
-
-
-        if (file_exists($configFile)) {
+        if ($this->configAreCached()) {
             // If cached configurations exist, load them directly
-            $this->configurations = Cache::loadCachedFile($configFile);
+            $this->loadCachedConfig();
         } else {
             // If cached configurations don't exist, load configurations from config files
-            $this->configurations = $this->loadConfigFiles();
+            $this->loadConfigFiles();
 
             // Cache the loaded configurations 
-            Cache::cacheFile($configFile, $this->configurations);
+            Cache::store($this->getCachedConfigPath(), $this->getConfigurations());
         }
     }
 
@@ -86,7 +85,7 @@ class Config
         $keys = explode('.', $key);
 
         // Retrieve all configurations
-        $config = $this->getConfigurations();
+        $config =  $this->getConfigurations();
 
         // Traverse through nested configurations based on the key
         foreach ($keys as $value) {
@@ -112,5 +111,31 @@ class Config
     public function getConfigurations()
     {
         return $this->configurations;
+    }
+    /**
+     * Load the cached routes for the application.
+     *
+     * @return void
+     */
+    protected function loadCachedConfig()
+    {
+
+        $this->configurations = Cache::loadFile($this->getCachedConfigPath());
+    }
+
+    /**
+     * Determine if the application routes are cached.
+     *
+     * @return bool
+     */
+    protected function configAreCached()
+    {
+        return Cache::exists($this->getCachedConfigPath());
+    }
+
+
+    protected function getCachedConfigPath()
+    {
+        return 'bootstrap/cache/config.php';
     }
 }

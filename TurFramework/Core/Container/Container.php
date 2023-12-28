@@ -11,7 +11,7 @@ class Container
      *
      * @var array
      */
-    public $bindings = [];
+    protected $bindings = [];
 
     /**
      * The singleton instance of the Container.
@@ -20,19 +20,22 @@ class Container
      */
     protected static $instance;
 
+
+
     /**
-     * Get the singleton instance of the Container.
+     * Get the globally available instance of the container.
      *
-     * @return self
+     * @return static
      */
-    public static function getInstance(): self
+    public static function getInstance()
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new static;
+        if (is_null(static::$instance)) {
+            static::$instance = new static;
         }
 
-        return self::$instance;
+        return static::$instance;
     }
+
 
     /**
      * Register a binding with the container.
@@ -63,6 +66,14 @@ class Container
         return call_user_func($this->bindings[$key]);
     }
 
+    public function make($key)
+    {
+        if (!$this->has($key)) {
+            throw new \InvalidArgumentException("Binding for '$key' not found in the container.");
+        }
+
+        return $this->bindings[$key];
+    }
     /**
      * Check if a key exists within the container.
      *
@@ -95,43 +106,5 @@ class Container
     private function add($key, callable $callable)
     {
         $this->bindings[$key] = $callable;
-    }
-
-
-    /**
-     * Register core aliases and their dependencies into the container.
-     *
-     * @param array $aliases
-     * @return void
-     */
-    public function registerCoreAliases(array $aliases): void
-    {
-        // 
-
-        foreach ($aliases as $key => $alias) {
-            if ($this->hasDependencies($alias)) {
-                $this->bind($key, function () use ($alias) {
-                    return new $alias['class'](...$this->resolveDependencies($alias));
-                });
-            } else {
-                $this->bind($key, function () use ($alias) {
-                    return new $alias();
-                });
-            }
-        }
-    }
-    private function hasDependencies($alias)
-    {
-        return is_array($alias) && $alias['dependencies'];
-    }
-    private function resolveDependencies($alias)
-    {
-        $dependencies = [];
-        foreach ($alias['dependencies'] as $dependency) {
-
-            $dependencies[] = $this->resolve($dependency);
-        }
-
-        return $dependencies;
     }
 }

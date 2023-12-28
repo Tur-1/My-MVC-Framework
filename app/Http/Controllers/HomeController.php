@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
+use TurFramework\Core\Http\Request;
 
 class HomeController
 {
-    public function index()
+    public function index(Request $request)
     {
 
         return view('pages.HomePage');
