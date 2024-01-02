@@ -2,6 +2,7 @@
 
 namespace TurFramework\Core\Container;
 
+use Reflection;
 use TurFramework\Core\Container\ContainerException;
 
 class Container
@@ -58,14 +59,67 @@ class Container
      */
     public function resolve($key)
     {
-        if (!$this->has($key)) {
-            throw new \InvalidArgumentException("Binding for '$key' not found in the container.");
+        if ($this->has($key)) {
+            // throw new \InvalidArgumentException("Binding for '$key' not found in the container.");
+            return call_user_func($this->bindings[$key]);
         }
 
 
-        return call_user_func($this->bindings[$key]);
+        return $this->build($key);
     }
 
+    public function build($key)
+    {
+
+        // 1. Inspect the class that we are trying to get from the container
+        $reflectionClass = new \ReflectionClass($key);
+
+        // 2. Inspect the constructor of the class
+        $constructorClass = $reflectionClass->getConstructor();
+
+        if (!$constructorClass) {
+            return new $key();
+        }
+
+        // 3. Inspect the constructor parameters (dependencies)
+        $parameters = $constructorClass->getParameters();
+
+        if (!$parameters) {
+            return new $key();
+        }
+
+        // 4. If the constructor parameter is a class then try to resolve that class using the container
+        $dependencies = array_map(
+            function (\ReflectionParameter $param) use ($key) {
+                $name = $param->getName();
+                $type = $param->getType();
+
+                if (!$type) {
+                    throw new ContainerException(
+                        'Failed to resolve class "' . $key . '" because param "' . $name . '" is missing a type hint'
+                    );
+                }
+
+                if ($type instanceof \ReflectionUnionType) {
+                    throw new ContainerException(
+                        'Failed to resolve class "' . $key . '" because of union type for param "' . $name . '"'
+                    );
+                }
+
+                if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                    return $this->resolve($type->getName());
+                }
+
+                throw new ContainerException(
+                    'Failed to resolve class "' . $key . '" because invalid param "' . $name . '"'
+                );
+            },
+            $parameters
+        );
+
+
+        return $reflectionClass->newInstanceArgs($dependencies);
+    }
     public function make($key)
     {
         if (!$this->has($key)) {

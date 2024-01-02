@@ -55,10 +55,7 @@ class Application extends Container
     {
         parent::bind($key, $value);
     }
-    public function make($key)
-    {
-        return parent::make($key);
-    }
+
 
     /**
      * Resolves and retrieves the value associated with the given key from the container.

@@ -6,11 +6,12 @@ use Error;
 use Closure;
 use TypeError;
 use ErrorException;
+use ReflectionClass;
 use InvalidArgumentException;
-use TurFramework\Core\Exceptions\BadMethodCallException;
 use TurFramework\Core\Facades\Cache;
 use TurFramework\Core\Facades\Request;
 use TurFramework\Core\Router\RouteNotDefinedException;
+use TurFramework\Core\Exceptions\BadMethodCallException;
 
 class Router
 {
@@ -67,7 +68,12 @@ class Router
      * @var mixed
      */
     public  $controller;
-
+    /**
+     * route params
+     *
+     * @var array
+     */
+    public  $routeParams = [];
     /**
      * An array containing registered routes.
      *
@@ -230,10 +236,11 @@ class Router
 
                 // Store route parameters and their values
                 $handler['parameters'] = array_intersect_key($matches, array_flip($handler['parameters']));
-
+                $this->setRouteParams($handler['parameters']);
                 break;
             }
         }
+
 
 
         return $handler;
@@ -351,31 +358,45 @@ class Router
             return;
         }
 
-        // Extract controller class and method from the route
-        $controllerClass = $route['controller'];
-        $controllerMethod = $route['action'];
-
-
-        // Check if the controller class exists
-        if ($this->isControllerNotExists($controllerClass)) {
-            throw new ControllerNotFoundException("Target class [$controllerClass] does not exist");
-        }
-
-        $controller = new $controllerClass();
-
-        // Check if the method exists in the controller
-        if ($this->isMethodNotExistsInController($controller, $controllerMethod)) {
-            throw new \BadMethodCallException("Method  $controllerClass::$controllerMethod  does not exist!");
-        }
-
-        // Invoke the controller method
-        $this->invokeControllerMethod([$controller, $controllerMethod], $route['parameters']);
+        $this->resolveController($route);
     }
 
-    private function invokeControllerMethod($callable, $parameters)
+    public function resolveController($route)
     {
+        // Extract controller class and method from the route
+        $controller = app()->resolve($route['controller']);
+        $controllerMethod = $route['action'];
 
-        return  call_user_func_array($callable,  [$this->request, ...$parameters]);
+        $reflectorController = new ReflectionClass($controller);
+
+        // Check if the controller class exists
+        if ($this->isControllerNotExists($reflectorController->getName())) {
+            throw new ControllerNotFoundException("Target class [ " . $reflectorController->getName() . " ] does not exist");
+        }
+        // Check if the method exists in the controller
+        if (!$reflectorController->hasMethod($controllerMethod)) {
+            throw new \BadMethodCallException("Method [ " . $reflectorController->getShortName() . '::' . $controllerMethod  . " ] does not exist!");
+        }
+
+        $resolveDependencies = [];
+        $parameters = $reflectorController->getMethod($controllerMethod)?->getParameters() ?? [];
+
+
+        foreach ($parameters as  $parameter) {
+            $type = $parameter->getType();
+
+            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                $resolveDependencies[] = app()->resolve($parameter->getType()?->getName());
+            }
+        }
+
+
+        // Invoke the controller method
+        $this->invokeControllerMethod([$controller, $controllerMethod], $resolveDependencies);
+    }
+    private function invokeControllerMethod($callable, $resolveDependencies)
+    {
+        return call_user_func($callable, ...array_merge(array_filter($resolveDependencies), array_filter($this->routeParams)));
     }
     // Method to check if the requested method matches the route method
     private function isMethodNotAllowedForRoute($route)
@@ -408,6 +429,10 @@ class Router
         return $this->nameList;
     }
 
+    public function setRouteParams($routeParams)
+    {
+        $this->routeParams = $routeParams;
+    }
     /**
      * Loads routes.
      * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
