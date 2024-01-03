@@ -138,7 +138,7 @@ class HomeController extends Controller
 ```
 
 
-<a name="section-6"></a>
+<a name="section-7"></a>
 
 ## Request
 We can use Request in this application like
