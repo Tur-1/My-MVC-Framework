@@ -45,27 +45,27 @@ class Application extends Container
 
 
     /**
-     * Binds a specified key to a particular value within the container.
+     * Binds a specified abstract to a particular value within the container.
      *
-     * @param string $key   The key to bind.
-     * @param mixed  $value The value to associate with the key.
+     * @param string $abstract
+     * @param mixed  $concrete 
      * @return void
      */
-    public function bind($key, $value)
+    public function bind($abstract, $concrete)
     {
-        parent::bind($key, $value);
+        parent::bind($abstract, $concrete);
     }
 
 
     /**
      * Resolves and retrieves the value associated with the given key from the container.
      *
-     * @param string $key The key whose value needs to be resolved.
-     * @return mixed|null The resolved value if found; otherwise, returns null.
+     * @param string $abstract
+     * @return mixed
      */
-    public function resolve($key)
+    public function resolve($abstract)
     {
-        return parent::resolve($key);
+        return parent::resolve($abstract);
     }
 
     /**

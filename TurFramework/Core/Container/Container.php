@@ -37,112 +37,118 @@ class Container
         return static::$instance;
     }
 
-
     /**
      * Register a binding with the container.
      *
      * @param  string  $abstract
-     * @param  callable
+     * @param  \Closure|string|null  $concrete
      * @return void
      */
-    public function bind($key, callable $callable)
+    public function bind($abstract, $concrete)
     {
-        $this->add($key, $callable);
+        $this->add($abstract, $concrete);
     }
 
     /**
      * Resolve the value associated with the given key from the container.
      *
-     * @param string $key
+     * @param string $abstract
      * @return mixed
      * @throws ContainerException If the key does not exist in the container.
      */
-    public function resolve($key)
+    public function resolve($abstract)
     {
-        if ($this->has($key)) {
-            // throw new \InvalidArgumentException("Binding for '$key' not found in the container.");
-            return call_user_func($this->bindings[$key]);
+        if ($this->has($abstract)) {
+            // throw new \InvalidArgumentException("Binding for '$abstract' not found in the container.");
+            return call_user_func($this->bindings[$abstract]);
         }
 
 
-        return $this->build($key);
+        return $this->build($abstract);
     }
 
-    public function build($key)
+    public function build($abstract)
     {
 
         // 1. Inspect the class that we are trying to get from the container
-        $reflectionClass = new \ReflectionClass($key);
+        $reflectionClass = new \ReflectionClass($abstract);
 
+        if (!$reflectionClass->isInstantiable()) {
+            throw new ContainerException('Class "' . $abstract . '" is not instantiable');
+        }
         // 2. Inspect the constructor of the class
         $constructorClass = $reflectionClass->getConstructor();
 
         if (!$constructorClass) {
-            return new $key();
+            return new $abstract();
         }
 
         // 3. Inspect the constructor parameters (dependencies)
         $parameters = $constructorClass->getParameters();
 
         if (!$parameters) {
-            return new $key();
+            return new $abstract();
         }
 
         // 4. If the constructor parameter is a class then try to resolve that class using the container
-        $dependencies = array_map(
-            function (\ReflectionParameter $param) use ($key) {
-                $name = $param->getName();
-                $type = $param->getType();
-
-                if (!$type) {
-                    throw new ContainerException(
-                        'Failed to resolve class "' . $key . '" because param "' . $name . '" is missing a type hint'
-                    );
-                }
-
-                if ($type instanceof \ReflectionUnionType) {
-                    throw new ContainerException(
-                        'Failed to resolve class "' . $key . '" because of union type for param "' . $name . '"'
-                    );
-                }
-
-                if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                    return $this->resolve($type->getName());
-                }
-
-                throw new ContainerException(
-                    'Failed to resolve class "' . $key . '" because invalid param "' . $name . '"'
-                );
-            },
-            $parameters
-        );
-
+        $dependencies = $this->resolveDependencies($parameters, $abstract);
 
         return $reflectionClass->newInstanceArgs($dependencies);
     }
-    public function make($key)
+
+    /**
+     * Resolve all of the dependencies from the ReflectionParameters.
+     *
+     * @param  \ReflectionParameter[]  $dependencies
+     * @return array
+    
+     */
+    private function resolveDependencies(array $dependencies, $abstract)
     {
-        if (!$this->has($key)) {
-            throw new \InvalidArgumentException("Binding for '$key' not found in the container.");
+
+        $results = [];
+
+        foreach ($dependencies as $dependency) {
+            $name = $dependency->getName();
+            $type = $dependency->getType();
+
+            if (!$type) {
+                throw new ContainerException(
+                    'Failed to resolve class "' . $abstract . '" because param "' . $name . '" is missing a type hint'
+                );
+            }
+            if ($type instanceof \ReflectionUnionType) {
+                throw new ContainerException(
+                    'Failed to resolve class "' . $abstract . '" because of union type for param "' . $name . '"'
+                );
+            }
+            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                $results[] = $this->resolve($type->getName());
+                break;
+            }
+            throw new ContainerException(
+                'Failed to resolve class "' . $abstract . '" because invalid param "' . $name . '"'
+            );
+            break;
         }
 
-        return $this->bindings[$key];
+        return $results;
     }
     /**
-     * Check if a key exists within the container.
+     * Check if a abstract exists within the container.
      *
-     * @param string $key
+     * @param string $abstract
      * @return bool
      */
-    public function has($key)
+    public function has($abstract)
     {
-        return array_key_exists($key, $this->bindings);
+        return array_key_exists($abstract, $this->bindings);
     }
 
     /**
      * Get the bindings associated with the given key.
      *
-     * @param string $key
+     * @param string $abstract
      * @return mixed
      */
     public function getBindings()
@@ -153,12 +159,12 @@ class Container
     /**
      * Add a key-callable pair to the container bindings.
      *
-     * @param string $key
-     * @param mixed $callable
+     * @param string $abstract
+     * @param \Closure|string|null  $concrete
      * @return void
      */
-    private function add($key, callable $callable)
+    private function add($abstract, $concrete)
     {
-        $this->bindings[$key] = $callable;
+        $this->bindings[$abstract] = $concrete;
     }
 }
