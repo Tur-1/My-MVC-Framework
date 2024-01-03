@@ -2,23 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\actions\Serv;
 use TurFramework\Core\Http\Request;
 
 class HomeController extends Controller
 {
 
-    public function index(Request $request, Serv $serv)
+    public function index(Request $request)
     {
-
-
         return view('pages.HomePage');
     }
 
-    public function about(Request $request, Serv $serv, $id, $name)
+    public function user(Request $request, $id)
     {
-
-
-        return view('pages.aboutPage');
+        return $id;
     }
 }
