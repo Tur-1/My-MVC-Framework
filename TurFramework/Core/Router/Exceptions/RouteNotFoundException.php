@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\Core\Router;
+namespace TurFramework\Core\Router\Exceptions;
 
 use TurFramework\Core\Exceptions\HttpResponseException;
 

@@ -164,8 +164,6 @@ class Application extends Container
     {
         $route = Route::getByName($routeName);
 
-        dd($route);
-
         if (is_null($route)) {
             throw new RouteNotDefinedException("Route [ $routeName ] not defined.");
         }
@@ -203,34 +201,10 @@ class Application extends Container
      */
     public function registerCoreContainerAliases($aliases)
     {
-        // 
-
         foreach ($aliases as $key => $alias) {
-            if ($this->hasDependencies($alias)) {
-                $this->bind($key, function () use ($alias) {
-                    return new $alias['class'](...$this->resolveDependencies($alias));
-                });
-            } else {
-                $this->bind($key, function () use ($alias) {
-                    return new $alias();
-                });
-            }
+            $this->bind($key, function () use ($alias) {
+                return new $alias();
+            });
         }
-    }
-
-
-    private function hasDependencies($alias)
-    {
-        return is_array($alias) && $alias['dependencies'];
-    }
-    private function resolveDependencies($alias)
-    {
-        $dependencies = [];
-        foreach ($alias['dependencies'] as $dependency) {
-
-            $dependencies[] = $this->resolve($dependency);
-        }
-
-        return $dependencies;
     }
 }

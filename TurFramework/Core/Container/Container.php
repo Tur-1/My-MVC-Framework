@@ -59,8 +59,12 @@ class Container
     public function resolve($abstract)
     {
         if ($this->has($abstract)) {
-            // throw new \InvalidArgumentException("Binding for '$abstract' not found in the container.");
-            return call_user_func($this->bindings[$abstract]);
+            $entry = $this->bindings[$abstract];
+
+            if (is_callable($entry)) {
+                return call_user_func($entry, $this);
+            }
+            $abstract = $entry;
         }
 
 
@@ -131,6 +135,7 @@ class Container
             );
             break;
         }
+
 
         return $results;
     }

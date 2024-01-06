@@ -2,16 +2,10 @@
 
 namespace TurFramework\Core\Router;
 
-use Error;
 use Closure;
-use TypeError;
-use ErrorException;
-use ReflectionClass;
-use InvalidArgumentException;
-use TurFramework\Core\Facades\Cache;
-use TurFramework\Core\Facades\Request;
-use TurFramework\Core\Router\RouteNotDefinedException;
-use TurFramework\Core\Exceptions\BadMethodCallException;
+use ReflectionFunction;
+use TurFramework\Core\Router\Exceptions\RouteNotFoundException;
+use TurFramework\Core\Router\Exceptions\RouteException;
 
 class Router
 {
@@ -29,18 +23,12 @@ class Router
     private  $request;
 
     /**
-     * route key
+     * route
      *
-     * @var array
+     * @var string
      */
     public  $route;
 
-    /**
-     * An array to store route files loaded for caching.
-     *
-     * @var array
-     */
-    private $routesFiles = [];
     /**
      * 
      *
@@ -51,8 +39,6 @@ class Router
 
     /**
      * A look-up table of routes by their names.
-     *
-     * @var \Illuminate\Routing\Route[]
      */
     protected $nameList = [];
     /**
@@ -63,9 +49,9 @@ class Router
     private $path;
 
     /**
-     * The currently active controller.
+     * The controller.
      *
-     * @var mixed
+     * @var string
      */
     public  $controller;
     /**
@@ -81,10 +67,8 @@ class Router
      */
     public  $routes = [];
 
-    public  $container;
     public function __construct()
     {
-        $this->container = app()->container;
     }
 
     /**
@@ -97,11 +81,7 @@ class Router
         $this->path = $this->request->getPath();
         $this->requestMethod = $this->request->getMethod();
 
-        //  match the incoming URL to the defined routes 
-        $route = $this->matchRoute($this->path);
-
-
-        $this->handleRoute($route);
+        return RouteResolver::resolve($this->path, $this->requestMethod, $this->routes);
     }
 
     /**
@@ -122,7 +102,7 @@ class Router
     /**
      * Create a new instance of the Route class and set the current controller.
      *
-     * @param string $controller the name of the controller
+     * @param string $controller
      *
      * @return $this
      */
@@ -135,15 +115,13 @@ class Router
     /**
      * Register a GET route with the specified route and associated callback.
      *
-     * @param string $route the URL pattern for the route
-     * @param string|array|Closure $callable the callback function or controller action for the route
+     * @param string $route 
+     * @param string|array|Closure $callable 
      *
      * @return $this
      */
     public function get($route, $callable)
     {
-
-
         return $this->addRoute(self::METHOD_GET, $route, $callable);
     }
 
@@ -151,21 +129,21 @@ class Router
      * Register a POST route with the specified route and associated callback.
      *
      * @param string  route the URL pattern for the route
-     * @param string|array|Closure $callable the callback function or controller action for the route
+     * @param string|array|Closure $action the callback function or controller action for the route
      *
      * @return  $this;
      */
-    public  function post($route,  $callable)
+    public  function post($route,  $action)
     {
 
-        return  $this->addRoute(self::METHOD_POST, $route, $callable);
+        return  $this->addRoute(self::METHOD_POST, $route, $action);
     }
 
     /**
      * Register a Delete route with the specified route and associated callback.
      *
      * @param string  route the URL pattern for the route
-     * @param string|array|Closure $callable the callback function or controller action for the route
+     * @param string|array|Closure $action the callback function or controller action for the route
      *
      * @return  $this;
      */
@@ -177,16 +155,11 @@ class Router
     /**
      * Add or change the route name.
      *
-     * @param  string  $name
-     * 
-     * @return  $this;
+     * @param string $routeName
      */
     public  function name(string $routeName)
     {
-
-        $this->setRouteName($routeName);
-
-        return $this;
+        $this->routes[$this->route]['name'] = $routeName;
     }
 
     /**
@@ -196,72 +169,28 @@ class Router
      * 
      * @return array|null
      */
-    public function getByName($routeName): array|null
+    public function getByName($routeName)
     {
         return $this->nameList[$routeName] ?? null;
     }
 
-    private function setRouteName(string $routeName)
-    {
-        return $this->routes[$this->route]['name'] = $routeName;
-    }
-    /**
-     * Retrieve the route handler associated with the given method and path.
-     *
-     * @param string $method The HTTP method of the route (e.g., GET, POST).
-     * @param string $path The URL path of the route.
-     * @return mixed|false The route handler associated with the route or false if not found.
-     */
-    public function matchRoute($path)
-    {
-        $handler = null;
 
-
-        foreach ($this->routes as $route => $routeDetails) {
-
-            // Replace route parameters with regex patterns to match dynamic values
-            $pattern = preg_replace_callback('/\{(\w+)\}/', function ($matches) {
-
-                return '(?P<' . $matches[1] . '>[^/]+)';
-            }, $route);
-
-            $pattern = str_replace('/', '\/', $pattern);
-
-            $pattern = '/^' . $pattern . '$/';
-
-            // Check if the requested path matches the route pattern
-            if (preg_match($pattern, $path, $matches)) {
-
-                $handler = $routeDetails;
-
-                // Store route parameters and their values
-                $handler['parameters'] = array_intersect_key($matches, array_flip($handler['parameters']));
-                $this->setRouteParams($handler['parameters']);
-                break;
-            }
-        }
-
-
-
-        return $handler;
-    }
 
 
 
     /**
      * Add a route to the internal routes collection for a specific HTTP method.
      *
-     * @param string $method The HTTP method (GET, POST, etc.) for the route.
-     * @param string $route The URL pattern for the route.
-     * @param string|array|Closure $callable The callback function or controller action for the route.
+     * @param string $method 
+     * @param string $route 
+     * @param string|array|Closure $action 
      * @return  $this;
      */
-    private function addRoute($method, $route, $callable, $name = null)
+    private function addRoute($method, $route, $action, $name = null)
     {
 
         $this->route = $route;
-
-        $this->routes[$route] = $this->createNewRoute($method, $route, $this->getCallable($callable), $name);
+        $this->routes[$route] = $this->createNewRoute($method, $route, $this->getAction($action), $name);
 
         return  $this;
     }
@@ -274,139 +203,59 @@ class Router
      *
      * @return array Returns an array representing the new route.
      */
-    private function createNewRoute($method, $route, $callable, $name = null)
+    private function createNewRoute($method, $route, $action, $name = null)
     {
         return  [
             'uri' => $route,
             'method' => $method,
-            'controller' => $callable['controller'],
-            'action' =>  $callable['action'],
-            'parameters' => $this->extractParametersFromRoute($route),
+            'controller' => $action['controller'],
+            'action' =>  $action['action'],
+            'parameters' => $this->extractRouteParameters($route),
             'name' => $name,
         ];
     }
 
     /**
      * Extracts parameters from the provided route URI pattern.
-     *
-     * @param string $route URI pattern for the route.
-     *
-     * @return array Returns an array containing the extracted parameters.
+     * 
+     * @param string $route
+     * @return array $parameters
      */
-    private  function extractParametersFromRoute($route)
+    private  function extractRouteParameters(string $route)
     {
+
         $parameters = [];
-        $routeParts = explode('/', $route);
+        $routeParts = array_filter(explode('/', $route));
 
         foreach ($routeParts as $part) {
-            // Checks if the part of the route is a parameter placeholder in the form of {param}
-            if (strpos($part, '{') === 0 && strpos($part, '}') === strlen($part) - 1) {
+            if (str_starts_with($part, '{') &&  str_ends_with($part, '}')) {
                 $parameters[] = substr($part, 1, -1); // Extracts the parameter name without braces
             }
         }
 
-        return  $parameters; // Returns an array of extracted parameters
+        return  $parameters;
     }
 
     /**
      * Determines the callable format based on the input and returns it as an array.
      *
-     * @param mixed $callable Callable associated with the route.
+     * @param mixed $action  
      *
-     * @return array|null Returns an array containing controller and action, or null if the format is not recognized.
+     * @return array  
      */
-    private  function getCallable($callable)
+    private  function getAction($action)
     {
-        if (!is_null($this->controller) && is_string($callable)) {
-            return ['controller' =>  $this->controller, 'action' =>  $callable];
+        if (!is_null($this->controller) && is_string($action)) {
+            return ['controller' =>  $this->controller, 'action' =>  $action];
         }
 
-        if (is_array($callable)) {
-            return ['controller' =>  $callable[0], 'action' =>  $callable[1]];
+        if (is_array($action)) {
+            return ['controller' =>  $action[0], 'action' =>  $action[1]];
         }
 
-        if (is_callable($callable)) {
-            return ['controller' => null, 'action' => $callable];
+        if (is_callable($action)) {
+            return ['controller' => null, 'action' => $action];
         }
-    }
-    /**
-     * Handle the resolved action (callable or controller method) based on the route.
-     *
-     * @param mixed $action The action associated with the resolved route.
-     * @return void
-     *
-     * @throws RouteNotFoundException If no action is found for the route.
-     * @throws ControllerNotFoundException If the specified controller class does not exist.
-     * @throws \BadMethodCallException If the controller method does not exist.
-     */
-    private function handleRoute($route)
-    {
-
-        // Check if the route method is not allowed
-        if ($this->isMethodNotAllowedForRoute($route)) {
-            throw new MethodNotAllowedHttpException($this->requestMethod, $this->path, $route['method']);
-        }
-
-        // Check if no action is associated with the route, throw RouteNotFoundException.
-        if (is_null($route)) {
-            throw new RouteNotFoundException();
-        }
-
-        // If the action is a callable function, execute it
-        if (is_callable($route['action'])) {
-            $this->invokeControllerMethod($route['action'], $route['parameters']);
-            return;
-        }
-
-        $this->resolveController($route);
-    }
-
-    public function resolveController($route)
-    {
-        // Extract controller class and method from the route
-        $controller = app()->resolve($route['controller']);
-        $controllerMethod = $route['action'];
-
-        $reflectorController = new ReflectionClass($controller);
-
-        // Check if the controller class exists
-        if ($this->isControllerNotExists($reflectorController->getName())) {
-            throw new ControllerNotFoundException("Target class [ " . $reflectorController->getName() . " ] does not exist");
-        }
-        // Check if the method exists in the controller
-        if (!$reflectorController->hasMethod($controllerMethod)) {
-            throw new \BadMethodCallException("Method [ " . $reflectorController->getShortName() . '::' . $controllerMethod  . " ] does not exist!");
-        }
-
-        $resolveDependencies = [];
-        $parameters = $reflectorController->getMethod($controllerMethod)?->getParameters() ?? [];
-
-
-        foreach ($parameters as  $parameter) {
-            $type = $parameter->getType();
-
-            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                $resolveDependencies[] = app()->resolve($parameter->getType()?->getName());
-            }
-        }
-
-
-        // Invoke the controller method
-        $this->invokeControllerMethod([$controller, $controllerMethod], $resolveDependencies);
-    }
-    private function invokeControllerMethod($callable, $resolveDependencies)
-    {
-        return call_user_func($callable, ...array_merge(array_filter($resolveDependencies), array_filter($this->routeParams)));
-    }
-    // Method to check if the requested method matches the route method
-    private function isMethodNotAllowedForRoute($route)
-    {
-
-        if (!is_null($route)  && $route['method'] !== $this->requestMethod) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -444,6 +293,8 @@ class Router
         $this->routes = (new RouteFileRegistrar($this))->loadRotues();
 
         $this->loadRoutesByNames();
+
+
         return $this;
     }
 
@@ -458,26 +309,5 @@ class Router
                 $this->nameList[$routeDetails['name']] = $routeDetails;
             }
         };
-    }
-
-    /**
-     * Checks if the controller class doesn't exist.
-     * @param string|null $controllerClass Name of the controller class.
-     * @return bool
-     */
-    private function isControllerNotExists($controllerClass)
-    {
-        return !is_null($controllerClass) && !class_exists($controllerClass);
-    }
-
-    /**
-     * Checks if the method doesn't exist in the controller.
-     * @param object $controller Controller object.
-     * @param string $methodName Name of the method.
-     * @return bool
-     */
-    private function isMethodNotExistsInController($controller, $methodName)
-    {
-        return !method_exists($controller, $methodName);
     }
 }

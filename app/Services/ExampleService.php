@@ -4,8 +4,12 @@ namespace App\Services;
 
 class ExampleService
 {
+
+    /**
+     * example 
+     */
     public function example()
     {
-        return 'ExampleService';
+        return 'example 000';
     }
 }
