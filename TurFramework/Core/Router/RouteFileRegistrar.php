@@ -3,10 +3,11 @@
 namespace TurFramework\Core\Router;
 
 use TurFramework\Core\Facades\Cache;
+use TurFramework\Core\Router\Exceptions\RouteException;
 
 class RouteFileRegistrar
 {
-    protected $routes;
+
     /**
      * The router instance.
      *
@@ -28,16 +29,14 @@ class RouteFileRegistrar
     public function loadRotues()
     {
         if ($this->routesAreCached()) {
-            $this->routes = $this->loadCachedRoutes();
+            $this->loadCachedRoutes();
         } else {
 
             $this->loadRoutesFiles();
-            $this->routes = $this->router->getRoutes();
-            // After loading, create a cache file for routes
-            // Cache::store($this->getCachedRoutesPath(), $this->routes);
-        }
 
-        return $this->routes;
+            // After loading, create a cache file for routes
+            // Cache::store($this->getCachedRoutesPath(), $this->router->routes->getRoutes());
+        }
     }
 
     /**
@@ -48,7 +47,7 @@ class RouteFileRegistrar
     {
 
         if (empty($this->getRoutesFiles())) {
-            throw new RouteNotFoundException('No route files found in routes directory');
+            throw RouteException::routeFilesNotFound();
         }
 
 

@@ -12,6 +12,7 @@ namespace TurFramework\Core\Facades;
  * @method static \TurFramework\Core\Router\Router name(string $name) 
  * @method array getRoutes() 
  * @method array getNameList() 
+ 
  * @method static \TurFramework\Core\Router\Router loadRotues() 
  * @method void resolve() 
  * @method static array|null getByName(string $routeName)

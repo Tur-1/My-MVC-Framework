@@ -3,17 +3,24 @@
 namespace TurFramework\Core\Application;
 
 use InvalidArgumentException;
-use TurFramework\Core\Facades\Route;
 use TurFramework\Core\Http\Request;
-use TurFramework\Core\Container\Container;
+use TurFramework\Core\Facades\Route;
+use App\Providers\AppServiceProvider;
 use TurFramework\Core\Exceptions\ExceptionHandler;
 use TurFramework\Core\Router\RouteNotDefinedException;
 use TurFramework\Core\Exceptions\HttpResponseException;
+use TurFramework\Core\Router\Exceptions\RouteException;
 
-class Application extends Container
+class Application extends AppServiceProvider
 {
 
-    public static ?Application $appInstance = null;
+
+    /**
+     * The singleton instance of the Container.
+     *
+     * @var self|null
+     */
+    protected static $appInstance;
 
     /**
      * The Tur framework version.
@@ -28,11 +35,32 @@ class Application extends Container
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
 
-        // Register core aliases into the container
-        $this->registerCoreContainerAliases($this->getCoreAliases());
+        // Register core services into the container
+        $this->registerApplicationServices();
     }
+    /**
+     * Get the singleton instance of Application.
+     * 
+     * @return $appInstance
+     */
+    public static function getApplicationInstance()
+    {
+        // If no instance exists, create a new one
+        if (is_null(static::$appInstance)) {
+            static::$appInstance = new static;
+        }
 
-
+        return static::$appInstance;
+    }
+    /**
+     * Method to start the application.
+     * 
+     * Starts the application by invoking the run method on the singleton instance.
+     */
+    public static function start(): void
+    {
+        self::getApplicationInstance()->run();
+    }
 
     /**
      * run.
@@ -68,29 +96,6 @@ class Application extends Container
         return parent::resolve($abstract);
     }
 
-    /**
-     * Get the singleton instance of Application.
-     * 
-     * @return Application The singleton instance of the Application class.
-     */
-    public static function getApplicationInstance(): Application
-    {
-        // If no instance exists, create a new one
-        if (is_null(static::$appInstance)) {
-            static::$appInstance = new static;
-        }
-
-        return static::$appInstance;
-    }
-    /**
-     * Method to start the application.
-     * 
-     * Starts the application by invoking the run method on the singleton instance.
-     */
-    public static function start(): void
-    {
-        self::getApplicationInstance()->run();
-    }
 
     /**
      * Get the version number of the application.
@@ -151,36 +156,9 @@ class Application extends Container
         throw new HttpResponseException(message: $message, code: $code);
     }
 
-    /**
-     * Generates a URL based on the route name and parameters.
-     *
-     * @param string $routeName The name of the route
-     * @param array $parameters (Optional) Parameters for the route
-     * @return string The generated URL
-     * @throws RouteNotDefinedException When the route is not defined
-     * @throws InvalidArgumentException When required parameters are missing
-     */
-    public function route($routeName, $parameters = [])
-    {
-        $route = Route::getByName($routeName);
 
-        if (is_null($route)) {
-            throw new RouteNotDefinedException("Route [ $routeName ] not defined.");
-        }
-        foreach ($route['parameters'] as $key => $value) {
-            if (!in_array($value, array_keys($parameters))) {
-                throw new InvalidArgumentException("Missing required parameter for [Route: $routeName] [URI: " . $route['uri'] . " ]  [ Missing parameter: $value ].");
-            }
-        }
 
-        $url = $route['uri'];
-        foreach ($parameters as $key => $value) {
-            $url = str_replace('{' . $key . '}', $value, $url);
-        }
-        return $url;
-    }
-
-    protected function getCoreAliases(): array
+    protected function getCoreServices(): array
     {
         return   [
             'cache' => \TurFramework\Core\Cache\Cache::class,
@@ -189,22 +167,25 @@ class Application extends Container
             'redirect' => \TurFramework\Core\Router\Redirector::class,
             'config' => \TurFramework\Core\Configurations\Config::class,
             'request' => \TurFramework\Core\Http\Request::class,
-            'route' => \TurFramework\Core\Router\Router::class,
+            'route' => (new \TurFramework\Core\Router\Router())->getInstance(),
         ];
     }
 
     /**
-     * Register core aliases and their dependencies into the container.
+     * Register core services and their dependencies into the container.
      *
-     * @param array $aliases
+     * @param array $services
      * @return void
      */
-    public function registerCoreContainerAliases($aliases)
+    public function registerApplicationServices()
     {
-        foreach ($aliases as $key => $alias) {
-            $this->bind($key, function () use ($alias) {
-                return new $alias();
-            });
+        $services = $this->getCoreServices();
+
+
+        foreach ($services as $key => $service) {
+            $this->bind($key, $service);
         }
+
+        $this->register();
     }
 }

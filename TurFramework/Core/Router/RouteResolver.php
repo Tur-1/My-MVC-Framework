@@ -85,6 +85,7 @@ class RouteResolver
     public function resolveController($route)
     {
 
+
         // If the action is a callable function, execute it
         if (is_callable($route['action'])) {
             $action = new \ReflectionFunction($route['action']);

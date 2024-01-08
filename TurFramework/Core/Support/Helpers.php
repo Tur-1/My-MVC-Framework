@@ -46,6 +46,7 @@ if (!function_exists('value')) {
      */
     function value($value)
     {
+
         return ($value instanceof Closure) ? $value() : $value;
     }
 }
@@ -254,6 +255,6 @@ if (!function_exists('route')) {
     function route($routeName, $parameters = [])
     {
 
-        return app()->route($routeName, $parameters);
+        return app('route')->route($routeName, $parameters);
     }
 }

@@ -14,6 +14,14 @@ class Router
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
+    /**
+     * The singleton instance of the router.
+     *
+     * @var self|null
+     */
+    protected static $instance;
+
+
 
     /**
      * The Request object used to handle HTTP requests.
@@ -37,10 +45,8 @@ class Router
     private $requestMethod;
 
 
-    /**
-     * A look-up table of routes by their names.
-     */
-    protected $nameList = [];
+    private $action = [];
+
     /**
      * 
      *
@@ -63,14 +69,30 @@ class Router
     /**
      * An array containing registered routes.
      *
-     * @var array
+     * @var 
      */
-    public  $routes = [];
+    public  $routes;
+
 
     public function __construct()
     {
+        $this->routes = new RouteCollection();
     }
 
+
+    /**
+     * Get the globally available instance of the container.
+     *
+     * @return static
+     */
+    public static function getInstance()
+    {
+        if (is_null(static::$instance)) {
+            static::$instance = new static;
+        }
+
+        return static::$instance;
+    }
     /**
      * Resolve the current request to find and handle the appropriate route.
      * 
@@ -81,7 +103,7 @@ class Router
         $this->path = $this->request->getPath();
         $this->requestMethod = $this->request->getMethod();
 
-        return RouteResolver::resolve($this->path, $this->requestMethod, $this->routes);
+        return RouteResolver::resolve($this->path, $this->requestMethod, $this->routes->getRoutes());
     }
 
     /**
@@ -108,7 +130,7 @@ class Router
      */
     public function controller(string $controller)
     {
-        $this->controller = $controller;
+        $this->action[1] = $controller;
         return  $this;
     }
 
@@ -159,27 +181,40 @@ class Router
      */
     public  function name(string $routeName)
     {
-        $this->routes[$this->route]['name'] = $routeName;
+        $this->routes->setRouteName($this->route, $routeName);
     }
 
     /**
-     * Add or change the route name.
+     * Generates a URL based on the route name and parameters.
      *
-     * @param  string  $name
-     * 
-     * @return array|null
+     * @param string $routeName The name of the route
+     * @param array $parameters (Optional) Parameters for the route
+     * @return string The generated URL
+     * @throws RouteException When the route is not defined
+     * @throws RouteException When required parameters are missing
      */
-    public function getByName($routeName)
+    public function route($routeName, $parameters = [])
     {
-        return $this->nameList[$routeName] ?? null;
+
+        $route = $this->routes->getByName($routeName);
+
+        if (is_null($route)) {
+            throw RouteException::routeNotDefined($routeName);
+        }
+        foreach ($route['parameters'] as $key => $parameter) {
+            if (!in_array($parameter, array_keys($parameter))) {
+                throw RouteException::invalidArgument($routeName, $route['uri'], $parameter);
+            }
+        }
+
+        $url = $route['uri'];
+        foreach ($parameters as $key => $parameter) {
+            $url = str_replace('{' . $key . '}', $parameter, $url);
+        }
+        return $url;
     }
-
-
-
-
-
     /**
-     * Add a route to the internal routes collection for a specific HTTP method.
+     * Add a route to the internal routes collection .
      *
      * @param string $method 
      * @param string $route 
@@ -189,94 +224,14 @@ class Router
     private function addRoute($method, $route, $action, $name = null)
     {
 
-        $this->route = $route;
-        $this->routes[$route] = $this->createNewRoute($method, $route, $this->getAction($action), $name);
 
+        $this->route = $route;
+        $this->action[0] = $action;
+
+        $this->routes->addRoute($method, $route, $this->action, $name);
         return  $this;
     }
-    /**
-     * Creates a new route array based on the provided method, route, and callable.
-     *
-     * @param string $method   HTTP method (e.g., GET, POST, etc.).
-     * @param string $route    URI pattern for the route.
-     * @param array  $callable Array containing controller and action information.
-     *
-     * @return array Returns an array representing the new route.
-     */
-    private function createNewRoute($method, $route, $action, $name = null)
-    {
-        return  [
-            'uri' => $route,
-            'method' => $method,
-            'controller' => $action['controller'],
-            'action' =>  $action['action'],
-            'parameters' => $this->extractRouteParameters($route),
-            'name' => $name,
-        ];
-    }
 
-    /**
-     * Extracts parameters from the provided route URI pattern.
-     * 
-     * @param string $route
-     * @return array $parameters
-     */
-    private  function extractRouteParameters(string $route)
-    {
-
-        $parameters = [];
-        $routeParts = array_filter(explode('/', $route));
-
-        foreach ($routeParts as $part) {
-            if (str_starts_with($part, '{') &&  str_ends_with($part, '}')) {
-                $parameters[] = substr($part, 1, -1); // Extracts the parameter name without braces
-            }
-        }
-
-        return  $parameters;
-    }
-
-    /**
-     * Determines the callable format based on the input and returns it as an array.
-     *
-     * @param mixed $action  
-     *
-     * @return array  
-     */
-    private  function getAction($action)
-    {
-        if (!is_null($this->controller) && is_string($action)) {
-            return ['controller' =>  $this->controller, 'action' =>  $action];
-        }
-
-        if (is_array($action)) {
-            return ['controller' =>  $action[0], 'action' =>  $action[1]];
-        }
-
-        if (is_callable($action)) {
-            return ['controller' => null, 'action' => $action];
-        }
-    }
-
-    /**
-     * Get all registered routes.
-     *
-     * @return array All registered routes.
-     */
-    public function getRoutes()
-    {
-
-        return $this->routes;
-    }
-    /**
-     * Get all registered routes by names.
-     *
-     * @return array All registered routes.
-     */
-    public function getNameList()
-    {
-        return $this->nameList;
-    }
 
     public function setRouteParams($routeParams)
     {
@@ -290,24 +245,9 @@ class Router
     public function loadRotues()
     {
 
-        $this->routes = (new RouteFileRegistrar($this))->loadRotues();
-
-        $this->loadRoutesByNames();
-
+        (new RouteFileRegistrar($this))->loadRotues();
+        $this->routes->loadRoutesByNames();
 
         return $this;
-    }
-
-
-    /**
-     * Loads routes by their names into a separate list.
-     */
-    private function loadRoutesByNames()
-    {
-        foreach ($this->routes as $route => $routeDetails) {
-            if (!is_null($routeDetails['name'])) {
-                $this->nameList[$routeDetails['name']] = $routeDetails;
-            }
-        };
     }
 }

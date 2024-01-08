@@ -20,4 +20,18 @@ class RouteException extends \Exception
     {
         return new self("The $requestMethod method is not supported for route $route. Supported methods: $routeMethod");
     }
+
+    public static function routeNotDefined($routeName)
+    {
+        return new self("Route [ $routeName ] not defined.");
+    }
+    public static function invalidArgument($routeName, $uri, $parameter)
+    {
+        return new self("Missing required parameter for [Route: $routeName] [URI: " . $uri . " ]  [ Missing parameter: $parameter ].");
+    }
+
+    public static function routeFilesNotFound()
+    {
+        return new self("No route files found in routes directory");
+    }
 }

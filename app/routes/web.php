@@ -6,7 +6,10 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/about', [AboutController::class, 'about'])->name('aboutPage');
 
-Route::get('/', [HomeController::class, 'index'])->name('homePage');
+Route::get('/sd', function () {
+    echo '/sd';
+});
+
 Route::controller(HomeController::class)->group(function () {
-    Route::post('/user/{id}', 'user')->name('user');
+    Route::get('/', 'index')->name('homePage');
 });
