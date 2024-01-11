@@ -28,27 +28,7 @@ class RouteFileRegistrar
      */
     public function register($routes)
     {
-
         require $routes;
-    }
-    /**
-     * Loads routes.
-     * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
-     * @return $routes
-     */
-    public function loadRotues()
-    {
-
-
-        if ($this->routesAreCached()) {
-            $this->loadCachedRoutes();
-        } else {
-
-            // $this->loadRoutesFiles();
-
-            // After loading, create a cache file for routes
-            // Cache::store($this->getCachedRoutesPath(), $this->router->routes->getRoutes());
-        }
     }
 
     /**

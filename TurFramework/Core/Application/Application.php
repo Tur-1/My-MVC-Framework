@@ -24,14 +24,13 @@ class Application extends Container
      * @var self|null
      */
     protected static $appInstance;
- 
+
     public function __construct()
     {
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
         // load config
         LoadConfiguration::load($this);
- 
     }
 
 
@@ -40,7 +39,7 @@ class Application extends Container
      */
     public function run(): void
     {
-         
+
         // Register core services into the container
         $this->registerApplicationServices();
         // Register the base service providers
@@ -48,7 +47,6 @@ class Application extends Container
 
         // Resolve incoming HTTP request
         Route::resolve(new Request);
- 
     }
     /**
      * Register the base service providers.
@@ -175,8 +173,6 @@ class Application extends Container
         throw new HttpResponseException(message: $message, code: $code);
     }
 
-
-
     protected function getCoreServices(): array
     {
         return   [
@@ -189,7 +185,10 @@ class Application extends Container
 
         ];
     }
-    
+    public function getRouteByName($routeName, $params)
+    {
+        return Route::getRouteByName($routeName, $params);
+    }
     /**
      * Register core services and their dependencies into the container.
      *

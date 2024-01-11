@@ -5,8 +5,9 @@ namespace TurFramework\Core\Router;
 use Closure;
 use TurFramework\Core\Router\Exceptions\RouteException;
 
-class RouteCollection
+class Route
 {
+
     /**
      * An array containing registered routes.
      *
@@ -19,7 +20,6 @@ class RouteCollection
      * @var string
      */
     public  $route;
-    public  $router;
     /**
      * A look-up table of routes by their names.
      */
@@ -32,8 +32,9 @@ class RouteCollection
      */
     public function addRoute($method, $route, $action, $name = null)
     {
+        $this->route = $route;
 
-        return  $this->createNewRoute($method, $route, $this->getAction($action), $name);
+        $this->routes[$route] = $this->createNewRoute($method, $route, $this->getAction($action), $name);
     }
 
 
@@ -108,7 +109,6 @@ class RouteCollection
      */
     public function getRoutes()
     {
-
         return $this->routes;
     }
     /**
@@ -130,7 +130,34 @@ class RouteCollection
     {
         return $this->nameList[$name] ?? null;
     }
+    /**
+     * Generate a URL for the given route name.
+     *
+     * @param string $routeName The name of the route.
+     * @param array $parameters Optional parameters for the route.
+     * @return string The generated URL.
+     * @throws RouteException
+     */
+    public function route(string $routeName, array $parameters = []): string
+    {
 
+        $route = $this->getByName($routeName);
+
+        if (!$route) {
+            throw RouteException::routeNotDefined($routeName);
+        }
+        $uri = $route['uri'];
+        foreach ($route['parameters'] as $key => $parameter) {
+            if (!in_array($parameter, array_keys($parameters))) {
+                throw RouteException::missingRequiredParameters($routeName, $uri, $parameter);
+            }
+        }
+
+        foreach ($parameters as $key => $value) {
+            $uri = str_replace('{' . $key . '}', $value, $uri);
+        }
+        return $uri;
+    }
     /**
      * Loads routes by their names into a separate list.
      */
@@ -144,8 +171,8 @@ class RouteCollection
     }
 
 
-    public function setRouteName($route, $routeName)
+    public function setRouteName($routeName)
     {
-        $this->routes[$route]['name'] = $routeName;
+        $this->routes[$this->route]['name'] = $routeName;
     }
 }

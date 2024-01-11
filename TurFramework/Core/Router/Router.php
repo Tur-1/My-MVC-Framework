@@ -3,109 +3,57 @@
 namespace TurFramework\Core\Router;
 
 use Closure;
-use ReflectionFunction;
-use TurFramework\Core\Router\Exceptions\RouteNotFoundException;
-use TurFramework\Core\Router\Exceptions\RouteException;
+use TurFramework\Core\Router\Route;
 
 class Router
 {
-
+    // HTTP request methods
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
+
     /**
-     * The singleton instance of the router.
+     * The route object responsible for managing registered routes.
      *
-     * @var self|null
+     * @var Route
      */
-    protected static $instance;
-
-
+    protected $route;
 
     /**
-     * The Request object used to handle HTTP requests.
-     *
-     * @var 
-     */
-    private  $request;
-
-    /**
-     * route
-     *
-     * @var string
-     */
-    public  $route;
-
-    /**
-     * 
-     *
-     * @var string
-     */
-    private $requestMethod;
-
-
-    private $action = [];
-
-    /**
-     * 
-     *
-     * @var string
-     */
-    private $path;
-
-    /**
-     * The controller.
-     *
-     * @var string
-     */
-    public  $controller;
-    /**
-     * route params
+     * An array to store action details, such as controller information.
      *
      * @var array
      */
-    public  $routeParams = [];
+    private $action = [];
+
     /**
-     * An array containing registered routes.
+     * The controller associated with the route.
      *
-     * @var 
+     * @var string
      */
-    public  $routes = [];
+    protected  $controller;
 
-    public $routeCollection;
-
+    /**
+     * Router constructor.
+     * Initializes the router with a new Route instance.
+     */
     public function __construct()
     {
-        $this->routeCollection = new RouteCollection();
+        $this->route = new Route();
     }
 
-
-    /**
-     * Get the globally available instance of the container.
-     *
-     * @return static
-     */
-    public static function getInstance()
-    {
-        if (is_null(static::$instance)) {
-            static::$instance = new static;
-        }
-
-        return static::$instance;
-    }
     /**
      * Resolve the current request to find and handle the appropriate route.
      * 
      */
     public function resolve($request)
     {
-
-        $this->request =  $request;
-        $this->path = $this->request->getPath();
-        $this->requestMethod = $this->request->getMethod();
-
-        return RouteResolver::resolve($this->path, $this->requestMethod, $this->routes);
+        return RouteResolver::resolve(
+            $request->getPath(),
+            $request->getMethod(),
+            $this->route->routes
+        );
     }
 
     /**
@@ -122,7 +70,8 @@ class Router
             $routes();
         } else {
 
-            require base_path($routes);
+            (new RouteFileRegistrar($this))->register($routes);
+            $this->route->loadRoutesByNames();
         }
 
 
@@ -130,11 +79,10 @@ class Router
     }
 
     /**
-     * Create a new instance of the Route class and set the current controller.
+     * Set the controller for the route.
      *
-     * @param string $controller
-     *
-     * @return $this
+     * @param string $controller 
+     * @return  $this
      */
     public function controller(string $controller)
     {
@@ -146,24 +94,24 @@ class Router
      * Register a GET route with the specified route and associated callback.
      *
      * @param string $route 
-     * @param string|array|Closure $callable 
+     * @param string|array|Closure $action 
      *
      * @return $this
      */
-    public function get($route, $callable)
+    public function get($route, $action)
     {
-        return $this->addRoute(self::METHOD_GET, $route, $callable);
+        return $this->addRoute(self::METHOD_GET, $route, $action);
     }
 
     /**
      * Register a POST route with the specified route and associated callback.
      *
-     * @param string  route the URL pattern for the route
-     * @param string|array|Closure $action the callback function or controller action for the route
+     * @param string  $route 
+     * @param string|array|Closure $action
      *
      * @return  $this;
      */
-    public  function post($route,  $action)
+    public  function post($route, $action)
     {
 
         return  $this->addRoute(self::METHOD_POST, $route, $action);
@@ -172,14 +120,14 @@ class Router
     /**
      * Register a Delete route with the specified route and associated callback.
      *
-     * @param string  route the URL pattern for the route
-     * @param string|array|Closure $action the callback function or controller action for the route
+     * @param string  $route
+     * @param string|array|Closure $action
      *
      * @return  $this;
      */
-    public  function delete($route,  $callable)
+    public  function delete($route, $action)
     {
-        return $this->addRoute(self::METHOD_DELETE, $route, $callable);
+        return $this->addRoute(self::METHOD_DELETE, $route, $action);
     }
 
     /**
@@ -189,38 +137,28 @@ class Router
      */
     public  function name(string $routeName)
     {
-        $this->routeCollection->setRouteName($this->route, $routeName);
+        $this->route->setRouteName($routeName);
     }
 
-    public function loadRotues()
+    public function getRouteByName($routeName, $params)
     {
-
-        require base_path('app/routes/web.php');
-
-        return $this;
+        return $this->route->route($routeName, $params);
     }
+
 
     /**
-     * Add a route to the internal routes collection .
+     * Add a route to the internal routes collection.
      *
-     * @param string $method 
-     * @param string $route 
-     * @param string|array|Closure $action 
+     * @param string $method The HTTP method of the route.
+     * @param string $route The route path.
+     * @param string|array|Closure $action The callback or controller action associated with the route.
+     * @param string|null $name The name of the route.
      * @return  $this;
      */
     private function addRoute($method, $route, $action, $name = null)
     {
-
-
-        $this->route = $route;
         $this->action[0] = $action;
-        $this->routes[$route] = $this->routeCollection->addRoute($method, $route, $this->action, $name);
-        return  $this;
-    }
-
-
-    public function setRouteParams($routeParams)
-    {
-        $this->routeParams = $routeParams;
+        $this->route->addRoute($method, $route, $this->action, $name);
+        return $this;
     }
 }

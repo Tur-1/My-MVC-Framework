@@ -10,7 +10,6 @@ namespace TurFramework\Core\Facades;
  * @method static \TurFramework\Core\Router\Router controller($controller) 
  * @method static \TurFramework\Core\Router\Router group($routes) 
  * @method static \TurFramework\Core\Router\Router name(string $name) 
- * @method static \TurFramework\Core\Router\Router loadRotues()
  * @see \TurFramework\Core\Router\Router
  */
 class Route extends Facade

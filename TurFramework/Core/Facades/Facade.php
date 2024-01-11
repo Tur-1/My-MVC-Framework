@@ -43,11 +43,4 @@ abstract class Facade
 
         return $instance->{$method}(...$args);
     }
-
-    public function __call($method, $args)
-    {
-        $instance = static::getResolvedInstance(static::getFacadeAccessor());
-
-        return $instance->{$method}(...$args);
-    }
 }
