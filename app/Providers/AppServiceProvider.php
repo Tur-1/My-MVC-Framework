@@ -16,9 +16,9 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         /**
-         *  an axample for binding a service
-         *  $this->bind(interface::class, service::class);
+         *  $this->app->bind(interface::class, service::class);
          */
+
 
         $this->app->bind(ExampleServiceInterface::class, ExampleService::class);
     }

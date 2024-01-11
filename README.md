@@ -5,9 +5,12 @@
 - [How to Install](#section-2)
 - [Define Route](#section-3)
 - [Route Parameters](#section-4)
-- [Dependency Injection](#section-5)
-- [Constructor Dependency Injection](#section-6)
-- [Request](#section-7)
+- [Request](#section-5)
+- [Dependency Injection](#section-6)
+- [Constructor Dependency Injection](#section-7)
+- [Binding Interface to Service Class](#section-8) 
+- [Register Custom Service Provider](#section-9)
+- [Route Service Provider](#section-10)
 
 
 <a name="section-1"></a>
@@ -37,7 +40,7 @@ To define route, navigate to this file and update
 ### `app/routes/web.php`
 ```php
 
-<?php
+
 
 use TurFramework\Core\Facades\Route;
 use App\Http\Controllers\AboutController;
@@ -57,7 +60,7 @@ Route::get('/about', [AboutController::class, 'about'])->name('aboutPage');
 You can pass single or multiple parameter with route as like below
 ```php
 
-<?php
+
 
 use TurFramework\Core\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -69,7 +72,7 @@ Now accept this param in your controller like:
 
 ```php
 
-<?php
+
 
 namespace App\Http\Controllers;
 
@@ -86,65 +89,12 @@ class HomeController extends Controller
 ```
 
 
-
 <a name="section-5"></a>
-
-## Dependency Injection
-Now look at that, how you can use dependency injection.
-```php
-
-<?php
-
-namespace App\Http\Controllers;
-
-use TurFramework\Core\Http\Request;
-
-class HomeController extends Controller
-{   
-    /**
-     * You can pass as many class as you want as parameter
-     */
-    public function index(
-        Request $request, //class dependency injection
-    ) {
-        
-       return view('pages.HomePage');
-    }
-
-}
-```
-
-<a name="section-6"></a>
-
-## Constructor Dependency Injection
-Now look at that, how you can use dependency injection using constructor.
-```php
-
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Services\ExampleService;
-
-class HomeController extends Controller
-{   
-    public $exampleService;
-    
-    public function __construct(ExampleService $exampleService) 
-    {
-       $this->exampleService = $exampleService;
-    }
-}
-```
-
-
-<a name="section-7"></a>
 
 ## Request
 We can use Request in this application like
 ```php
 
-<?php
 
 namespace App\Http\Controllers;
 
@@ -171,3 +121,157 @@ class HomeController extends Controller
     }
 }
 ```
+
+<a name="section-6"></a>
+
+## Dependency Injection
+Now look at that, how you can use dependency injection.
+```php
+
+
+
+namespace App\Http\Controllers;
+
+use TurFramework\Core\Http\Request;
+
+class HomeController extends Controller
+{   
+    /**
+     * You can pass as many class as you want as parameter
+     */
+    public function index(
+        Request $request, //class dependency injection
+    ) {
+        
+       return view('pages.HomePage');
+    }
+
+}
+```
+
+<a name="section-7"></a>
+
+## Constructor Dependency Injection
+Now look at that, how you can use dependency injection using constructor.
+```php
+
+namespace App\Http\Controllers;
+
+use App\Services\ExampleService;
+
+class HomeController extends Controller
+{   
+    public $exampleService;
+    
+    public function __construct(ExampleService $exampleService) 
+    {
+       $this->exampleService = $exampleService;
+    }
+}
+```
+<a name="section-8"></a>
+## Binding Interface to Service Class
+To bind an interface with a service class, you can use the `AppServiceProvider`,
+
+### `app/Providers/AppServiceProvider.php`
+```php
+namespace App\Providers;
+
+use App\Services\ExampleService;
+use App\Services\ExampleServiceInterface;
+use TurFramework\Core\Application\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /** 
+     * Register any application services.
+     *
+     */
+    public function register()
+    {
+        /**
+         * To bind an interface to a service class, use the following syntax:
+         * $this->app->bind(interface::class, service::class);
+         * This ensures that when the interface is requested, an instance of the service class is provided.
+         */
+
+        $this->app->bind(ExampleServiceInterface::class, ExampleService::class);
+    }
+}
+```
+
+<a name="section-9"></a>
+
+## Register Custom Service Provider
+You can register your own custom service providers to extend the functionality of the application. Here's how you can do it:
+
+### `config/app.php`
+In the `providers` array, add the namespace of your custom service provider.
+
+```php
+'providers' => [
+    App\Providers\AppServiceProvider::class,
+    App\Providers\RouteServiceProvider::class,
+    // Add your custom service provider here
+    App\Providers\CustomServiceProvider::class,
+],
+
+
+<?php
+
+namespace App\Providers;
+
+use TurFramework\Core\Application\ServiceProvider;
+
+class CustomServiceProvider extends ServiceProvider
+{
+    /** 
+     * Register any application services.
+     *
+     */
+    public function register()
+    {
+        /**
+         * Add your custom service registration logic here.
+         * You can use $this->app->bind() or other methods to register services.
+         * For example:
+         * $this->app->bind(CustomServiceInterface::class, CustomService::class);
+         */
+    }
+}
+```
+
+<a name="section-10"></a>
+
+## Route Service Provider
+The `RouteServiceProvider` is responsible for loading route files into the application.
+
+### `app/Providers/RouteServiceProvider.php`
+In this service provider, you can use the `Route::group()` method to load route files. Here's an example:
+
+```php
+
+namespace App\Providers;
+
+use TurFramework\Core\Facades\Route;
+use TurFramework\Core\Application\ServiceProvider;
+
+class RouteServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     *
+     */
+    public function register()
+    {
+        /**
+         * Use the Route::group() method to load route files.
+         */
+
+        // Load web routes from the 'app/routes/web.php' file.
+        Route::group('app/routes/web.php');
+
+        // Load API routes from the 'app/routes/api.php' file.
+        Route::group('app/routes/api.php');
+    }
+}
