@@ -71,12 +71,13 @@ class Router
      *
      * @var 
      */
-    public  $routes;
+    public  $routes = [];
 
+    public $routeCollection;
 
     public function __construct()
     {
-        $this->routes = new RouteCollection();
+        $this->routeCollection = new RouteCollection();
     }
 
 
@@ -99,24 +100,31 @@ class Router
      */
     public function resolve($request)
     {
+
         $this->request =  $request;
         $this->path = $this->request->getPath();
         $this->requestMethod = $this->request->getMethod();
 
-        return RouteResolver::resolve($this->path, $this->requestMethod, $this->routes->getRoutes());
+        return RouteResolver::resolve($this->path, $this->requestMethod, $this->routes);
     }
 
     /**
      * Create a route group 
      *
-     * @param callable $callback
+     * @param Closure|string $routes Closure function or routes path to load routes
      *
      * @return $this
      */
-    public  function group(callable $callback)
+    public  function group($routes)
     {
 
-        $callback();
+        if ($routes instanceof Closure) {
+            $routes();
+        } else {
+
+            require base_path($routes);
+        }
+
 
         return $this;
     }
@@ -181,38 +189,17 @@ class Router
      */
     public  function name(string $routeName)
     {
-        $this->routes->setRouteName($this->route, $routeName);
+        $this->routeCollection->setRouteName($this->route, $routeName);
     }
 
-    /**
-     * Generates a URL based on the route name and parameters.
-     *
-     * @param string $routeName The name of the route
-     * @param array $parameters (Optional) Parameters for the route
-     * @return string The generated URL
-     * @throws RouteException When the route is not defined
-     * @throws RouteException When required parameters are missing
-     */
-    public function route($routeName, $parameters = [])
+    public function loadRotues()
     {
 
-        $route = $this->routes->getByName($routeName);
+        require base_path('app/routes/web.php');
 
-        if (is_null($route)) {
-            throw RouteException::routeNotDefined($routeName);
-        }
-        foreach ($route['parameters'] as $key => $parameter) {
-            if (!in_array($parameter, array_keys($parameter))) {
-                throw RouteException::invalidArgument($routeName, $route['uri'], $parameter);
-            }
-        }
-
-        $url = $route['uri'];
-        foreach ($parameters as $key => $parameter) {
-            $url = str_replace('{' . $key . '}', $parameter, $url);
-        }
-        return $url;
+        return $this;
     }
+
     /**
      * Add a route to the internal routes collection .
      *
@@ -227,8 +214,7 @@ class Router
 
         $this->route = $route;
         $this->action[0] = $action;
-
-        $this->routes->addRoute($method, $route, $this->action, $name);
+        $this->routes[$route] = $this->routeCollection->addRoute($method, $route, $this->action, $name);
         return  $this;
     }
 
@@ -236,18 +222,5 @@ class Router
     public function setRouteParams($routeParams)
     {
         $this->routeParams = $routeParams;
-    }
-    /**
-     * Loads routes.
-     * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
-     * @return $this
-     */
-    public function loadRotues()
-    {
-
-        (new RouteFileRegistrar($this))->loadRotues();
-        $this->routes->loadRoutesByNames();
-
-        return $this;
     }
 }

@@ -3,6 +3,7 @@
 namespace TurFramework\Core\Http;
 
 use TurFramework\Core\Facades\Route;
+use TurFramework\Core\Router\Router;
 
 class Request
 {
@@ -26,16 +27,7 @@ class Request
         return static::$instance;
     }
 
-    /**
-     * Send the given request through the middleware / router.
-     *
-     * @param  Request  $request
-     * 
-     */
-    public function sendRequestThroughRouter()
-    {
-        Route::loadRotues()->resolve($this);
-    }
+
 
 
     /**

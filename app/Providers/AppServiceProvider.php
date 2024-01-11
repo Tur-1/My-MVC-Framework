@@ -4,14 +4,14 @@ namespace App\Providers;
 
 use App\Services\ExampleService;
 use App\Services\ExampleServiceInterface;
-use TurFramework\Core\Container\Container;
+use TurFramework\Core\Application\ServiceProvider;
 
 
-class AppServiceProvider extends Container
+class AppServiceProvider extends ServiceProvider
 {
     /** 
      * Register any application services.
-     * @return	void
+     *
      */
     public function register()
     {
@@ -20,6 +20,6 @@ class AppServiceProvider extends Container
          *  $this->bind(interface::class, service::class);
          */
 
-        $this->bind(ExampleServiceInterface::class, ExampleService::class);
+        $this->app->bind(ExampleServiceInterface::class, ExampleService::class);
     }
 }

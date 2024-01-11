@@ -7,7 +7,7 @@ use TurFramework\Core\Http\Request;
 class AboutController extends Controller
 {
 
-    public function about(Request $request)
+    public function index(Request $request)
     {
         return view('pages.aboutPage');
     }

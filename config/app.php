@@ -80,6 +80,9 @@ return [
     */
 
     'key' => env('APP_KEY'),
+    'providers' => [
 
-    'cipher' => 'AES-256-CBC',
+        App\Providers\AppServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+    ],
 ];

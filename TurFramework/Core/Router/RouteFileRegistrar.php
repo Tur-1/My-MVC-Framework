@@ -20,7 +20,17 @@ class RouteFileRegistrar
         $this->router = $router;
     }
 
+    /**
+     * Require the given routes file.
+     *
+     * @param    $routes
+     * @return void
+     */
+    public function register($routes)
+    {
 
+        require $routes;
+    }
     /**
      * Loads routes.
      * If cached file exists, loads from cache, otherwise loads route files and creates a cache file.
@@ -28,11 +38,13 @@ class RouteFileRegistrar
      */
     public function loadRotues()
     {
+
+
         if ($this->routesAreCached()) {
             $this->loadCachedRoutes();
         } else {
 
-            $this->loadRoutesFiles();
+            // $this->loadRoutesFiles();
 
             // After loading, create a cache file for routes
             // Cache::store($this->getCachedRoutesPath(), $this->router->routes->getRoutes());
@@ -52,7 +64,7 @@ class RouteFileRegistrar
 
 
         foreach ($this->getRoutesFiles() as $routeFile) {
-            require_once $routeFile;
+            require $routeFile;
         }
     }
 
@@ -82,16 +94,7 @@ class RouteFileRegistrar
     }
 
 
-    /**
-     * Require the given routes file.
-     *
-     * @param  string  $routes
-     * @return void
-     */
-    public function register($routeFile)
-    {
-        return require_once $routeFile;
-    }
+
     protected function getRoutesFiles()
     {
         return get_files_in_directory('app/routes');

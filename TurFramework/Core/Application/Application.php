@@ -2,25 +2,15 @@
 
 namespace TurFramework\Core\Application;
 
-use InvalidArgumentException;
 use TurFramework\Core\Http\Request;
 use TurFramework\Core\Facades\Route;
-use App\Providers\AppServiceProvider;
+use TurFramework\Core\Container\Container;
 use TurFramework\Core\Exceptions\ExceptionHandler;
-use TurFramework\Core\Router\RouteNotDefinedException;
+use TurFramework\Core\Configurations\LoadConfiguration;
 use TurFramework\Core\Exceptions\HttpResponseException;
-use TurFramework\Core\Router\Exceptions\RouteException;
 
-class Application extends AppServiceProvider
+class Application extends Container
 {
-
-
-    /**
-     * The singleton instance of the Container.
-     *
-     * @var self|null
-     */
-    protected static $appInstance;
 
     /**
      * The Tur framework version.
@@ -28,15 +18,53 @@ class Application extends AppServiceProvider
      * @var string
      */
     public const VERSION = '1.0';
-
+    /**
+     * The singleton instance of the Container.
+     *
+     * @var self|null
+     */
+    protected static $appInstance;
+ 
     public function __construct()
     {
-
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
+        // load config
+        LoadConfiguration::load($this);
+ 
+    }
 
+
+    /**
+     * run.
+     */
+    public function run(): void
+    {
+         
         // Register core services into the container
         $this->registerApplicationServices();
+        // Register the base service providers
+        $this->registerBaseServiceProvider();
+
+        // Resolve incoming HTTP request
+        Route::resolve(new Request);
+ 
+    }
+    /**
+     * Register the base service providers.
+     *
+     * @return void
+     */
+    protected function registerBaseServiceProvider()
+    {
+        $providers = $this->resolve('config')->get('app.providers');
+
+        foreach ($providers as $providerClass) {
+            $provider = new $providerClass($this);
+            if (method_exists($provider, 'register')) {
+                $provider->register();
+            }
+        }
     }
     /**
      * Get the singleton instance of Application.
@@ -52,6 +80,7 @@ class Application extends AppServiceProvider
 
         return static::$appInstance;
     }
+
     /**
      * Method to start the application.
      * 
@@ -59,19 +88,9 @@ class Application extends AppServiceProvider
      */
     public static function start(): void
     {
+
         self::getApplicationInstance()->run();
     }
-
-    /**
-     * run.
-     */
-    public function run(): void
-    {
-
-        Request::getInstance()->sendRequestThroughRouter();
-    }
-
-
     /**
      * Binds a specified abstract to a particular value within the container.
      *
@@ -165,12 +184,12 @@ class Application extends AppServiceProvider
             'view' => \TurFramework\Core\Views\Factory::class,
             'session' => \TurFramework\Core\Session\Store::class,
             'redirect' => \TurFramework\Core\Router\Redirector::class,
-            'config' => \TurFramework\Core\Configurations\Config::class,
             'request' => \TurFramework\Core\Http\Request::class,
-            'route' => (new \TurFramework\Core\Router\Router())->getInstance(),
+            'route' =>  \TurFramework\Core\Router\Router::class,
+
         ];
     }
-
+    
     /**
      * Register core services and their dependencies into the container.
      *
@@ -181,11 +200,8 @@ class Application extends AppServiceProvider
     {
         $services = $this->getCoreServices();
 
-
         foreach ($services as $key => $service) {
             $this->bind($key, $service);
         }
-
-        $this->register();
     }
 }

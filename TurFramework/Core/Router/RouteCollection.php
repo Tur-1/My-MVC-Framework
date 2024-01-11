@@ -19,11 +19,12 @@ class RouteCollection
      * @var string
      */
     public  $route;
-
+    public  $router;
     /**
      * A look-up table of routes by their names.
      */
     protected $nameList = [];
+
 
     /**
      * Add a route to the internal routes collection 
@@ -32,7 +33,7 @@ class RouteCollection
     public function addRoute($method, $route, $action, $name = null)
     {
 
-        $this->routes[$route] = $this->createNewRoute($method, $route, $this->getAction($action), $name);
+        return  $this->createNewRoute($method, $route, $this->getAction($action), $name);
     }
 
 

@@ -255,6 +255,6 @@ if (!function_exists('route')) {
     function route($routeName, $parameters = [])
     {
 
-        return app('route')->route($routeName, $parameters);
+        return app()->route($routeName, $parameters);
     }
 }
