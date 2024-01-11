@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use TurFramework\Core\Facades\Route;
-use TurFramework\Core\Application\ServiceProvider;
+use TurFramework\src\Facades\Route;
+use TurFramework\src\Application\ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {

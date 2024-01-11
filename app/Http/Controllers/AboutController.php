@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use TurFramework\Core\Http\Request;
+use TurFramework\src\Http\Request;
 
 class AboutController extends Controller
 {

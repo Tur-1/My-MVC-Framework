@@ -8,7 +8,7 @@
         },
        
         "files": [
-            "TurFramework/Core/Support/Helpers.php"
+            "TurFramework/src/Support/Helpers.php"
         ]
     },
     "authors": [

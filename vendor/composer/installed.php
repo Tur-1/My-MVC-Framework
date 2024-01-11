@@ -3,7 +3,7 @@
         'name' => 'tur1i/mvc',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '3cfe6b027169a631328a5c6b75c8a8cff66740d5',
+        'reference' => '7b9259a2c0319731e5bb6dcc2810dc0a5ce764b6',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -60,7 +60,7 @@
         'symfony/var-dumper' => array(
             'pretty_version' => '7.1.x-dev',
             'version' => '7.1.9999999.9999999-dev',
-            'reference' => 'cf0220fc7607476fd0d001ab3ed9e830d1fdda56',
+            'reference' => '7d6e2e42a0edaddc7ee867be51470187a68c3cfe',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/var-dumper',
             'aliases' => array(),
@@ -69,7 +69,7 @@
         'tur1i/mvc' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '3cfe6b027169a631328a5c6b75c8a8cff66740d5',
+            'reference' => '7b9259a2c0319731e5bb6dcc2810dc0a5ce764b6',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

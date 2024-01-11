@@ -11,7 +11,7 @@ class ComposerStaticInit427c8b7c03b4c416ee023fa53b836057
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '541a338a43e14cf9dd265e21ea4909d8' => __DIR__ . '/../..' . '/TurFramework/Core/Support/Helpers.php',
+        'f15ecf273dd5e6ac27c3124e9fbc44ea' => __DIR__ . '/../..' . '/TurFramework/src/Support/Helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (

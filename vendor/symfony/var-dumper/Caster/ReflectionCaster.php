@@ -42,7 +42,7 @@ class ReflectionCaster
 
         $a = static::castFunctionAbstract($c, $a, $stub, $isNested, $filter);
 
-        if (!str_contains($c->name, '{closure}')) {
+        if (!$c->isAnonymous()) {
             $stub->class = isset($a[$prefix.'class']) ? $a[$prefix.'class']->value.'::'.$c->name : $c->name;
             unset($a[$prefix.'class']);
         }
@@ -98,7 +98,7 @@ class ReflectionCaster
 
         if ($c instanceof \ReflectionNamedType) {
             $a += [
-                $prefix.'name' => $c instanceof \ReflectionNamedType ? $c->getName() : (string) $c,
+                $prefix.'name' => $c->getName(),
                 $prefix.'allowsNull' => $c->allowsNull(),
                 $prefix.'isBuiltin' => $c->isBuiltin(),
             ];
