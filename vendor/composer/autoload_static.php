@@ -47,7 +47,7 @@ class ComposerStaticInit427c8b7c03b4c416ee023fa53b836057
     public static $prefixDirsPsr4 = array (
         'TurFramework\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/TurFramework',
+            0 => __DIR__ . '/../..' . '/TurFramework/src',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (

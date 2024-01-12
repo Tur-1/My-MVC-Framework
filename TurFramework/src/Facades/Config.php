@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 
 
@@ -16,7 +16,7 @@ namespace TurFramework\src\Facades;
  * @method static void set($key, $value = null)
  * @method static array getMany($keys)
  * 
- * @see \TurFramework\src\Configurations\Repository
+ * @see \TurFramework\Configurations\Repository
  */
 class Config extends Facade
 {

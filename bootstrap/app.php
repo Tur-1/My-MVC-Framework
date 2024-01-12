@@ -4,7 +4,7 @@
 session_start();
 
 use Dotenv\Dotenv;
-use TurFramework\src\Application\Application;
+use TurFramework\Application\Application;
 
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();

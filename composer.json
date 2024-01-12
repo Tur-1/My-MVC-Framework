@@ -2,7 +2,7 @@
     "name": "tur1i/mvc",
     "autoload": {
         "psr-4": {
-            "TurFramework\\": "TurFramework/",
+            "TurFramework\\": "TurFramework/src",
             "App\\": "app/"
              
         },

@@ -3,7 +3,7 @@
         'name' => 'tur1i/mvc',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7b9259a2c0319731e5bb6dcc2810dc0a5ce764b6',
+        'reference' => '0b5aa86da7d70b9fbab1da216a115e59ba93d29d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -69,7 +69,7 @@
         'tur1i/mvc' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7b9259a2c0319731e5bb6dcc2810dc0a5ce764b6',
+            'reference' => '0b5aa86da7d70b9fbab1da216a115e59ba93d29d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

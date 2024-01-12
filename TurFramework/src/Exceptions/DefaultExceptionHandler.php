@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Exceptions;
+namespace TurFramework\Exceptions;
 
 class DefaultExceptionHandler
 {
@@ -16,6 +16,7 @@ class DefaultExceptionHandler
 
         $trace = $exception->getTrace();
 
+
         foreach ($trace as $key => $value) {
             if (isset($value['file'])) {
                 $line = $value['line'];
@@ -25,19 +26,18 @@ class DefaultExceptionHandler
                 $endLine = min(count($file_content), $line + 10); // Display 5 lines after the error line
 
                 $errorData[] = [
-                     'file' => $file,
-                     'line' => $line,
-                     'file_content' => $file_content,
-                     'start_line' => $startLine,
-                     'end_line' => $endLine,
-                    ];
+                    'file' => $file,
+                    'line' => $line,
+                    'file_content' => $file_content,
+                    'start_line' => $startLine,
+                    'end_line' => $endLine,
+                ];
             }
         }
 
-        ob_start();
+
         include self::$exceptionViewPath;
-        $outbpot = ob_get_clean();
-        echo $outbpot;
+
         exit; // Ensure that code below doesn't execute
     }
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace TurFramework\src\Router;
+namespace TurFramework\Router;
 
 use ReflectionClass;
-use TurFramework\src\Router\Exceptions\RouteException;
-use TurFramework\src\Router\Exceptions\RouteNotFoundException;
+use TurFramework\Router\Exceptions\RouteException;
+use TurFramework\Router\Exceptions\RouteNotFoundException;
 
 class RouteResolver
 {

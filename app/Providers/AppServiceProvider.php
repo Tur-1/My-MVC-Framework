@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Services\ExampleService;
 use App\Services\ExampleServiceInterface;
-use TurFramework\src\Application\ServiceProvider;
+use TurFramework\Application\ServiceProvider;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -18,7 +18,6 @@ class AppServiceProvider extends ServiceProvider
         /**
          *  $this->app->bind(interface::class, service::class);
          */
-
 
         $this->app->bind(ExampleServiceInterface::class, ExampleService::class);
     }

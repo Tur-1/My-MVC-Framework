@@ -1,19 +1,13 @@
 <?php
 
-namespace TurFramework\src\Configurations;
+namespace TurFramework\Configurations;
 
-use TurFramework\src\Facades\Cache;
-use TurFramework\src\Configurations\Repository;
+use TurFramework\Facades\Cache;
+use TurFramework\Configurations\Repository;
 
 class LoadConfiguration
 {
 
-    /**
-     * All of the configuration items.
-     *
-     * @var array
-     */
-    protected $items = [];
 
     /**
      * Load configurations.
@@ -23,16 +17,16 @@ class LoadConfiguration
      */
     public static function load($app)
     {
-
+        $items = [];
         $instance = new self();
 
         if (file_exists($cached = $instance->getCachedConfigPath())) {
             // If cached configurations exist, load them directly
-            $instance->items =   require $cached;
+            $items =  require $cached;
             $loadedFromCache = true;
         }
 
-        $config =  new Repository($instance->items);
+        $config = new Repository($items);
 
         $app->bind('config', fn () => $config);
 
@@ -40,7 +34,7 @@ class LoadConfiguration
             $instance->loadConfigFiles($config);
         }
     }
-/**
+    /**
      * Determine if the application configuration is cached.
      *
      * @return bool
@@ -59,7 +53,7 @@ class LoadConfiguration
     {
         return base_path('bootstrap/cache/config.php');
     }
-   /**
+    /**
      * Load all configurations from files
      * 
      */
@@ -72,5 +66,4 @@ class LoadConfiguration
             $repository->set($key, require $path);
         }
     }
-   
 }

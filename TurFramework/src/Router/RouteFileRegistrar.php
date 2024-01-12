@@ -1,9 +1,9 @@
 <?php
 
-namespace TurFramework\src\Router;
+namespace TurFramework\Router;
 
-use TurFramework\src\Facades\Cache;
-use TurFramework\src\Router\Exceptions\RouteException;
+use TurFramework\Facades\Cache;
+use TurFramework\Router\Exceptions\RouteException;
 
 class RouteFileRegistrar
 {
@@ -11,7 +11,7 @@ class RouteFileRegistrar
     /**
      * The router instance.
      *
-     * @var \TurFramework\src\Router\Router
+     * @var \TurFramework\Router\Router
      */
     protected $router;
 

@@ -1,9 +1,10 @@
 <?php
 
-namespace TurFramework\src\Container;
+namespace TurFramework\Container;
 
+use Closure;
 use Reflection;
-use TurFramework\src\Container\ContainerException;
+use TurFramework\Container\ContainerException;
 
 class Container
 {
@@ -58,19 +59,22 @@ class Container
      */
     public function resolve($abstract)
     {
+
         if ($this->has($abstract)) {
-            $entry = $this->bindings[$abstract];
-
-            if (is_callable($entry)) {
-                return call_user_func($entry, $this);
+            $concrete = $this->getAbstract($abstract);
+            if (is_callable($concrete)) {
+                return call_user_func($concrete, $this);
             }
-            $abstract = $entry;
-        }
 
+            $abstract = $concrete;
+        }
 
         return $this->build($abstract);
     }
-
+    public function getAbstract($abstract)
+    {
+        return $this->bindings[$abstract];
+    }
     public function build($abstract)
     {
 
@@ -84,14 +88,14 @@ class Container
         $constructorClass = $reflectionClass->getConstructor();
 
         if (!$constructorClass) {
-            return new $abstract();
+            return new $abstract($this);
         }
 
         // 3. Inspect the constructor parameters (dependencies)
         $parameters = $constructorClass->getParameters();
 
         if (!$parameters) {
-            return new $abstract();
+            return new $abstract($this);
         }
 
         // 4. If the constructor parameter is a class then try to resolve that class using the container
@@ -117,25 +121,18 @@ class Container
             $type = $dependency->getType();
 
             if (!$type) {
-                throw new ContainerException(
-                    'Failed to resolve class "' . $abstract . '" because param "' . $name . '" is missing a type hint'
-                );
+                throw ContainerException::missingTypeHint($abstract, $name);
             }
             if ($type instanceof \ReflectionUnionType) {
-                throw new ContainerException(
-                    'Failed to resolve class "' . $abstract . '" because of union type for param "' . $name . '"'
-                );
+                throw  ContainerException::unionType($abstract, $name);
             }
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
                 $results[] = $this->resolve($type->getName());
                 break;
             }
-            throw new ContainerException(
-                'Failed to resolve class "' . $abstract . '" because invalid param "' . $name . '"'
-            );
+            throw  ContainerException::invalidParam($abstract, $name);
             break;
         }
-
 
         return $results;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Support;
+namespace TurFramework\Support;
 
 use ArgumentCountError;
 use ArrayAccess;

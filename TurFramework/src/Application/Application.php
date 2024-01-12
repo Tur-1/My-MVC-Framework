@@ -1,13 +1,13 @@
 <?php
 
-namespace TurFramework\src\Application;
+namespace TurFramework\Application;
 
-use TurFramework\src\Http\Request;
-use TurFramework\src\Facades\Route;
-use TurFramework\src\Container\Container;
-use TurFramework\src\Exceptions\ExceptionHandler;
-use TurFramework\src\Configurations\LoadConfiguration;
-use TurFramework\src\Exceptions\HttpResponseException;
+use TurFramework\Http\Request;
+use TurFramework\Facades\Route;
+use TurFramework\Container\Container;
+use TurFramework\Exceptions\ExceptionHandler;
+use TurFramework\Configurations\LoadConfiguration;
+use TurFramework\Exceptions\HttpResponseException;
 
 class Application extends Container
 {
@@ -29,6 +29,10 @@ class Application extends Container
     {
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
+
+        // Register core services into the container
+        $this->registerApplicationServices();
+
         // load config
         LoadConfiguration::load($this);
     }
@@ -40,8 +44,6 @@ class Application extends Container
     public function run(): void
     {
 
-        // Register core services into the container
-        $this->registerApplicationServices();
         // Register the base service providers
         $this->registerBaseServiceProvider();
 
@@ -58,8 +60,8 @@ class Application extends Container
         $providers = $this->resolve('config')->get('app.providers');
 
         foreach ($providers as $providerClass) {
-            $provider = new $providerClass($this);
-            if (method_exists($provider, 'register')) {
+            if (method_exists($providerClass, 'register')) {
+                $provider = new $providerClass($this);
                 $provider->register();
             }
         }
@@ -176,17 +178,18 @@ class Application extends Container
     protected function getCoreServices(): array
     {
         return   [
-            'cache' => \TurFramework\src\Cache\Cache::class,
-            'view' => \TurFramework\src\Views\Factory::class,
-            'session' => \TurFramework\src\Session\Store::class,
-            'redirect' => \TurFramework\src\Router\Redirector::class,
-            'request' => \TurFramework\src\Http\Request::class,
-            'route' =>  \TurFramework\src\Router\Router::class,
-
+            'config' =>  \TurFramework\Configurations\Repository::class,
+            'cache' => \TurFramework\Cache\Cache::class,
+            'view' => \TurFramework\Views\Factory::class,
+            'session' => \TurFramework\Session\Store::class,
+            'redirect' => \TurFramework\Router\Redirector::class,
+            'request' => \TurFramework\Http\Request::class,
+            'route' =>  \TurFramework\Router\Router::class
         ];
     }
     public function getRouteByName($routeName, $params)
     {
+
         return Route::getRouteByName($routeName, $params);
     }
     /**

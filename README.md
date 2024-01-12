@@ -43,7 +43,7 @@ To define route, navigate to this file and update
 
 
 
-use TurFramework\src\Facades\Route;
+use TurFramework\Facades\Route;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomeController;
 
@@ -66,7 +66,7 @@ You can pass single or multiple parameter with route as like below
 
 
 
-use TurFramework\src\Facades\Route;
+use TurFramework\Facades\Route;
 use App\Http\Controllers\HomeController;
 
 Route::post('/user/{id}', [HomeController::class, 'user'])->name('user');
@@ -80,7 +80,7 @@ Now accept this param in your controller like:
 
 namespace App\Http\Controllers;
 
-use TurFramework\src\Http\Request;
+use TurFramework\Http\Request;
 
 class HomeController extends Controller
 {
@@ -103,7 +103,7 @@ We can use Request in this application like
 
 namespace App\Http\Controllers;
 
-use TurFramework\src\Http\Request;
+use TurFramework\Http\Request;
 
 class HomeController extends Controller
 {
@@ -139,7 +139,7 @@ Now look at that, how you can use dependency injection.
 
 namespace App\Http\Controllers;
 
-use TurFramework\src\Http\Request;
+use TurFramework\Http\Request;
 
 class HomeController extends Controller
 {
@@ -192,7 +192,7 @@ namespace App\Providers;
 
 use App\Services\ExampleService;
 use App\Services\ExampleServiceInterface;
-use TurFramework\src\Application\ServiceProvider;
+use TurFramework\Application\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -236,7 +236,7 @@ In the `providers` array, add the namespace of your custom service provider.
 
 namespace App\Providers;
 
-use TurFramework\src\Application\ServiceProvider;
+use TurFramework\Application\ServiceProvider;
 
 class CustomServiceProvider extends ServiceProvider
 {
@@ -270,8 +270,8 @@ In this service provider, you can use the `Route::group()` method to load route 
 
 namespace App\Providers;
 
-use TurFramework\src\Facades\Route;
-use TurFramework\src\Application\ServiceProvider;
+use TurFramework\Facades\Route;
+use TurFramework\Application\ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {

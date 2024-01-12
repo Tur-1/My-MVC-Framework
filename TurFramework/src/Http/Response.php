@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Http;
+namespace TurFramework\Http;
 
 class Response
 {

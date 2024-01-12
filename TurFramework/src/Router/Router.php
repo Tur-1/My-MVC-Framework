@@ -1,9 +1,9 @@
 <?php
 
-namespace TurFramework\src\Router;
+namespace TurFramework\Router;
 
 use Closure;
-use TurFramework\src\Router\Route;
+use TurFramework\Router\Route;
 
 class Router
 {
@@ -12,7 +12,12 @@ class Router
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
-
+    /**
+     * The singleton instance of the Container.
+     *
+     * @var self|null
+     */
+    protected static $instance;
     /**
      * The route object responsible for managing registered routes.
      *
@@ -41,6 +46,20 @@ class Router
     public function __construct()
     {
         $this->route = new Route();
+    }
+    /**
+     * Get the singleton instance of Application.
+     * 
+     * @return $appInstance
+     */
+    public static function getInstance()
+    {
+        // If no instance exists, create a new one
+        if (is_null(static::$instance)) {
+            static::$instance = new self();
+        }
+
+        return static::$instance;
     }
 
     /**

@@ -1,12 +1,12 @@
 <?php
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 /**
  * @method static void store(string $file, mixed $data)
  * @method static mixed|null loadFile(string $cacheFile)
  * @method static mixed|null exists(string $file)
- * @see \TurFramework\src\Cache\Cache
+ * @see \TurFramework\Cache\Cache
  */
 class Cache extends Facade
 {

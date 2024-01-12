@@ -1,8 +1,8 @@
 <?php
 
-namespace TurFramework\src\Views;
+namespace TurFramework\Views;
 
-use TurFramework\src\Views\ViewFactory;
+use TurFramework\Views\ViewFactory;
 
 class Factory
 {
@@ -16,7 +16,7 @@ class Factory
      * @param string $view The view file to be rendered.
      * @param array $data An array of data to be passed to the view. 
      * @throws ViewNotFoundException If the specified view file doesn't exist.
-     * @return \TurFramework\src\Views\ViewFactory
+     * @return \TurFramework\Views\ViewFactory
      */
     public function make($view, array $data = [])
     {
@@ -41,7 +41,7 @@ class Factory
      * @param Factory $Factory The Factory instance.
      * @param string $viewPath The path to the view file.
      * @param array $data An array of data to be passed to the view.
-     * @return \TurFramework\src\Views\ViewFactory
+     * @return \TurFramework\Views\ViewFactory
      */
     public function ViewInstance($viewPath,  $data)
     {

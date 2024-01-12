@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Views;
+namespace TurFramework\Views;
 
 class ViewFactory
 {

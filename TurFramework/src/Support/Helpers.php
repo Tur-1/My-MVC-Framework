@@ -1,15 +1,15 @@
 <?php
 
-use TurFramework\src\Facades\Config;
-use TurFramework\src\Application\Application;
-use TurFramework\src\Container\Container;
+use TurFramework\Facades\Config;
+use TurFramework\Application\Application;
+use TurFramework\Container\Container;
 
 if (!function_exists('app')) {
     /**
      * Get the available container instance or resolve an abstract.
      *
      * @param  string|null  $abstract
-     * @return \TurFramework\src\Application\Application|mixed
+     * @return \TurFramework\Application\Application|mixed
      */
 
     function app($abstract = null)
@@ -141,9 +141,9 @@ if (!function_exists('view')) {
     /**
      * Render a view with optional data.
      *
-     * @param  string  $viewPath  The path to the view to be rendered
-     * @param  array   $data      Optional data to be passed to the view
-     * @return \TurFramework\src\Views\ViewFactory
+     * @param  string  $viewPath 
+     * @param  array   $data
+     * @return \TurFramework\Views\ViewFactory
      */
     function view($viewPath, array $data = [])
     {
@@ -158,7 +158,7 @@ if (!function_exists('import')) {
      *
      * @param  string  $viewPath  The path to the view to be rendered
      * @param  array   $data      Optional data to be passed to the view
-     * @return \TurFramework\src\Views\ViewFactory
+     * @return \TurFramework\Views\ViewFactory
      */
     function import($viewPath, array $data = [])
     {
@@ -171,7 +171,7 @@ if (!function_exists('redirect')) {
     /**
      * Retrieves an instance of the Redirector class.
      *
-     * @return \TurFramework\src\Router\Redirector
+     * @return \TurFramework\Router\Redirector
      */
     function redirect()
     {
@@ -188,7 +188,7 @@ if (!function_exists('session')) {
      *
      * @param  array|string|null  $key
      * @param  mixed  $default
-     * @return mixed|\TurFramework\src\Session\Store
+     * @return mixed|\TurFramework\Session\Store
      */
     function session($key = null, $default = null)
     {
@@ -236,7 +236,7 @@ if (!function_exists('request')) {
     /**
      * Retrieves an instance of the current request or an input item from the request.
      *
-     * @return \TurFramework\src\Http\Request
+     * @return \TurFramework\Http\Request
      */
     function request()
     {

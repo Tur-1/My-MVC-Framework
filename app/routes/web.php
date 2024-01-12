@@ -1,6 +1,6 @@
 <?php
 
-use TurFramework\src\Facades\Route;
+use TurFramework\Facades\Route;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomeController;
 

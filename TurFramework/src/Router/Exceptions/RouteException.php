@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Router\Exceptions;
+namespace TurFramework\Router\Exceptions;
 
 
 class RouteException extends \Exception

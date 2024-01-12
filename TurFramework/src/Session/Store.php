@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Session;
+namespace TurFramework\Session;
 
 class Store
 {

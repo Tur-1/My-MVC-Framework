@@ -1,9 +1,9 @@
 <?php
 
-namespace TurFramework\src\Router;
+namespace TurFramework\Router;
 
-use TurFramework\src\Facades\Request;
-use TurFramework\src\Http\RedirectResponse;
+use TurFramework\Facades\Request;
+use TurFramework\Http\RedirectResponse;
 
 
 class Redirector
@@ -16,44 +16,33 @@ class Redirector
      *
      * @param string $url
      * @param int $status
-     * @return \TurFramework\src\Http\RedirectResponse The RedirectResponse instance.
+     * @return \TurFramework\Http\RedirectResponse The RedirectResponse instance.
      */
     public function to(string $url, $status = 302)
     {
-        $this->url = $url;
         $this->status_code = $status;
-
-        return $this->createRedirect();
+        return $this->createRedirect($url, $status);
     }
 
     /**
      * Redirect back to the previous URL.
      *
-     * @return \TurFramework\src\Http\RedirectResponse
+     * @return \TurFramework\Http\RedirectResponse
      */
     public function back()
     {
-        $this->url = (new Request)->previousUrl();
-        return $this->createRedirect();
+        return $this->createRedirect((new Request)->previousUrl());
     }
 
     /**
      * Create a RedirectResponse instance.
      *
-     * @return \TurFramework\src\Http\RedirectResponse
+     * @return \TurFramework\Http\RedirectResponse
      */
-    public function createRedirect()
+    public function createRedirect($url)
     {
-        return new RedirectResponse();
-    }
-
-    /**
-     * Perform the actual redirection upon object destruction.
-     * Sends a header to the client with the redirect location and status code.
-     */
-    public function __destruct()
-    {
-        header('Location: ' . $this->url, true, $this->status_code);
+        $response = new RedirectResponse();
+        $response->send($url, $this->status_code);
         exit();
     }
 }

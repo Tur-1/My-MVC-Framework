@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 use RuntimeException;
 

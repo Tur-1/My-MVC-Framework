@@ -1,16 +1,16 @@
 <?php
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 
 /**
 
- * @method \TurFramework\src\Http\RedirectResponse with($key, $value = null)
- * @method \TurFramework\src\Http\RedirectResponse withInput(array $input)
- * @method \TurFramework\src\Http\RedirectResponse withErrors(array $errors)
- * @method \TurFramework\src\Http\RedirectResponse back()
- * @method \TurFramework\src\Http\RedirectResponse to(string $url, $status = 302)
- * @see \TurFramework\src\Router\Redirector
+ * @method \TurFramework\Http\RedirectResponse with($key, $value = null)
+ * @method \TurFramework\Http\RedirectResponse withInput(array $input)
+ * @method \TurFramework\Http\RedirectResponse withErrors(array $errors)
+ * @method \TurFramework\Http\RedirectResponse back()
+ * @method \TurFramework\Http\RedirectResponse to(string $url, $status = 302)
+ * @see \TurFramework\Router\Redirector
  */
 class Redirect extends Facade
 {

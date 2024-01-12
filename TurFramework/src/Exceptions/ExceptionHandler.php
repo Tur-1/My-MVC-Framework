@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Exceptions;
+namespace TurFramework\Exceptions;
 
 use Error;
 use DateError;
@@ -31,9 +31,37 @@ class ExceptionHandler
 
         set_error_handler([self::class,  'errorHandler']);
         set_exception_handler([self::class,  'customExceptionHandler']);
+        register_shutdown_function([self::class, 'handleShutdown']);
+    }
+    /**
+     * Handle the PHP shutdown event.
+     *
+     * @return void
+     */
+    public static function handleShutdown()
+    {
+
+        if (!is_null($error = error_get_last()) && static::isFatal($error['type'])) {
+
+            try {
+                throw new ErrorException($error['message'], 0, $error['type'], $error['file'],  $error['line']);
+            } catch (\ErrorException $exception) {
+
+                self::getDefaultExceptionHandler($exception);
+            }
+        }
     }
 
-
+    /**
+     * Determine if the error type is fatal.
+     *
+     * @param  int  $type
+     * @return bool
+     */
+    protected static function isFatal($type)
+    {
+        return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
+    }
     public static function errorHandler($severity, $message, $file, $line)
     {
 

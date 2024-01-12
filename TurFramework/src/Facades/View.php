@@ -1,13 +1,13 @@
 <?php
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 
 /**
 
- * @method \TurFramework\src\Views\ViewFactory with($key, $value = null)
- * @method static \TurFramework\src\Views\ViewFactory make($view, array $data = [])
- * @see \TurFramework\src\Views\Factory
+ * @method \TurFramework\Views\ViewFactory with($key, $value = null)
+ * @method static \TurFramework\Views\ViewFactory make($view, array $data = [])
+ * @see \TurFramework\Views\Factory
  */
 class View extends Facade
 {

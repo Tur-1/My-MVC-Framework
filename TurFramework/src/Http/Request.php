@@ -1,9 +1,7 @@
 <?php
 
-namespace TurFramework\src\Http;
+namespace TurFramework\Http;
 
-use TurFramework\src\Facades\Route;
-use TurFramework\src\Router\Router;
 
 class Request
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Cache;
+namespace TurFramework\Cache;
 
 class Cache
 {

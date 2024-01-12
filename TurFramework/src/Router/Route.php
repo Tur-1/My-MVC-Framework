@@ -1,9 +1,9 @@
 <?php
 
-namespace TurFramework\src\Router;
+namespace TurFramework\Router;
 
 use Closure;
-use TurFramework\src\Router\Exceptions\RouteException;
+use TurFramework\Router\Exceptions\RouteException;
 
 class Route
 {

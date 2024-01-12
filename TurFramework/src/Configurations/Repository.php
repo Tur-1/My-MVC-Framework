@@ -1,10 +1,10 @@
 <?php
 
-namespace TurFramework\src\Configurations;
+namespace TurFramework\Configurations;
 
 
 use ArrayAccess;
-use TurFramework\src\Support\Arr;
+use TurFramework\Support\Arr;
 
 class Repository implements ArrayAccess
 {

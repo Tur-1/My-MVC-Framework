@@ -1,6 +1,6 @@
 <?php
 
-use TurFramework\src\Facades\Route;
+use TurFramework\Facades\Route;
 
 
 

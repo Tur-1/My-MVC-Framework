@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 
 
@@ -19,7 +19,7 @@ namespace TurFramework\src\Facades;
  * @method static string fullUrl() 
  * @method static string getPath()
  * @method static array getValidMethods() 
- * @see \TurFramework\src\Http\HttpRequest
+ * @see \TurFramework\Http\HttpRequest
  */
 class Request extends Facade
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\src\Facades;
+namespace TurFramework\Facades;
 
 
 
@@ -13,7 +13,7 @@ namespace TurFramework\src\Facades;
  * @method static void put(string $key, $value)
  * @method static mixed get(string $key, $default = null)
  * 
- * @see \TurFramework\src\Session\Store
+ * @see \TurFramework\Session\Store
  */
 class Session extends Facade
 {

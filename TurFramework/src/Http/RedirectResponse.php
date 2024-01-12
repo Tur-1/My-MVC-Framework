@@ -1,8 +1,8 @@
 <?php
 
-namespace TurFramework\src\Http;
+namespace TurFramework\Http;
 
-use TurFramework\src\Support\Session;
+use TurFramework\Facades\Session;
 
 class RedirectResponse
 {
@@ -35,11 +35,27 @@ class RedirectResponse
 
         return $this;
     }
-
-    public function __destruct()
+    /**
+     * Flash the stored data to the session.
+     *
+     * @return void
+     */
+    public function flashToSession()
     {
         foreach ($this->withData as $key => $value) {
             Session::flash($key, $value);
         }
+    }
+
+    /**
+     * Send the HTTP response.
+     *
+     * @return void
+     */
+    public function send($url, $status_code)
+    {
+        $this->flashToSession();
+
+        return header('Location: ' . $url, true, $status_code);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use TurFramework\src\Http\Request;
+use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
 
 class HomeController extends Controller
