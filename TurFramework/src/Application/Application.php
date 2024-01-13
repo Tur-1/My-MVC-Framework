@@ -28,10 +28,13 @@ class Application extends Container
         ExceptionHandler::registerExceptions();
 
 
-        $this->registerCoreContainerAliases();
-
+        // 1- laod Configuration and bind config into the Container 
         $this->loadConfiguration();
 
+        // 2- register Core Container Aliases
+        $this->registerCoreContainerAliases();
+
+        // 3- register service Providers
         $this->registerConfiguredProviders();
     }
 
@@ -143,10 +146,8 @@ class Application extends Container
      *
      * @param  int  $code
      * @param  string  $message 
-     * @return never
-     *
+     * @return never 
      * @throws HttpResponseException
-     *
      */
     public function abort($code, $message = '')
     {
@@ -156,18 +157,15 @@ class Application extends Container
     protected function getCoreContainerAliases(): array
     {
         return [
+            'router' =>  \TurFramework\Router\Router::class,
             'cache' => \TurFramework\Cache\Cache::class,
             'view' => \TurFramework\Views\Factory::class,
             'session' => \TurFramework\Session\Store::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
-            'route' =>  \TurFramework\Router\Router::class
         ];
     }
-    public function getRouteByName($routeName, $params)
-    {
-        return Route::getRouteByName($routeName, $params);
-    }
+
     /**
      * Register the core class aliases in the container.
      *

@@ -73,26 +73,12 @@ class Container
     public function bind($abstract, $concrete = null, $shared = false)
     {
 
-        // If no concrete type was given, we will simply set the concrete type to the
-        // abstract type. After that, the concrete type to be registered as shared
-        // without being forced to state their classes in both of the parameters.
+        // If no concrete type was given, 
+        // we will simply set the concrete type to the abstract type.
         if (is_null($concrete)) {
             $concrete = $abstract;
         }
-
-        // If the factory is not a Closure, it means it is just a class name which is
-        // bound into this container to the abstract type and we will just wrap it
-        // up inside its own Closure to give us more convenience when extending.
-        if (!$concrete instanceof Closure) {
-            if (!is_string($concrete)) {
-                throw new \TypeError(self::class . '::bind(): Argument #2 ($concrete) must be of type Closure|string|null');
-            }
-
-            $concrete =  $this->getConcrete($concrete);
-        }
-
-
-        $this->bindings[$abstract] =  $concrete;
+        $this->bindings[$abstract] = $this->build($concrete);
     }
 
 
@@ -133,23 +119,7 @@ class Container
      */
     protected function getConcrete($abstract)
     {
-        if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract];
-        }
-
-        return $abstract;
-    }
-
-    /**
-     * Determine if the given concrete is buildable.
-     *
-     * @param  mixed  $concrete
-     * @param  string  $abstract
-     * @return bool
-     */
-    protected function isBuildable($concrete, $abstract)
-    {
-        return $concrete === $abstract || $concrete instanceof Closure;
+        return $this->bindings[$abstract] ?? $abstract;
     }
 
     /**
@@ -162,14 +132,15 @@ class Container
     public function resolve($abstract)
     {
 
+        // 1- Get the concrete type for a given abstract.
         $concrete = $this->getConcrete($abstract);
 
-        $object = $this->isBuildable($concrete, $abstract)
-            ? $this->build($concrete)
-            : $this->make($concrete);
-
-        return $object;
+        if ($this->has($abstract)) {
+            return $concrete;
+        }
+        return $this->build($concrete);
     }
+
 
     protected function build($concrete)
     {

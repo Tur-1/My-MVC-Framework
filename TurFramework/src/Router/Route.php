@@ -138,7 +138,7 @@ class Route
      * @return string The generated URL.
      * @throws RouteException
      */
-    public function route(string $routeName, array $parameters = []): string
+    public function getRouteByName(string $routeName, array $parameters = []): string
     {
 
         $route = $this->getByName($routeName);

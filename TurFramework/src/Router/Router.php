@@ -161,10 +161,14 @@ class Router
 
     public function getRouteByName($routeName, $params)
     {
-        return $this->route->route($routeName, $params);
+        return $this->route->getRouteByName($routeName, $params);
     }
 
 
+    public function getRoutes()
+    {
+        return $this->route->getRoutes();
+    }
 
     /**
      * Add a route to the internal routes collection.

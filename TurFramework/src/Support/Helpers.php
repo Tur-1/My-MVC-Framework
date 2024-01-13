@@ -254,11 +254,10 @@ if (!function_exists('route')) {
      *
      * @param string $routeName
      * @param array  $parameters
-     * @return mixed
+     * @return string
      */
-    function route($routeName, $parameters = [])
+    function route($routeName, $parameters = []): string
     {
-
-        return app()->getRouteByName($routeName, $parameters);
+        return app('router')->getRouteByName($routeName, $parameters);
     }
 }
