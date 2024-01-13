@@ -5,8 +5,8 @@ namespace TurFramework\Application;
 use TurFramework\Http\Request;
 use TurFramework\Facades\Route;
 use TurFramework\Container\Container;
+use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
-use TurFramework\Configurations\LoadConfiguration;
 use TurFramework\Exceptions\HttpResponseException;
 
 class Application extends Container
@@ -18,23 +18,21 @@ class Application extends Container
      * @var string
      */
     public const VERSION = '1.0';
-    /**
-     * The singleton instance of the Container.
-     *
-     * @var self|null
-     */
-    protected static $appInstance;
+
 
     public function __construct()
     {
+        static::setInstance($this);
+
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
 
-        // Register core services into the container
-        $this->registerApplicationServices();
 
-        // load config
-        LoadConfiguration::load($this);
+        $this->registerCoreContainerAliases();
+
+        $this->loadConfiguration();
+
+        $this->registerConfiguredProviders();
     }
 
 
@@ -43,78 +41,58 @@ class Application extends Container
      */
     public function run(): void
     {
-
-        // Register the base service providers
-        $this->registerBaseServiceProvider();
-
         // Resolve incoming HTTP request
         Route::resolve(new Request);
     }
+
     /**
-     * Register the base service providers.
+     * Register a service provider with the application.
+     *
+     * @param  \TurFramework\Support\ServiceProvider|string  $provider
+     * @return \TurFramework\Support\ServiceProvider
+     */
+    public function register($provider)
+    {
+        if (is_string($provider)) {
+            $provider = $this->resolveProvider($provider);
+        }
+        $provider->register();
+    }
+
+    /**
+     * Resolve a service provider instance from the class name.
+     *
+     * @param  string  $provider
+     * @return \TurFramework\Support\ServiceProvider
+     */
+    public function resolveProvider($provider)
+    {
+        return new $provider($this);
+    }
+
+    /**
+     * Register all of the configured providers.
      *
      * @return void
      */
-    protected function registerBaseServiceProvider()
+    public function registerConfiguredProviders()
     {
-        $providers = $this->resolve('config')->get('app.providers');
 
-        foreach ($providers as $providerClass) {
-            if (method_exists($providerClass, 'register')) {
-                $provider = new $providerClass($this);
-                $provider->register();
-            }
+        $providers = $this->make('config')->get('app.providers');
+
+        foreach ($providers as $provider) {
+            $this->register($provider);
         }
     }
     /**
-     * Get the singleton instance of Application.
-     * 
-     * @return $appInstance
-     */
-    public static function getApplicationInstance()
-    {
-        // If no instance exists, create a new one
-        if (is_null(static::$appInstance)) {
-            static::$appInstance = new static;
-        }
-
-        return static::$appInstance;
-    }
-
-    /**
-     * Method to start the application.
-     * 
-     * Starts the application by invoking the run method on the singleton instance.
-     */
-    public static function start(): void
-    {
-
-        self::getApplicationInstance()->run();
-    }
-    /**
-     * Binds a specified abstract to a particular value within the container.
+     * load Configuration
      *
-     * @param string $abstract
-     * @param mixed  $concrete 
-     * @return void
+     * @return \TurFramework\Configurations\ConfigLoader
      */
-    public function bind($abstract, $concrete)
+    public function loadConfiguration()
     {
-        parent::bind($abstract, $concrete);
+        return ConfigLoader::load($this);
     }
-
-
-    /**
-     * Resolves and retrieves the value associated with the given key from the container.
-     *
-     * @param string $abstract
-     * @return mixed
-     */
-    public function resolve($abstract)
-    {
-        return parent::resolve($abstract);
-    }
-
 
     /**
      * Get the version number of the application.
@@ -175,10 +153,9 @@ class Application extends Container
         throw new HttpResponseException(message: $message, code: $code);
     }
 
-    protected function getCoreServices(): array
+    protected function getCoreContainerAliases(): array
     {
-        return   [
-            'config' =>  \TurFramework\Configurations\Repository::class,
+        return [
             'cache' => \TurFramework\Cache\Cache::class,
             'view' => \TurFramework\Views\Factory::class,
             'session' => \TurFramework\Session\Store::class,
@@ -189,21 +166,24 @@ class Application extends Container
     }
     public function getRouteByName($routeName, $params)
     {
-
         return Route::getRouteByName($routeName, $params);
     }
     /**
-     * Register core services and their dependencies into the container.
+     * Register the core class aliases in the container.
      *
-     * @param array $services
      * @return void
      */
-    public function registerApplicationServices()
+    public function registerCoreContainerAliases()
     {
-        $services = $this->getCoreServices();
-
-        foreach ($services as $key => $service) {
-            $this->bind($key, $service);
+        $aliases = $this->getCoreContainerAliases();
+        foreach ($aliases as $key => $alias) {
+            if (is_array($alias)) {
+                foreach ($alias as $value) {
+                    $this->bind($key, $value);
+                }
+            } else {
+                $this->bind($key, $alias);
+            }
         }
     }
 }

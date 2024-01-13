@@ -9,17 +9,21 @@ if (!function_exists('app')) {
      * Get the available container instance or resolve an abstract.
      *
      * @param  string|null  $abstract
-     * @return \TurFramework\Application\Application|mixed
+     * @return \TurFramework\Container\Container|mixed
      */
 
     function app($abstract = null)
     {
-
         if (is_null($abstract)) {
-            return Application::getApplicationInstance();
+            return Container::getInstance();
         }
 
-        return Application::getApplicationInstance()->resolve($abstract);
+        return Container::getInstance()->make($abstract);
+        // if (is_null($abstract)) {
+        //     return Application::getApplicationInstance();
+        // }
+
+        // return Application::getApplicationInstance()->make($abstract);
     }
 }
 

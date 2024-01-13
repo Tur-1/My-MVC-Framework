@@ -20,26 +20,51 @@ abstract class Facade
         throw new RuntimeException('Facade does not implement getFacadeAccessor method.');
     }
 
-    protected static function createFacadeInstance()
+    /**
+     * Get the root object behind the facade.
+     *
+     * @return mixed
+     */
+    public static function getFacadeRoot()
     {
-
-        return app()->resolve(static::getFacadeAccessor());
+        return static::resolveFacadeInstance(static::getFacadeAccessor());
     }
-
-    protected static function getResolvedInstance($facadeAccessor)
+    protected static function createFacadeInstance($facadeAccessor)
     {
-        if (!isset(static::$resolvedInstances[$facadeAccessor])) {
-            static::$resolvedInstances[$facadeAccessor] = static::createFacadeInstance($facadeAccessor);
+
+        return app()->make($facadeAccessor);
+    }
+    /**
+     * Resolve the facade root instance from the container.
+     *
+     * @param  string  $name
+     * @return mixed
+     */
+    protected static function resolveFacadeInstance($facadeAccessor)
+    {
+        if (static::isNotExsits($facadeAccessor)) {
+            static::addResolvedInstances($facadeAccessor, static::createFacadeInstance($facadeAccessor));
         }
 
-
-        return static::$resolvedInstances[$facadeAccessor];
+        return static::getResolvedInstances($facadeAccessor);
     }
 
+    private static function isNotExsits($facadeAccessor)
+    {
+        return !isset(static::$resolvedInstances[$facadeAccessor]);
+    }
+    private static function addResolvedInstances($facadeAccessor, $instance)
+    {
+        return static::$resolvedInstances[$facadeAccessor] = $instance;
+    }
+
+    private static function getResolvedInstances($facadeAccessor)
+    {
+        return static::$resolvedInstances[$facadeAccessor];
+    }
     public static function __callStatic($method, $args)
     {
-
-        $instance = static::getResolvedInstance(static::getFacadeAccessor());
+        $instance = static::getFacadeRoot();
 
         return $instance->{$method}(...$args);
     }

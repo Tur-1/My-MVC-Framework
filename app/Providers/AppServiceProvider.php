@@ -4,8 +4,7 @@ namespace App\Providers;
 
 use App\Services\ExampleService;
 use App\Services\ExampleServiceInterface;
-use TurFramework\Application\ServiceProvider;
-
+use TurFramework\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

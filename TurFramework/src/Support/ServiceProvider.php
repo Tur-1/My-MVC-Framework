@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\Application;
+namespace TurFramework\Support;
 
 
 abstract class ServiceProvider

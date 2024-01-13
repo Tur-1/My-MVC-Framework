@@ -8,21 +8,32 @@ use TurFramework\Container\ContainerException;
 
 class Container
 {
+
     /**
-     * The array of registered bindings.
+     * An array of the types that have been resolved.
      *
-     * @var array
+     * @var bool[]
+     */
+    protected $resolved = [];
+
+    /**
+     * The container's bindings.
+     *
+     * @var array[]
      */
     protected $bindings = [];
-
+    /**
+     * The registered type aliases.
+     *
+     * @var string[]
+     */
+    protected $aliases = [];
     /**
      * The singleton instance of the Container.
      *
      * @var self|null
      */
     protected static $instance;
-
-
 
     /**
      * Get the globally available instance of the container.
@@ -39,15 +50,106 @@ class Container
     }
 
     /**
+     * Set the shared instance of the container.
+     *
+     * @param  Container|null  $container
+     * @return Container|static
+     */
+    public static function setInstance(Container $container = null)
+    {
+        return static::$instance = $container;
+    }
+
+    /**
      * Register a binding with the container.
+     *
+     * @param  string  $abstract
+     * @param  \Closure|string|null  $concrete
+     * @param  bool  $shared
+     * @return void
+     *
+     * @throws \TypeError
+     */
+    public function bind($abstract, $concrete = null, $shared = false)
+    {
+
+        // If no concrete type was given, we will simply set the concrete type to the
+        // abstract type. After that, the concrete type to be registered as shared
+        // without being forced to state their classes in both of the parameters.
+        if (is_null($concrete)) {
+            $concrete = $abstract;
+        }
+
+        // If the factory is not a Closure, it means it is just a class name which is
+        // bound into this container to the abstract type and we will just wrap it
+        // up inside its own Closure to give us more convenience when extending.
+        if (!$concrete instanceof Closure) {
+            if (!is_string($concrete)) {
+                throw new \TypeError(self::class . '::bind(): Argument #2 ($concrete) must be of type Closure|string|null');
+            }
+
+            $concrete =  $this->getConcrete($concrete);
+        }
+
+
+        $this->bindings[$abstract] =  $concrete;
+    }
+
+
+
+
+    /**
+     * Register a shared binding in the container.
      *
      * @param  string  $abstract
      * @param  \Closure|string|null  $concrete
      * @return void
      */
-    public function bind($abstract, $concrete)
+    public function singleton($abstract, $concrete = null)
     {
-        $this->add($abstract, $concrete);
+        $this->bind($abstract, $concrete, true);
+    }
+
+
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param  string|callable  $abstract
+     * @param  array  $parameters
+     * @return mixed
+     *
+     */
+    public function make($abstract)
+    {
+        return $this->resolve($abstract);
+    }
+
+
+    /**
+     * Get the concrete type for a given abstract.
+     *
+     * @param  string|callable  $abstract
+     * @return mixed
+     */
+    protected function getConcrete($abstract)
+    {
+        if (isset($this->bindings[$abstract])) {
+            return $this->bindings[$abstract];
+        }
+
+        return $abstract;
+    }
+
+    /**
+     * Determine if the given concrete is buildable.
+     *
+     * @param  mixed  $concrete
+     * @param  string  $abstract
+     * @return bool
+     */
+    protected function isBuildable($concrete, $abstract)
+    {
+        return $concrete === $abstract || $concrete instanceof Closure;
     }
 
     /**
@@ -60,46 +162,47 @@ class Container
     public function resolve($abstract)
     {
 
-        if ($this->has($abstract)) {
-            $concrete = $this->getAbstract($abstract);
-            if (is_callable($concrete)) {
-                return call_user_func($concrete, $this);
-            }
+        $concrete = $this->getConcrete($abstract);
 
-            $abstract = $concrete;
+        $object = $this->isBuildable($concrete, $abstract)
+            ? $this->build($concrete)
+            : $this->make($concrete);
+
+        return $object;
+    }
+
+    protected function build($concrete)
+    {
+        // If the concrete type is actually a Closure, we will just execute it and
+        // hand back the results of the functions, which allows functions to be
+        // used as resolvers for more fine-tuned resolution of these objects.
+        if ($concrete instanceof Closure) {
+            return $concrete($this);
         }
 
-        return $this->build($abstract);
-    }
-    public function getAbstract($abstract)
-    {
-        return $this->bindings[$abstract];
-    }
-    public function build($abstract)
-    {
 
         // 1. Inspect the class that we are trying to get from the container
-        $reflectionClass = new \ReflectionClass($abstract);
+        $reflectionClass = new \ReflectionClass($concrete);
 
         if (!$reflectionClass->isInstantiable()) {
-            throw new ContainerException('Class "' . $abstract . '" is not instantiable');
+            throw new ContainerException('Class "' . $concrete . '" is not instantiable');
         }
         // 2. Inspect the constructor of the class
         $constructorClass = $reflectionClass->getConstructor();
 
         if (!$constructorClass) {
-            return new $abstract($this);
+            return new $concrete($this);
         }
 
         // 3. Inspect the constructor parameters (dependencies)
         $parameters = $constructorClass->getParameters();
 
         if (!$parameters) {
-            return new $abstract($this);
+            return new $concrete($this);
         }
 
         // 4. If the constructor parameter is a class then try to resolve that class using the container
-        $dependencies = $this->resolveDependencies($parameters, $abstract);
+        $dependencies = $this->resolveDependencies($parameters, $concrete);
 
         return $reflectionClass->newInstanceArgs($dependencies);
     }
@@ -165,7 +268,7 @@ class Container
      * @param \Closure|string|null  $concrete
      * @return void
      */
-    private function add($abstract, $concrete)
+    private function addAbstract($abstract, $concrete)
     {
         $this->bindings[$abstract] = $concrete;
     }

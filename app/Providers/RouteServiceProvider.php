@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use TurFramework\Facades\Route;
-use TurFramework\Application\ServiceProvider;
+use TurFramework\Support\ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {

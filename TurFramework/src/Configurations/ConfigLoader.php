@@ -2,10 +2,10 @@
 
 namespace TurFramework\Configurations;
 
-use TurFramework\Facades\Cache;
+use TurFramework\Application\Application;
 use TurFramework\Configurations\Repository;
 
-class LoadConfiguration
+class ConfigLoader
 {
 
 
@@ -15,7 +15,7 @@ class LoadConfiguration
      * Checks if cached configurations exist. If they do, loads them;
      *  otherwise, loads from config files and caches them.
      */
-    public static function load($app)
+    public static function load(Application $app)
     {
         $items = [];
         $instance = new self();

@@ -165,6 +165,7 @@ class Router
     }
 
 
+
     /**
      * Add a route to the internal routes collection.
      *
