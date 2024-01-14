@@ -10,24 +10,12 @@ class Container
 {
 
     /**
-     * An array of the types that have been resolved.
-     *
-     * @var bool[]
-     */
-    protected $resolved = [];
-
-    /**
      * The container's bindings.
      *
      * @var array[]
      */
     protected $bindings = [];
-    /**
-     * The registered type aliases.
-     *
-     * @var string[]
-     */
-    protected $aliases = [];
+
     /**
      * The singleton instance of the Container.
      *
@@ -65,12 +53,11 @@ class Container
      *
      * @param  string  $abstract
      * @param  \Closure|string|null  $concrete
-     * @param  bool  $shared
      * @return void
      *
      * @throws \TypeError
      */
-    public function bind($abstract, $concrete = null, $shared = false)
+    public function bind($abstract, $concrete = null)
     {
 
         // If no concrete type was given, 
@@ -78,24 +65,14 @@ class Container
         if (is_null($concrete)) {
             $concrete = $abstract;
         }
+        // If the factory is not a Closure or string, throw TypeError
+        if (!$concrete instanceof Closure && !is_string($concrete)) {
+            throw new \TypeError(self::class . '::bind(): Argument #2 ($concrete) must be of type Closure|string|null');
+        }
+
+
         $this->bindings[$abstract] = $this->build($concrete);
     }
-
-
-
-
-    /**
-     * Register a shared binding in the container.
-     *
-     * @param  string  $abstract
-     * @param  \Closure|string|null  $concrete
-     * @return void
-     */
-    public function singleton($abstract, $concrete = null)
-    {
-        $this->bind($abstract, $concrete, true);
-    }
-
 
     /**
      * Resolve the given type from the container.
@@ -127,7 +104,6 @@ class Container
      *
      * @param string $abstract
      * @return mixed
-     * @throws ContainerException If the key does not exist in the container.
      */
     public function resolve($abstract)
     {
@@ -230,17 +206,5 @@ class Container
     public function getBindings()
     {
         return $this->bindings;
-    }
-
-    /**
-     * Add a key-callable pair to the container bindings.
-     *
-     * @param string $abstract
-     * @param \Closure|string|null  $concrete
-     * @return void
-     */
-    private function addAbstract($abstract, $concrete)
-    {
-        $this->bindings[$abstract] = $concrete;
     }
 }

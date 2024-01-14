@@ -12,12 +12,7 @@ class Router
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
-    /**
-     * The singleton instance of the Container.
-     *
-     * @var self|null
-     */
-    protected static $instance;
+
     /**
      * The route object responsible for managing registered routes.
      *
@@ -47,20 +42,6 @@ class Router
     {
         $this->route = new Route();
     }
-    /**
-     * Get the singleton instance of Application.
-     * 
-     * @return $appInstance
-     */
-    public static function getInstance()
-    {
-        // If no instance exists, create a new one
-        if (is_null(static::$instance)) {
-            static::$instance = new self();
-        }
-
-        return static::$instance;
-    }
 
     /**
      * Resolve the current request to find and handle the appropriate route.
@@ -68,7 +49,7 @@ class Router
      */
     public function resolve($request)
     {
-        return RouteResolver::resolve(
+        return RouteResolver::resolveRoute(
             $request->getPath(),
             $request->getMethod(),
             $this->route->routes

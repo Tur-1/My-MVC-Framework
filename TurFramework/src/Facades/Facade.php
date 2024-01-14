@@ -42,6 +42,7 @@ abstract class Facade
      */
     protected static function resolveFacadeInstance($facadeAccessor)
     {
+
         if (static::isNotExsits($facadeAccessor)) {
             static::addResolvedInstances($facadeAccessor, static::createFacadeInstance($facadeAccessor));
         }

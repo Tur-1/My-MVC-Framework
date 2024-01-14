@@ -1,7 +1,5 @@
 <?php
 
-use TurFramework\Facades\Config;
-use TurFramework\Application\Application;
 use TurFramework\Container\Container;
 
 if (!function_exists('app')) {
@@ -19,11 +17,6 @@ if (!function_exists('app')) {
         }
 
         return Container::getInstance()->make($abstract);
-        // if (is_null($abstract)) {
-        //     return Application::getApplicationInstance();
-        // }
-
-        // return Application::getApplicationInstance()->make($abstract);
     }
 }
 

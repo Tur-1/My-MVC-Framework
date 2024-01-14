@@ -175,13 +175,7 @@ class Application extends Container
     {
         $aliases = $this->getCoreContainerAliases();
         foreach ($aliases as $key => $alias) {
-            if (is_array($alias)) {
-                foreach ($alias as $value) {
-                    $this->bind($key, $value);
-                }
-            } else {
-                $this->bind($key, $alias);
-            }
+            $this->bind($key, $alias);
         }
     }
 }

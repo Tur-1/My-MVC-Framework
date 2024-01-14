@@ -15,10 +15,8 @@ class RouteResolver
      *
      * @param mixed $action 
      */
-    public static function resolve($path, $requestMethod, $routes)
+    public static function resolveRoute($path, $requestMethod, $routes)
     {
-
-
         $instance = new self();
 
         $route = $instance->matchRoute($path, $requestMethod, $routes);
