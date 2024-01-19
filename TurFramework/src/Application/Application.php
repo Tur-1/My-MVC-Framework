@@ -24,10 +24,6 @@ class Application extends Container
     {
         static::setInstance($this);
 
-        // Register exceptions with the ExceptionHandler
-        ExceptionHandler::registerExceptions();
-
-
         // 1- laod Configuration and bind config into the Container 
         $this->loadConfiguration();
 
@@ -36,6 +32,10 @@ class Application extends Container
 
         // 3- register service Providers
         $this->registerConfiguredProviders();
+
+
+        // Register exceptions with the ExceptionHandler
+        ExceptionHandler::registerExceptions();
     }
 
 
@@ -108,20 +108,6 @@ class Application extends Container
     }
 
     /**
-     * Get app property.
-     *
-     * @param mixed name
-     *
-     * @return $name
-     */
-    public function __get($name)
-    {
-        if (property_exists($this, $name)) {
-            return $this->$name;
-        }
-    }
-
-    /**
      * Determine if the application is in the local environment.
      *
      * @return bool
@@ -159,7 +145,7 @@ class Application extends Container
         return [
             'router' =>  \TurFramework\Router\Router::class,
             'cache' => \TurFramework\Cache\Cache::class,
-            'view' => \TurFramework\Views\Factory::class,
+            'view' => \TurFramework\Views\View::class,
             'session' => \TurFramework\Session\Store::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,

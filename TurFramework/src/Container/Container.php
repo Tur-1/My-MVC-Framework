@@ -105,7 +105,7 @@ class Container
      * @param string $abstract
      * @return mixed
      */
-    public function resolve($abstract)
+    protected function resolve($abstract)
     {
 
         // 1- Get the concrete type for a given abstract.

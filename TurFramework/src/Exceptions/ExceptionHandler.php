@@ -29,9 +29,19 @@ class ExceptionHandler
     public static function registerExceptions()
     {
 
-        set_error_handler([self::class,  'errorHandler']);
-        set_exception_handler([self::class,  'customExceptionHandler']);
-        register_shutdown_function([self::class, 'handleShutdown']);
+
+        if (config('app.debug') == 'true') {
+            set_error_handler([self::class,  'errorHandler']);
+            set_exception_handler([self::class,  'customExceptionHandler']);
+            register_shutdown_function([self::class, 'handleShutdown']);
+        } else {
+
+            try {
+                throw new HttpResponseException(code: 500);
+            } catch (HttpResponseException $ex) {
+                self::handleHttpResponseException($ex);
+            }
+        }
     }
     /**
      * Handle the PHP shutdown event.

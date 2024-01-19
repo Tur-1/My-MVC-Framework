@@ -2,6 +2,7 @@
 
 namespace TurFramework\Router;
 
+use Closure;
 use ReflectionClass;
 use TurFramework\Router\Exceptions\RouteException;
 use TurFramework\Router\Exceptions\RouteNotFoundException;
@@ -15,14 +16,24 @@ class RouteResolver
      *
      * @param mixed $action 
      */
-    public static function resolveRoute($path, $requestMethod, $routes)
+    public static function handle($path, $requestMethod, $routes)
     {
         $instance = new self();
 
         $route = $instance->matchRoute($path, $requestMethod, $routes);
 
+        // Check if the route method is not allowed
+        if ($instance->isMethodNotAllowedForRoute($route, $requestMethod)) {
+            throw  RouteException::methodNotAllowed($requestMethod, $path, $route['method']);
+        }
 
-        $instance->resolveController($route);
+        // Check if no action is associated with the route, throw RouteNotFoundException.
+        if (is_null($route)) {
+            throw new RouteNotFoundException();
+        }
+
+
+        $instance->resolve($route);
     }
 
 
@@ -65,43 +76,24 @@ class RouteResolver
             }
         }
 
-        // Check if the route method is not allowed
-        if ($this->isMethodNotAllowedForRoute($handler, $requestMethod)) {
-            throw  RouteException::methodNotAllowed($requestMethod, $path, $handler['method']);
-        }
-
-
-        // Check if no action is associated with the route, throw RouteNotFoundException.
-        if (is_null($handler)) {
-            throw new RouteNotFoundException();
-        }
 
         return $handler;
     }
 
+    // if ($this->actionReferencesController($action)) {
+    //     $action = $this->convertToControllerAction($action);
+    // }
 
-    public function resolveController($route)
+
+
+    protected function resolveControllerAction($route)
     {
-
-
-        // If the action is a callable function, execute it
-        if (is_callable($route['action'])) {
-            $action = new \ReflectionFunction($route['action']);
-
-            $parameters = $action->getParameters() ?? [];
-
-            $resolvedDependencies = $this->resolveMethodDependencies($parameters);
-
-            $this->invokeControllerMethod($route['action'], $resolvedDependencies);
-            return;
-        }
-
         // Check if the controller class exists
         if ($this->isControllerNotExists($route['controller'])) {
             throw RouteException::targetClassDoesNotExist($route['controller']);
         }
 
-        $controller = app()->resolve($route['controller']);
+        $controller = app()->make($route['controller']);
 
         $method = $route['action'];
 
@@ -120,7 +112,33 @@ class RouteResolver
         return $this->invokeControllerMethod([$controller, $method], $resolvedDependencies);
     }
 
+    private function resolveClosureAction($route)
+    {
+        $action = new \ReflectionFunction($route['action']);
 
+        $parameters = $action->getParameters() ?? [];
+
+        $resolvedDependencies = $this->resolveMethodDependencies($parameters);
+
+        $this->invokeControllerMethod($route['action'], $resolvedDependencies);
+    }
+    public function resolve($route)
+    {
+
+
+        // If the action is a callable function, execute it
+        if ($this->actionReferencesClosure($route['action'])) {
+            $this->resolveClosureAction($route);
+            return;
+        }
+
+        $this->resolveControllerAction($route);
+    }
+
+    private function actionReferencesClosure($action)
+    {
+        return $action instanceof Closure;
+    }
     private function invokeControllerMethod($callable, $resolveDependencies)
     {
         return call_user_func($callable, ...array_merge(array_filter($resolveDependencies), array_filter($this->routeParams)));
@@ -136,7 +154,7 @@ class RouteResolver
             $type = $parameter->getType();
 
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                $dependencies[] = app()->resolve($parameter->getType()?->getName());
+                $dependencies[] = app()->make($parameter->getType()?->getName());
             }
         }
 

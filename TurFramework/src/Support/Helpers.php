@@ -30,7 +30,7 @@ if (!function_exists('env')) {
      */
     function env($key, $default = null)
     {
-        return $_ENV[$key] ?? value($default);
+        return $_ENV[$key] ?? $default;
     }
 }
 
@@ -205,8 +205,8 @@ if (!function_exists('old')) {
     /**
      * Get old input data from the session.
      *
-     * @param  string  $key The key of the old input to retrieve from the session
-     * @param  mixed   $default  The default value to return if the key is not found
+     * @param  string  $key 
+     * @param  mixed   $default 
      * @return mixed
      */
     function old($key, $default = null)

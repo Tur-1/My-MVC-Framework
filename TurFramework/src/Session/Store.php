@@ -5,14 +5,12 @@ namespace TurFramework\Session;
 class Store
 {
     /**
-     * Start the session.
+     * The session attributes.
+     *
+     * @var array
      */
-    public function start()
-    {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
+    protected $attributes = [];
+
 
     /**
      * Put a value in the session.
@@ -25,6 +23,15 @@ class Store
     public function put(string $key, $value): void
     {
         $_SESSION[$key] = $value;
+    }
+    /**
+     * Get all of the session data.
+     *
+     * @return array
+     */
+    public function all()
+    {
+        return $_SESSION;
     }
 
     /**

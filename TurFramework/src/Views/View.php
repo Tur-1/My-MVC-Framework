@@ -4,7 +4,7 @@ namespace TurFramework\Views;
 
 use TurFramework\Views\ViewFactory;
 
-class Factory
+class View
 {
     public $viewPath;
     public $data = [];
@@ -13,8 +13,8 @@ class Factory
     /**
      * Create a new view instance.
      *
-     * @param string $view The view file to be rendered.
-     * @param array $data An array of data to be passed to the view. 
+     * @param string $view 
+     * @param array $data  
      * @throws ViewNotFoundException If the specified view file doesn't exist.
      * @return \TurFramework\Views\ViewFactory
      */
@@ -32,21 +32,9 @@ class Factory
         $this->data = array_merge($this->data, $data);
 
         // Return a new instance of View
-        return $this->ViewInstance($this->viewPath,  $this->data);
+        return new ViewFactory($this->viewPath,  $this->data);
     }
 
-    /**
-     * Create a new View instance.
-     *
-     * @param Factory $Factory The Factory instance.
-     * @param string $viewPath The path to the view file.
-     * @param array $data An array of data to be passed to the view.
-     * @return \TurFramework\Views\ViewFactory
-     */
-    public function ViewInstance($viewPath,  $data)
-    {
-        return new ViewFactory($viewPath, $data);
-    }
 
     /**
      * Get the path of the view file.

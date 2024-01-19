@@ -5,7 +5,7 @@ namespace TurFramework\Http;
 
 class Request
 {
-    private static  $instance = null;
+
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
@@ -15,18 +15,6 @@ class Request
     public function __construct()
     {
     }
-    public static function getInstance()
-    {
-        // If no instance exists, create a new one
-        if (is_null(static::$instance)) {
-            static::$instance = new static;
-        }
-
-        return static::$instance;
-    }
-
-
-
 
     /**
      * Get the requested URI (Uniform Resource Identifier) from the server.
@@ -169,7 +157,7 @@ class Request
     /**
      * Get the request method used for the current request.
      *
-     * @return string The request method (e.g., GET, POST, PUT, DELETE, etc.).
+     * @return string The request method 
      */
     public function getMethod(): string
     {
@@ -329,7 +317,6 @@ class Request
         // Retrieve all sanitized request parameters into an array
         $allParams = $this->all();
 
-        // Check if the provided parameter key exists in the sanitized parameters array
         return array_key_exists($key, $allParams);
     }
 
@@ -338,22 +325,10 @@ class Request
      *
      * @param string $key 
      *
-     * @return mixed|null The value from the server array corresponding to the given key, or null if the key is not found.
+     * @return mixed|null The value from the server
      */
     private function getServer($key)
     {
         return Server::get($key);
-    }
-
-    public static function __callStatic($method, $args)
-    {
-
-        return static::$instance->{$method}(...$args);
-    }
-
-    public function __call($method, $args)
-    {
-
-        return static::$instance->{$method}(...$args);
     }
 }

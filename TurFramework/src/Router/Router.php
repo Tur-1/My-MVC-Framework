@@ -49,7 +49,7 @@ class Router
      */
     public function resolve($request)
     {
-        return RouteResolver::resolveRoute(
+        return RouteResolver::handle(
             $request->getPath(),
             $request->getMethod(),
             $this->route->routes

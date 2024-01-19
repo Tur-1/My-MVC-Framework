@@ -31,7 +31,7 @@ class Redirector
      */
     public function back()
     {
-        return $this->createRedirect((new Request)->previousUrl());
+        return $this->to(url: (new Request)->previousUrl());
     }
 
     /**
@@ -41,8 +41,6 @@ class Redirector
      */
     public function createRedirect($url)
     {
-        $response = new RedirectResponse();
-        $response->send($url, $this->status_code);
-        exit();
+        return new RedirectResponse($url, $this->status_code);
     }
 }

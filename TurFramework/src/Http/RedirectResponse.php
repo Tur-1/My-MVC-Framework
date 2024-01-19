@@ -6,7 +6,21 @@ use TurFramework\Facades\Session;
 
 class RedirectResponse
 {
+    /**
+     * The session store instance.
+     *
+     * @var \TurFramework\Session\Store
+     */
+    protected $session;
+    protected $url;
+    protected $statusCode = 302;
     protected $withData = [];
+
+    public function __construct($url = null, $statusCode = 302)
+    {
+        $this->url = $url;
+        $this->statusCode = $statusCode;
+    }
     /**
      * Flash a piece of data to the session.
      *
@@ -35,6 +49,8 @@ class RedirectResponse
 
         return $this;
     }
+
+
     /**
      * Flash the stored data to the session.
      *
@@ -46,16 +62,20 @@ class RedirectResponse
             Session::flash($key, $value);
         }
     }
-
+    public function __destruct()
+    {
+        $this->send($this->url, $this->statusCode);
+    }
     /**
      * Send the HTTP response.
      *
      * @return void
      */
-    public function send($url, $status_code)
+    public function send()
     {
         $this->flashToSession();
 
-        return header('Location: ' . $url, true, $status_code);
+        header('Location: ' . $this->url, true,  $this->statusCode);
+        exit();
     }
 }
