@@ -372,9 +372,14 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomeController;
 
 
-Route::get('/', [HomeController::class, 'index'])->name('homePage')->middleware('auth');
+Route::get('/', [HomeController::class, 'index'])
+       ->name('homePage')
+       ->middleware('auth');
 
-Route::get('/about', [AboutController::class, 'index'])->name('aboutPage')->middleware(['auth', 'is_admin']);
+Route::get('/about', [AboutController::class, 'index'])
+       ->name('aboutPage')
+       ->middleware(['auth', 'is_admin']);
+
 
 ```
 
