@@ -13,6 +13,9 @@
 - [Register Custom Service Provider](#section-9)
 - [Route Service Provider](#section-10)
 - [Global Middleware](#section-11)
+- [Route Middleware](#section-12)
+
+
 
 <a name="section-1"></a>
 
