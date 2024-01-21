@@ -2,8 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use TurFramework\Exceptions\HttpResponseException;
 use TurFramework\Http\Request;
 
 class Auth

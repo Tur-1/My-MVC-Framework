@@ -12,6 +12,7 @@
 - [Binding Interface to Service Class](#section-8)
 - [Register Custom Service Provider](#section-9)
 - [Route Service Provider](#section-10)
+- [Global Middleware](#section-11)
 
 <a name="section-1"></a>
 
@@ -293,3 +294,84 @@ class RouteServiceProvider extends ServiceProvider
     }
 }
 ```
+
+<a name="section-11"></a>
+
+## Global Middleware
+
+In the application, global middleware runs during every request to your application.
+
+```php
+class Kernel
+{
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
+     *
+     * @var array<int, class-string|string>
+     */
+    protected $middleware = [
+        \App\Http\Middleware\ExampleMiddleware::class,
+    ];
+
+}
+```
+
+<a name="section-12"></a>
+
+## Route Middleware
+
+To define route middleware, update the App\Http\Kernel.php file's $routeMiddleware array as shown below:
+
+```php
+class Kernel
+{
+    /**
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $routeMiddleware = [
+        'auth' => \App\Http\Middleware\Auth::class,
+        'is_admin' => \App\Http\Middleware\IsAdmin::class,
+    ];
+}
+```
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use TurFramework\Http\Request;
+
+class IsAdmin
+{
+    /**
+     * Handle an incoming request.
+     */
+    public function handle(Request $request)
+    {
+    }
+}
+```
+
+
+And update your route like:
+
+```php
+<?php
+
+use TurFramework\Facades\Route;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\HomeController;
+
+
+Route::get('/', [HomeController::class, 'index'])->name('homePage')->middleware('auth');
+
+Route::get('/about', [AboutController::class, 'index'])->name('aboutPage')->middleware(['auth', 'is_admin']);
+
+```
+

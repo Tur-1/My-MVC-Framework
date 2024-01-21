@@ -12,7 +12,7 @@ class Kernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        \App\Http\Middleware\CsrfTokenMiddleware::class,
+        \App\Http\Middleware\ExampleMiddleware::class,
     ];
 
     /**
@@ -24,6 +24,5 @@ class Kernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Auth::class,
-        'api' => \App\Http\Middleware\Api::class,
     ];
 }
