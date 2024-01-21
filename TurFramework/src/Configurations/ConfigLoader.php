@@ -59,7 +59,7 @@ class ConfigLoader
      */
     protected function loadConfigFiles($repository)
     {
-        $files = get_files_in_directory('config');
+        $files = get_files_in_directory(base_path('config'));
 
         foreach ($files as $key => $path) {
             $key = basename($path, '.php');

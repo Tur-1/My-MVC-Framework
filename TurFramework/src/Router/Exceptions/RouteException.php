@@ -16,7 +16,7 @@ class RouteException extends \Exception
         return new self("Method class [ " . $targetClass . '::' . $targetMethod . " ] does not exist");
     }
 
-    public static function methodNotAllowed($requestMethod, $route, $routeMethod)
+    public static function requestMethodNotAllowed($requestMethod, $route, $routeMethod)
     {
         return new self("The $requestMethod method is not supported for route $route. Supported methods: $routeMethod");
     }

@@ -11,14 +11,15 @@ class RouteServiceProvider extends ServiceProvider
     public function register()
     {
 
+
         /**
          * Use the Route::group() method to load route files.
          */
 
         // Load web routes from the 'app/routes/web.php' file.
-        Route::group('app/routes/web.php');
+        Route::group(base_path('app/routes/web.php'));
 
         // Load API routes from the 'app/routes/api.php' file.
-        Route::group('app/routes/api.php');
+        Route::group(base_path('app/routes/api.php'));
     }
 }

@@ -74,7 +74,7 @@ if (!function_exists('get_files_in_directory')) {
     {
         $files = [];
 
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(base_path($directory)));
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
@@ -107,6 +107,7 @@ if (!function_exists('base_path')) {
      */
     function base_path($path = '')
     {
+
         return dirname(__DIR__) . '/../../' . $path;
     }
 }

@@ -3,22 +3,25 @@
 namespace TurFramework\Router;
 
 use Closure;
+use App\Http\Kernel;
 use TurFramework\Router\Route;
+use TurFramework\Router\RouteCollection;
+use TurFramework\Router\RouteFileRegistrar;
 
-class Router
+class Router extends Kernel
 {
-    // HTTP request methods
+
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
 
     /**
-     * The route object responsible for managing registered routes.
+     * The route collection instance.
      *
-     * @var Route
+     * @var RouteCollection
      */
-    protected $route;
+    protected $routes;
 
     /**
      * An array to store action details, such as controller information.
@@ -40,7 +43,7 @@ class Router
      */
     public function __construct()
     {
-        $this->route = new Route();
+        $this->routes = new RouteCollection();
     }
 
     /**
@@ -49,11 +52,7 @@ class Router
      */
     public function resolve($request)
     {
-        return RouteResolver::handle(
-            $request->getPath(),
-            $request->getMethod(),
-            $this->route->routes
-        );
+        return Route::handle($request, $this->getMiddleware(), $this->routes);
     }
 
     /**
@@ -71,7 +70,7 @@ class Router
         } else {
 
             (new RouteFileRegistrar($this))->register($routes);
-            $this->route->loadRoutesByNames();
+            $this->routes->refreshNameNameList();
         }
 
 
@@ -129,28 +128,6 @@ class Router
     {
         return $this->addRoute(self::METHOD_DELETE, $route, $action);
     }
-
-    /**
-     * Add or change the route name.
-     *
-     * @param string $routeName
-     */
-    public  function name(string $routeName)
-    {
-        $this->route->setRouteName($routeName);
-    }
-
-    public function getRouteByName($routeName, $params)
-    {
-        return $this->route->getRouteByName($routeName, $params);
-    }
-
-
-    public function getRoutes()
-    {
-        return $this->route->getRoutes();
-    }
-
     /**
      * Add a route to the internal routes collection.
      *
@@ -162,8 +139,40 @@ class Router
      */
     private function addRoute($method, $route, $action, $name = null)
     {
+
         $this->action[0] = $action;
-        $this->route->addRoute($method, $route, $this->action, $name);
+
+        $this->routes->addRoute($method, $route, $this->action, $name);
         return $this;
+    }
+    /**
+     * Add or change the route name.
+     *
+     * @param string $routeName
+     */
+    public  function name(string $routeName)
+    {
+        $this->routes->setRouteName($routeName);
+
+        return $this;
+    }
+
+    public function getRouteByName($routeName, $params)
+    {
+        return $this->routes->getRouteByName($routeName, $params);
+    }
+
+    public function getRoutes()
+    {
+        return $this->routes->getRoutes();
+    }
+    public function middleware($middleware)
+    {
+        $this->routes->setMiddleware($middleware);
+    }
+
+    private function getMiddleware()
+    {
+        return array_merge($this->middleware, $this->routeMiddleware);
     }
 }
