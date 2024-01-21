@@ -256,6 +256,8 @@ class CustomServiceProvider extends ServiceProvider
          * For example:
          * $this->app->bind(CustomServiceInterface::class, CustomService::class);
          */
+
+         $this->app->bind(CustomServiceInterface::class, CustomService::class);
     }
 }
 ```
