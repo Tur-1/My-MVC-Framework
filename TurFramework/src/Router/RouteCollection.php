@@ -37,9 +37,9 @@ class RouteCollection
      * Add a route to the internal routes collection 
      *
      */
-    public function addRoute($method, $route, $action, $name = null, $middleware = null)
+    public function addRoute($method, $path, $action, $name = null, $middleware = null)
     {
-        $this->routes[$route] = $this->createNewRoute($method, $route, $this->getAction($action), $name, $middleware);
+        $this->routes[$path] = $this->createNewRoute($method, $path, $this->getAction($action), $name, $middleware);
     }
 
 
@@ -47,20 +47,20 @@ class RouteCollection
      * Creates a new route array based on the provided method, route, and callable.
      *
      * @param string $method 
-     * @param string $route 
+     * @param string $path 
      * @param array  $action
      *
      * @return array Returns an array representing the new route.
      */
-    public  function createNewRoute($method, $route, $action, $name = null, $middleware = null)
+    public  function createNewRoute($method, $path, $action, $name = null, $middleware = null)
     {
 
         return  [
-            'uri' => $route,
+            'uri' => $path,
             'method' => $method,
             'controller' => $action['controller'],
             'action' =>  $action['action'],
-            'parameters' => $this->extractRouteParameters($route),
+            'parameters' => $this->extractRouteParameters($path),
             'name' => $name,
             'middleware' => $middleware,
         ];

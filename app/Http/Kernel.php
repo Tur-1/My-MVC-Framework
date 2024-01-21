@@ -12,7 +12,7 @@ class Kernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        'csrf_token' => \App\Http\Middleware\CsrfTokenMiddleware::class,
+        \App\Http\Middleware\CsrfTokenMiddleware::class,
     ];
 
     /**

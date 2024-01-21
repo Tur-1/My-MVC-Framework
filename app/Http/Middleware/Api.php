@@ -13,10 +13,5 @@ class Api
      */
     public function handle(Request $request)
     {
-        $x = 34;
-
-        if ($x !== 34) {
-            throw new HttpResponseException(message: 'Api message', code: 404);
-        }
     }
 }

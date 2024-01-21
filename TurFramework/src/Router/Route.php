@@ -3,29 +3,29 @@
 namespace TurFramework\Router;
 
 use Closure;
+use App\Http\Kernel;
 use TurFramework\Http\Request;
+use TurFramework\Router\MiddlewareResolver;
 use TurFramework\Router\RouteResolverTrait;
-use TurFramework\Router\Exceptions\RouteException;
 
 class Route
 {
     use RouteResolverTrait;
 
     /**
-     * Handle the resolved action 
+     * Handle the $request 
      * 
      * @param Request $request 
-     * @param Kernel $kernelmiddlewares
      * @param RouteCollection $routes 
      */
-    public static function handle($request, $kernelmiddlewares, $routes)
+    public static function handle($request, $routes)
     {
         $self = new self();
 
         $route = $routes->match($request->getPath(), $request->getMethod());
 
 
-        $self->resolveMiddleware($kernelmiddlewares, $route['middleware'], $request);
+        MiddlewareResolver::handle($route['middleware'], $request);
 
 
         return $self->resolve($route);
@@ -41,20 +41,6 @@ class Route
         }
 
         $this->resolveControllerAction($route);
-    }
-    private function resolveMiddleware($middlewares, $routeMiddleware, $request)
-    {
-        if (!is_null($routeMiddleware)) {
-            foreach ($routeMiddleware as $key => $value) {
-                if (!isset($middlewares[$value])) {
-                    throw RouteException::targetClassDoesNotExist($value);
-                }
-
-                $middlewareClass = new $middlewares[$value]();
-                // Apply the middleware to the request.
-                $middlewareClass->handle($request);
-            }
-        }
     }
 
 

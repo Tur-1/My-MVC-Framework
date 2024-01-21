@@ -8,7 +8,7 @@ use TurFramework\Router\Route;
 use TurFramework\Router\RouteCollection;
 use TurFramework\Router\RouteFileRegistrar;
 
-class Router extends Kernel
+class Router
 {
 
     public const METHOD_GET = 'GET';
@@ -52,7 +52,7 @@ class Router extends Kernel
      */
     public function resolve($request)
     {
-        return Route::handle($request, $this->getMiddleware(), $this->routes);
+        return Route::handle($request, $this->routes);
     }
 
     /**
@@ -131,18 +131,18 @@ class Router extends Kernel
     /**
      * Add a route to the internal routes collection.
      *
-     * @param string $method The HTTP method of the route.
-     * @param string $route The route path.
-     * @param string|array|Closure $action The callback or controller action associated with the route.
-     * @param string|null $name The name of the route.
+     * @param string $method 
+     * @param string $path  
+     * @param string|array|Closure $action 
+     * @param string|null $name 
      * @return  $this;
      */
-    private function addRoute($method, $route, $action, $name = null)
+    private function addRoute($method, $path, $action, $name = null)
     {
 
         $this->action[0] = $action;
 
-        $this->routes->addRoute($method, $route, $this->action, $name);
+        $this->routes->addRoute($method, $path, $this->action, $name);
         return $this;
     }
     /**
@@ -169,10 +169,5 @@ class Router extends Kernel
     public function middleware($middleware)
     {
         $this->routes->setMiddleware($middleware);
-    }
-
-    private function getMiddleware()
-    {
-        return array_merge($this->middleware, $this->routeMiddleware);
     }
 }

@@ -13,10 +13,5 @@ class Auth
      */
     public function handle(Request $request)
     {
-        $x = 34;
-
-        if ($x !== 34) {
-            throw new HttpResponseException(message: 'Auth message', code: 404);
-        }
     }
 }
