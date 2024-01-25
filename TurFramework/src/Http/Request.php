@@ -193,38 +193,55 @@ class Request
         return $this->getMethod() == $method ? true : false;
     }
     /**
+     * Get the current decoded path info for the request.
+     *
+     * @return string
+     */
+    public function decodedPath()
+    {
+        return rawurldecode($this->getPath());
+    }
+    /**
      * Check if the current request path matches a given pattern.
      *
-     * @param string $pattern The pattern to match against the request path.
+     * @param string $path 
      *
-     * @return bool True if the request path matches the pattern, false otherwise.
+     * @return bool True if the request path matches the path, false otherwise.
      */
     public function is(string $url): bool
     {
         // Get the current path from the request
-        $path = $this->getPath();
+        $path = $this->decodedPath();
 
-
-        // Check if the pattern ends with a wildcard *
-        $endsWithWildcard = substr($url, -2) === '/*';
-
-        // If the pattern ends with a wildcard *, remove it
-        if ($endsWithWildcard) {
-            $url = substr($url, 0, -2);
-        }
-
-        // Perform the comparison to check if the path starts with the pattern
-
-        // If the pattern is just '/', check if the path is also '/'
-        if ($url === '/') {
-            return $path === '/';
-        }
-
-        // Check if the path starts with the pattern (including /)
-        // Also, if the path matches the pattern exactly
-        return strpos($path, $url) === 0 || $path === $url;
+        return $this->getPattren($url, $path);
     }
 
+    private function getPattren($pattern, $value)
+    {
+        $value = (string) $value;
+
+        if (!is_iterable($pattern)) {
+            $pattern = [$pattern];
+        }
+
+        foreach ($pattern as $pattern) {
+            $pattern = (string) $pattern;
+
+            if ($pattern === $value) {
+                return true;
+            }
+
+            $pattern = preg_quote($pattern, '#');
+
+            $pattern = str_replace('\*', '.*', $pattern);
+
+            if (preg_match('#^' . $pattern . '\z#u', $value) === 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     /**
      * Check if the request method is POST.
      *
@@ -261,9 +278,9 @@ class Request
         ];
     }
     /**
-     * Retrieve all request parameters from both GET and POST methods, sanitized against special characters.
+     * Retrieve all request parameters from both GET and POST methods.
      *
-     * @return array An array containing all sanitized request parameters.
+     * @return array  request parameters.
      */
     public function all(): array
     {
@@ -282,6 +299,7 @@ class Request
                 $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
+
 
         // Return the sanitized request parameters or an empty array if none found
         return $body ?? [];

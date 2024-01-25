@@ -39,7 +39,7 @@ class Redirector
      *
      * @return \TurFramework\Http\RedirectResponse
      */
-    public function createRedirect($url)
+    private function createRedirect($url)
     {
         return new RedirectResponse($url, $this->status_code);
     }

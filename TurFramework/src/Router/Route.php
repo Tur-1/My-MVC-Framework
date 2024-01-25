@@ -3,7 +3,6 @@
 namespace TurFramework\Router;
 
 use Closure;
-use App\Http\Kernel;
 use TurFramework\Http\Request;
 use TurFramework\Router\MiddlewareResolver;
 use TurFramework\Router\RouteResolverTrait;
@@ -18,20 +17,17 @@ class Route
      * @param Request $request 
      * @param RouteCollection $routes 
      */
-    public static function handle($request, $routes)
+    public static function resolve($request, $route)
     {
         $self = new self();
-
-        $route = $routes->match($request->getPath(), $request->getMethod());
-
 
         MiddlewareResolver::handle($route['middleware'], $request);
 
 
-        return $self->resolve($route);
+        return $self->runRoute($route);
     }
 
-    private function resolve($route)
+    private function runRoute($route)
     {
 
         // If the action is a callable function, execute it

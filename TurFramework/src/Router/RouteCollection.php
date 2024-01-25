@@ -3,6 +3,7 @@
 namespace TurFramework\Router;
 
 use Closure;
+use TurFramework\Support\Arr;
 use TurFramework\Router\Exceptions\RouteException;
 use TurFramework\Router\Exceptions\RouteNotFoundException;
 
@@ -136,34 +137,7 @@ class RouteCollection
     {
         return $this->nameList[$name] ?? null;
     }
-    /**
-     * Generate a URL for the given route name.
-     *
-     * @param string $routeName The name of the route.
-     * @param array $parameters Optional parameters for the route.
-     * @return string The generated URL.
-     * @throws RouteException
-     */
-    public function getRouteByName(string $routeName, array $parameters = []): string
-    {
 
-        $route = $this->getByName($routeName);
-
-        if (!$route) {
-            throw RouteException::routeNotDefined($routeName);
-        }
-        $uri = $route['uri'];
-        foreach ($route['parameters'] as $key => $parameter) {
-            if (!in_array($parameter, array_keys($parameters))) {
-                throw RouteException::missingRequiredParameters($routeName, $uri, $parameter);
-            }
-        }
-
-        foreach ($parameters as $key => $value) {
-            $uri = str_replace('{' . $key . '}', $value, $uri);
-        }
-        return $uri;
-    }
     /**
      * Loads routes by their names into a separate list.
      */
@@ -204,6 +178,7 @@ class RouteCollection
 
     private function getRoute($path)
     {
+
         foreach ($this->routes as $key => $route) {
 
             // Replace route parameters with regex patterns to match dynamic values

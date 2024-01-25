@@ -25,9 +25,9 @@ class RouteException extends \Exception
     {
         return new self("Route [ $routeName ] not defined.");
     }
-    public static function missingRequiredParameters($routeName, $uri, $parameter)
+    public static function missingRequiredParameters($routeName, $uri, $missingParameter)
     {
-        return new self("Missing required parameter for [Route: $routeName] [URI: " . $uri . " ]  [ Missing parameter: $parameter ].");
+        return new self("Missing required parameter for [ Route: $routeName ] [ URI: " . $uri . " ]  [ Missing parameter: $missingParameter ].");
     }
 
     public static function routeFilesNotFound()

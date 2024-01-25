@@ -176,9 +176,9 @@ class Container
             if ($type instanceof \ReflectionUnionType) {
                 throw  ContainerException::unionType($abstract, $name);
             }
+
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
                 $results[] = $this->resolve($type->getName());
-                break;
             }
             throw  ContainerException::invalidParam($abstract, $name);
             break;

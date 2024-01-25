@@ -1,6 +1,7 @@
 <?php
 
 use TurFramework\Container\Container;
+use TurFramework\Support\UrlGenerator;
 
 if (!function_exists('app')) {
     /**
@@ -252,6 +253,19 @@ if (!function_exists('route')) {
      */
     function route($routeName, $parameters = []): string
     {
-        return app('router')->getRouteByName($routeName, $parameters);
+        return app('url')->route($routeName, $parameters);
+    }
+}
+
+
+if (!function_exists('url')) {
+    /**
+     * Generate a url for the application.
+     *
+     * @return \TurFramework\Support\UrlGenerator|string
+     */
+    function url()
+    {
+        return app('url');
     }
 }

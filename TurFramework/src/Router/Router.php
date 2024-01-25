@@ -52,7 +52,9 @@ class Router
      */
     public function resolve($request)
     {
-        return Route::handle($request, $this->routes);
+        $route = $this->routes->match($request->getPath(), $request->getMethod());
+
+        Route::resolve($request, $route);
     }
 
     /**
@@ -157,14 +159,9 @@ class Router
         return $this;
     }
 
-    public function getRouteByName($routeName, $params)
+    public function getRouteCollection()
     {
-        return $this->routes->getRouteByName($routeName, $params);
-    }
-
-    public function getRoutes()
-    {
-        return $this->routes->getRoutes();
+        return $this->routes;
     }
     public function middleware($middleware)
     {

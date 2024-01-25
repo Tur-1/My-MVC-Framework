@@ -7,6 +7,7 @@ use TurFramework\Facades\Route;
 use TurFramework\Container\Container;
 use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
+use TurFramework\Router\RoutingServiceProvider;
 use TurFramework\Exceptions\HttpResponseException;
 
 class Application extends Container
@@ -34,6 +35,8 @@ class Application extends Container
         $this->registerConfiguredProviders();
 
 
+        $this->registerBaseServiceProviders();
+
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
     }
@@ -47,7 +50,15 @@ class Application extends Container
         // Resolve incoming HTTP request
         Route::resolve(new Request);
     }
-
+    /**
+     * Register all of the base service providers.
+     *
+     * @return void
+     */
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(new RoutingServiceProvider($this));
+    }
     /**
      * Register a service provider with the application.
      *

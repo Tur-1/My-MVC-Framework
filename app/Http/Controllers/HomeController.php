@@ -11,12 +11,11 @@ class HomeController extends Controller
     public function index(Request $request, ExampleServiceInterface $exampleService)
     {
 
-
         return view('pages.HomePage');
     }
 
-    public function user(Request $request, $id)
+    public function user(Request $request, $id, $name = null)
     {
-        return $id;
+        echo $id;
     }
 }
