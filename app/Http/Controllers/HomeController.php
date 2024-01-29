@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
 
@@ -13,9 +14,11 @@ class HomeController extends Controller
 
         return view('pages.HomePage');
     }
-
-    public function user(Request $request, $id, $name = null)
+    public function edit(Request $request, $id)
     {
         echo $id;
+    }
+    public function user(Request $request, ExampleServiceInterface $exampleService, $id, $name)
+    {
     }
 }

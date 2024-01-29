@@ -44,7 +44,7 @@ trait RouteResolverTrait
 
         $resolvedDependencies = $this->resolveMethodDependencies($parameters);
 
-        return $this->invokeControllerMethod([$controller, $method], $resolvedDependencies, $route['parameters']);
+        $this->invokeControllerMethod([$controller, $method], $resolvedDependencies, $route['parameters']);
     }
 
     private function resolveClosureAction($route)
@@ -60,7 +60,7 @@ trait RouteResolverTrait
 
     private function invokeControllerMethod($callable, $resolveDependencies, $routeParams)
     {
-        return call_user_func($callable, ...array_merge(array_filter($resolveDependencies), array_filter($routeParams)));
+        call_user_func($callable, ...array_merge(array_filter($resolveDependencies), array_filter($routeParams)));
     }
 
     /**

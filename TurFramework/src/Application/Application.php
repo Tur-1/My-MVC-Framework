@@ -2,9 +2,12 @@
 
 namespace TurFramework\Application;
 
+use TurFramework\Database\DB;
 use TurFramework\Http\Request;
+use TurFramework\Support\Hash;
 use TurFramework\Facades\Route;
 use TurFramework\Container\Container;
+use TurFramework\Database\MySqlManager;
 use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
 use TurFramework\Router\RoutingServiceProvider;
@@ -36,7 +39,6 @@ class Application extends Container
 
 
         $this->registerBaseServiceProviders();
-
         // Register exceptions with the ExceptionHandler
         ExceptionHandler::registerExceptions();
     }
@@ -47,6 +49,7 @@ class Application extends Container
      */
     public function run(): void
     {
+
         // Resolve incoming HTTP request
         Route::resolve(new Request);
     }

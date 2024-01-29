@@ -10,6 +10,7 @@ use TypeError;
 use ParseError;
 use CompileError;
 use ErrorException;
+use RuntimeException;
 
 class ExceptionHandler
 {
@@ -22,7 +23,7 @@ class ExceptionHandler
         Throwable::class,
         ParseError::class,
         TypeError::class,
-
+        RuntimeException::class,
     ];
 
 

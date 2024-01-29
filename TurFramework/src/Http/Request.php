@@ -27,7 +27,7 @@ class Request
             parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH)
         );
 
-        return $uri;
+        return  trim($uri);
     }
     /**
      * Get the host name from the current request.

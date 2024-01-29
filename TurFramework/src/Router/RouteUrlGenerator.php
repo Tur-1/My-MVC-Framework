@@ -7,9 +7,6 @@ use TurFramework\Router\Exceptions\RouteException;
 
 class RouteUrlGenerator
 {
-
-
-
     /**
      * Generate a URL for the given route.
      *

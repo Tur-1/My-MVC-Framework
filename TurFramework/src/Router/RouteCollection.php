@@ -178,7 +178,7 @@ class RouteCollection
 
     private function getRoute($path)
     {
-
+        $route = null;
         foreach ($this->routes as $key => $route) {
 
             // Replace route parameters with regex patterns to match dynamic values
@@ -196,12 +196,11 @@ class RouteCollection
 
                 // Store route parameters and their values
                 $route['parameters'] = array_intersect_key($matches, array_flip($route['parameters']));
-
-                return $route;
+                $route = $route;
                 break;
             }
         }
-        return null;
+        return $route;
     }
     private function isRequestMethodNotAllowed($route, $requestMethod)
     {
