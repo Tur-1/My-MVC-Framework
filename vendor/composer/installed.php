@@ -3,7 +3,7 @@
         'name' => 'tur1i/mvc',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'ce41c6d30b1fc4ecb5b0241ebbafe024c7d5afe2',
+        'reference' => '49215a5a11babdc150007f3291b42fc6b2c1306b',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -33,7 +33,7 @@
         'symfony/polyfill-ctype' => array(
             'pretty_version' => '1.x-dev',
             'version' => '1.9999999.9999999.9999999-dev',
-            'reference' => 'ea208ce43cbb04af6867b4fdddb1bdbf84cc28cb',
+            'reference' => 'ef4d7e442ca910c4764bce785146269b30cb5fc4',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-ctype',
             'aliases' => array(),
@@ -42,7 +42,7 @@
         'symfony/polyfill-mbstring' => array(
             'pretty_version' => '1.x-dev',
             'version' => '1.9999999.9999999.9999999-dev',
-            'reference' => '42292d99c55abe617799667f454222c54c60e229',
+            'reference' => '9773676c8a1bb1f8d4340a62efe641cf76eda7ec',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-mbstring',
             'aliases' => array(),
@@ -51,7 +51,7 @@
         'symfony/polyfill-php80' => array(
             'pretty_version' => '1.x-dev',
             'version' => '1.9999999.9999999.9999999-dev',
-            'reference' => '6caa57379c4aec19c0a12a38b59b26487dcfe4b5',
+            'reference' => '87b68208d5c1188808dd7839ee1e6c8ec3b02f1b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-php80',
             'aliases' => array(),
@@ -60,7 +60,7 @@
         'symfony/var-dumper' => array(
             'pretty_version' => '7.1.x-dev',
             'version' => '7.1.9999999.9999999-dev',
-            'reference' => 'a882c92e8e926d28e22923072297e6ba91a4c7b2',
+            'reference' => '8035841b1317243ac52dd42cecee402edc08c97c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/var-dumper',
             'aliases' => array(),
@@ -69,7 +69,7 @@
         'tur1i/mvc' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'ce41c6d30b1fc4ecb5b0241ebbafe024c7d5afe2',
+            'reference' => '49215a5a11babdc150007f3291b42fc6b2c1306b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

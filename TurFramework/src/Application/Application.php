@@ -2,16 +2,15 @@
 
 namespace TurFramework\Application;
 
-use TurFramework\Database\DB;
 use TurFramework\Http\Request;
-use TurFramework\Support\Hash;
 use TurFramework\Facades\Route;
 use TurFramework\Container\Container;
-use TurFramework\Database\MySqlManager;
+use TurFramework\Exceptions\HttpException;
 use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
 use TurFramework\Router\RoutingServiceProvider;
-use TurFramework\Exceptions\HttpResponseException;
+use \TurFramework\Database\Managers\MySQLManager;
+use TurFramework\Database\DatabaseServiceProvider;
 
 class Application extends Container
 {
@@ -31,6 +30,9 @@ class Application extends Container
         // 1- laod Configuration and bind config into the Container 
         $this->loadConfiguration();
 
+        // Register exceptions with the ExceptionHandler
+        ExceptionHandler::registerExceptions();
+
         // 2- register Core Container Aliases
         $this->registerCoreContainerAliases();
 
@@ -39,9 +41,8 @@ class Application extends Container
 
 
         $this->registerBaseServiceProviders();
-        // Register exceptions with the ExceptionHandler
-        ExceptionHandler::registerExceptions();
     }
+
 
 
     /**
@@ -60,6 +61,7 @@ class Application extends Container
      */
     protected function registerBaseServiceProviders()
     {
+        $this->register(new DatabaseServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
     }
     /**
@@ -147,11 +149,11 @@ class Application extends Container
      * @param  int  $code
      * @param  string  $message 
      * @return never 
-     * @throws HttpResponseException
+     * @throws HttpException
      */
     public function abort($code, $message = '')
     {
-        throw new HttpResponseException(message: $message, code: $code);
+        throw new HttpException(message: $message, code: $code);
     }
 
     protected function getCoreContainerAliases(): array
@@ -163,6 +165,7 @@ class Application extends Container
             'session' => \TurFramework\Session\Store::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
+
         ];
     }
 

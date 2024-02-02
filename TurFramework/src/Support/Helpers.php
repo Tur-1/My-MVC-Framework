@@ -1,7 +1,6 @@
 <?php
 
 use TurFramework\Container\Container;
-use TurFramework\Support\UrlGenerator;
 
 if (!function_exists('app')) {
     /**
@@ -20,6 +19,38 @@ if (!function_exists('app')) {
         return Container::getInstance()->make($abstract);
     }
 }
+
+if (!function_exists('class_basename')) {
+    /**
+     * Get the class "basename" of the given object / class.
+     *
+     * @param  string|object  $class
+     * @return string
+     */
+    function class_basename($class)
+    {
+        $class = is_object($class) ? get_class($class) : $class;
+
+        return basename(str_replace('\\', '/', $class));
+    }
+}
+if (!function_exists('pluralStudly')) {
+
+    /**
+     * Pluralize the last word of an English, studly caps case string.
+     *
+     * @param string $word
+     * @return string
+     */
+    function pluralStudly($word)
+    {
+        $word = strtolower($word);
+        $word .= str_ends_with($word, 'y') ? 'ies' : 's';
+
+        return $word;
+    }
+}
+
 
 if (!function_exists('env')) {
     /**
@@ -217,7 +248,24 @@ if (!function_exists('old')) {
     }
 }
 
-
+if (!function_exists('abort_if')) {
+    /**
+     * Throw an HttpException with the given data if the given condition is true.
+     *
+     * @param  bool  $condition
+     * @param int    $code
+     * @param string $message
+     * @return void
+     *
+     * @throws \TurFramework\Exceptions\HttpException
+     */
+    function abort_if($condition, $code = 404, $message = '')
+    {
+        if ($condition) {
+            abort($code, $message);
+        }
+    }
+}
 if (!function_exists('abort')) {
     /**
      * Throws an HttpException with the given data.
@@ -225,6 +273,7 @@ if (!function_exists('abort')) {
      * @param int    $code
      * @param string $message
      * @return never
+     * 
      */
     function abort($code = 404, $message = '')
     {
@@ -235,11 +284,13 @@ if (!function_exists('request')) {
     /**
      * Retrieves an instance of the current request or an input item from the request.
      *
-     * @return \TurFramework\Http\Request
+     * @return mixed|\TurFramework\Http\Request
      */
-    function request()
+    function request($key = null)
     {
-
+        if (!is_null($key)) {
+            return app('request')->get($key);
+        }
         return app('request');
     }
 }

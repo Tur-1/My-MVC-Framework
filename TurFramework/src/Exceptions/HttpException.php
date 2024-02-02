@@ -2,7 +2,7 @@
 
 namespace TurFramework\Exceptions;
 
-class HttpResponseException extends \Exception
+class HttpException extends \Exception
 {
     protected $message;
     protected $code;

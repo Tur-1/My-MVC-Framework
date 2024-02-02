@@ -2,13 +2,11 @@
 
 namespace TurFramework\Database;
 
-class Model
-{
-    /**
-     * @var mixed instance
-     */
-    protected static $instance;
 
+abstract class Model
+{
+    protected static $connection;
+    protected $attributes = [];
     /**
      * The table associated with the model.
      *
@@ -29,14 +27,27 @@ class Model
      */
     const UPDATED_AT = 'updated_at';
 
-    public static function getInstance()
+    /**
+     * Create a new Eloquent query builder for the model.
+     * @return \TurFramework\Database\QueryBuilder
+     */
+    public function newQueryBuilder()
     {
-        if (!self::$instance) {
-            self::$instance =  new static;
-        }
-
-        return self::$instance;
+        return new QueryBuilder(static::$connection);
     }
+    /**
+     * Begin querying the model.
+     *
+     * @return \TurFramework\Database\QueryBuilder
+     */
+    public static function query()
+    {
+        $model = new static;
+
+        return $model->newQueryBuilder()->setModel($model);
+    }
+
+
 
     /**
      * Get the table associated with the model.
@@ -45,16 +56,51 @@ class Model
      */
     public function getTable()
     {
-        $ins = explode('\\', get_class(self::$instance));
-        $this->table = strtolower(end($ins));
+        return $this->table ?? pluralStudly(class_basename($this));
+    }
+    /**
+     * Set the table associated with the model.
+     *
+     * @param  string  $table
+     * @return $this
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
 
-        if (str_ends_with($this->table, 'y')) {
-            $this->table = $this->table . 'ies';
-        } else {
+        return $this;
+    }
+    public function __get($key)
+    {
+        return $this->attributes[$key] ?? null;
+    }
 
-            $this->table .= 's';
-        }
+    public function __set($key, $value)
+    {
+        $this->attributes[$key] = $value;
+        $this->setTable($this->getTable());
+    }
+    /**
+     * Set the connection resolver instance.
+     *
+     * @param  
+     * @return void
+     */
+    public static function setConnection($connection)
+    {
+        static::$connection = $connection;
+    }
 
-        return $this->table;
+
+    /**
+     * Handle dynamic static method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public static function __callStatic($method, $parameters)
+    {
+        return (new static)->$method(...$parameters);
     }
 }

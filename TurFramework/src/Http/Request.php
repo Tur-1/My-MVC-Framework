@@ -17,7 +17,7 @@ class Request
     }
 
     /**
-     * Get the requested URI (Uniform Resource Identifier) from the server.
+     * Get the requested URI 
      *
      * @return string The requested URI path.
      */
@@ -36,24 +36,23 @@ class Request
      */
     public function getHost(): string
     {
-        // Retrieve the host from the HTTP_HOST server variable
+
         return $this->getServer('HTTP_HOST') ?? '';
     }
 
     /**
      * Get the previous path from the referer URL in the server array.
      *
-     * @return string|null The path of the previous URL if available, otherwise null
+     * @return string|null 
      */
     public function previousUrl(): string|null
     {
-        // Get the referer URL from the server array
+
         $referer = $this->getServer('HTTP_REFERER');
 
         // Parse the referer URL to extract its components
         $parsedReferer = parse_url($referer);
 
-        // Get the path from the referer URL
         $refererPath = $parsedReferer['path'] ?? '';
 
         return $refererPath;
@@ -62,7 +61,7 @@ class Request
     /**
      * Get the previous URL with query string from the referer URL in the server array.
      *
-     * @return string|null The previous URL with query string if available, otherwise null
+     * @return string|null
      */
     public function previousUrlWithQuery(): string|null
     {
@@ -96,8 +95,6 @@ class Request
      */
     public function getProtocol(): string
     {
-
-
         // Check if HTTPS is on to determine the protocol
         return !is_null($this->getServer('HTTPS')) && $this->getServer('HTTPS') === 'on' ? 'https://' : 'http://';
     }
@@ -105,22 +102,20 @@ class Request
     /**
      * Get the full URL of the current request, including the query string.
      *
-     * @return string The full URL with query string
+     * @return string 
      */
     public function fullUrlWithQuery(): string
     {
-        // Retrieve the protocol, host, and URI using their respective methods
+
         $protocol = $this->getProtocol();
         $host = $this->getHost();
         $uri = $this->getUri();
 
-        // Get the query string
+
         $queryString = $this->getQueryString();
 
-        // Construct the full URL with the query string
         $urlWithQuery = $protocol . $host . $uri;
 
-        // Append the query string if it exists
         if (!empty($queryString)) {
             $urlWithQuery .= '?' . $queryString;
         }
@@ -144,14 +139,12 @@ class Request
      */
     public function fullUrl(): string
     {
-        // Retrieve the protocol and host using the respective methods
+
         $protocol = $this->getProtocol();
         $host = $this->getHost();
 
-        // Retrieve the URI from the REQUEST_URI server variable
         $uri = $this->getUri();
 
-        // Concatenate protocol, host, and URI to reconstruct the full URL
         return $protocol . $host . $uri;
     }
     /**
@@ -175,8 +168,7 @@ class Request
     }
 
     /**
-     * Check if the request method matches the
-     * given method.
+     * Check if the request method matches the given method.
      *
      * @param string $method
      *
@@ -197,7 +189,7 @@ class Request
      *
      * @return string
      */
-    public function decodedPath()
+    private function decodedPath()
     {
         return rawurldecode($this->getPath());
     }
@@ -206,7 +198,7 @@ class Request
      *
      * @param string $path 
      *
-     * @return bool True if the request path matches the path, false otherwise.
+     * @return bool
      */
     public function is(string $url): bool
     {
@@ -280,43 +272,23 @@ class Request
     /**
      * Retrieve all request parameters from both GET and POST methods.
      *
-     * @return array  request parameters.
+     * @return array request parameters.
      */
     public function all(): array
     {
-        $body = [];
-
-        // Check if the request method is GET and sanitize its parameters
-        if ($this->isGet()) {
-            foreach ($_GET as $key => $value) {
-                $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-            }
-        }
-
-        // Check if the request method is POST and sanitize its parameters
-        if ($this->isPost()) {
-            foreach ($_POST as $key => $value) {
-                $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
-            }
-        }
-
-
-        // Return the sanitized request parameters or an empty array if none found
-        return $body ?? [];
+        return $this->allInputsRequest();
     }
     /**
-     * Retrieve a specific sanitized input parameter by its key.
+     * Retrieve a specific input parameter
      *
-     * @param string $key The key of the input parameter to retrieve
-     * @return mixed|null The value of the input parameter or default if not found
+     * @param string $key
+     * @return mixed|null
      */
     public function get(string $key, $default = null)
     {
-        // Retrieve all sanitized request parameters
+
         $allParams = $this->all();
 
-        // Check if the provided input key exists 
-        // If found, return the value; otherwise, return default
         if ($this->has($key)) {
             return $allParams[$key];
         }
@@ -325,19 +297,37 @@ class Request
     }
 
     /**
-     * Check if a sanitized input parameter exists by its key.
+     * Check if a input parameter exists
      *
-     * @param string $param The key of the input parameter to check
-     * @return bool True if the parameter exists, false otherwise
+     * @param string $key
+     * @return bool 
      */
     public function has(string $key): bool
     {
-        // Retrieve all sanitized request parameters into an array
+
         $allParams = $this->all();
 
         return array_key_exists($key, $allParams);
     }
 
+    private function allInputsRequest()
+    {
+        $inputs = [];
+
+        if ($this->isGet()) {
+            foreach ($_GET as $key => $value) {
+                $inputs[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        }
+
+        if ($this->isPost()) {
+            foreach ($_POST as $key => $value) {
+                $inputs[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        }
+
+        return $inputs;
+    }
     /**
      * Get the $_SERVER values.
      *

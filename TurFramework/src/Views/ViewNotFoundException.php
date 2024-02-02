@@ -13,9 +13,9 @@ class ViewNotFoundException extends Exception
 
     public function __construct($viewPath)
     {
-        $this->message = 'View['.$viewPath.'] not found.';
+        $this->message = 'View[' . $viewPath . '] not found.';
         $this->multipleMessages = [
-            'View['.$viewPath.'] not found.',
+            'View[' . $viewPath . '] not found.',
             'Are you sure the view exists ?',
         ];
     }

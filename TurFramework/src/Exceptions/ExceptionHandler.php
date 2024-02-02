@@ -11,6 +11,7 @@ use ParseError;
 use CompileError;
 use ErrorException;
 use RuntimeException;
+use TurFramework\Exceptions\HttpException;
 
 class ExceptionHandler
 {
@@ -38,9 +39,9 @@ class ExceptionHandler
         } else {
 
             try {
-                throw new HttpResponseException(code: 500);
-            } catch (HttpResponseException $ex) {
-                self::handleHttpResponseException($ex);
+                throw new HttpException(code: 500);
+            } catch (HttpException $ex) {
+                self::handleHttpException($ex);
             }
         }
     }
@@ -84,8 +85,8 @@ class ExceptionHandler
     {
 
 
-        if ($exception instanceof HttpResponseException) {
-            self::handleHttpResponseException($exception);
+        if ($exception instanceof HttpException) {
+            self::handleHttpException($exception);
         }
 
         self::getDefaultExceptionHandler($exception);
@@ -103,7 +104,7 @@ class ExceptionHandler
             }
         }
     }
-    private static function handleHttpResponseException($exception)
+    private static function handleHttpException($exception)
     {
 
         $code = $exception->getCode();
