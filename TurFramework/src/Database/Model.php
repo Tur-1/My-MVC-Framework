@@ -5,7 +5,7 @@ namespace TurFramework\Database;
 
 abstract class Model
 {
-    protected static $connection;
+    protected static $manager;
     protected $attributes = [];
     /**
      * The table associated with the model.
@@ -33,7 +33,7 @@ abstract class Model
      */
     private function newQueryBuilder()
     {
-        return new QueryBuilder(static::$connection);
+        return new QueryBuilder(static::$manager);
     }
     /**
      * Begin querying the model.
@@ -86,9 +86,9 @@ abstract class Model
      * @param  
      * @return void
      */
-    public static function setConnection($connection)
+    public static function setManager($manager)
     {
-        static::$connection = $connection;
+        static::$manager = $manager;
     }
 
 

@@ -30,13 +30,9 @@ class Connector
      *
      * @throws \Exception
      */
-    public function createConnection($dsn, $username, $password)
+    public function createConnection($dsn, $username, $password): \PDO
     {
-
-        $pdo = $this->createPdoConnection($dsn, $username, $password, $this->options);
-
-
-        return $pdo;
+        return $this->createPdoConnection($dsn, $username, $password, $this->options);
     }
 
     /**

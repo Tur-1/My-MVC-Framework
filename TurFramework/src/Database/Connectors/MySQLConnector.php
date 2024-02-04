@@ -10,9 +10,9 @@ class MySQLConnector extends Connector implements ConnectorInterface
 {
 
     /**
-     * @var \PDO
+     * @var \PDO $connection
      */
-    protected static $instance;
+    protected static $connection;
 
 
     /**
@@ -22,11 +22,11 @@ class MySQLConnector extends Connector implements ConnectorInterface
      */
     public function connect(): \PDO
     {
-        if (!self::$instance) {
-            self::$instance = $this->createConnection($this->getDsn(), 'root', '');
+        if (!self::$connection) {
+            self::$connection = $this->createConnection($this->getDsn(), 'root', '');
         }
 
-        return self::$instance;
+        return self::$connection;
     }
 
     /**

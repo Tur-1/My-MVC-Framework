@@ -2,29 +2,24 @@
 
 namespace TurFramework\Database;
 
-use TurFramework\Database\DatabaseManager;
 use TurFramework\Support\ServiceProvider;
-use TurFramework\Database\Connectors\MySQLConnector;
+use TurFramework\Database\Managers\MySQLManager;
+use TurFramework\Database\Managers\DatabaseManager;
 
 class DatabaseServiceProvider extends ServiceProvider
 {
     public function register()
     {
         $db = new DatabaseManager($this->getDatabaseDriver());
-        $this->app->bind('database', function ($app) use ($db) {
-            return $db;
-        });
 
-        // $connection = $db->makeConnection();
-
-        // Model::setConnection($connection);
+        Model::setManager($db->getManager());
     }
     private function getDatabaseDriver()
     {
 
         return match (config('database.driver')) {
-            'mysql' =>  new MySQLConnector,
-            default =>  new MySQLConnector,
+            'mysql' =>  new MySQLManager,
+            default =>  new MySQLManager,
         };
     }
 }

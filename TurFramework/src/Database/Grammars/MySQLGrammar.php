@@ -3,7 +3,7 @@
 namespace TurFramework\Database\Grammars;
 
 
-class Grammar
+trait MySQLGrammar
 {
     protected $columns = '*';
     protected $limit;
