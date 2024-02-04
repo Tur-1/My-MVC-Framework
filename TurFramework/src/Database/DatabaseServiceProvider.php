@@ -15,9 +15,9 @@ class DatabaseServiceProvider extends ServiceProvider
             return $db;
         });
 
-        $connection = $db->makeConnection();
+        // $connection = $db->makeConnection();
 
-        Model::setConnection($connection);
+        // Model::setConnection($connection);
     }
     private function getDatabaseDriver()
     {

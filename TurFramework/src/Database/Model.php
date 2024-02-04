@@ -31,7 +31,7 @@ abstract class Model
      * Create a new Eloquent query builder for the model.
      * @return \TurFramework\Database\QueryBuilder
      */
-    public function newQueryBuilder()
+    private function newQueryBuilder()
     {
         return new QueryBuilder(static::$connection);
     }
@@ -101,6 +101,6 @@ abstract class Model
      */
     public static function __callStatic($method, $parameters)
     {
-        return (new static)->$method(...$parameters);
+        return static::$method(...$parameters);
     }
 }

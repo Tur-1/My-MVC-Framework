@@ -16,14 +16,32 @@ class QueryBuilder extends Grammar implements QueryBuilderInterface
      * @var \TurFramework\Database\Model
      */
     protected $model;
-    protected $wheres = [];
+    protected $columns = '*';
+    protected $limit;
+    protected $table;
+    protected $wheres;
+    /**
+     * All of the available clause operators.
+     *
+     * @var string[]
+     */
+    public $operators = [
+        '=', '<', '>', '<=', '>=', '<>', '!=', '<=>',
+        'like', 'like binary', 'not like', 'ilike',
+        '&', '|', '^', '<<', '>>', '&~', 'is', 'is not',
+        'rlike', 'not rlike', 'regexp', 'not regexp',
+        '~', '~*', '!~', '!~*', 'similar to',
+        'not similar to', 'not ilike', '~~*', '!~~*',
+    ];
 
     /**
-     * The table associated with the model.
+     * All of the available bitwise operators.
      *
-     * @var string
+     * @var string[]
      */
-    protected $table;
+    public $bitwiseOperators = [
+        '&', '|', '^', '<<', '>>', '&~',
+    ];
     /**
      * 
      *
@@ -78,12 +96,19 @@ class QueryBuilder extends Grammar implements QueryBuilderInterface
      */
     public function select($columns = ['*'])
     {
-        $this->selectColumns($columns);
+        $columns = is_array($columns) ? $columns : func_get_args();
+
+        $this->setColumns($columns);
 
         return $this;
     }
     public function where($column, $operator = null, $value = null)
     {
+
+        if (is_null($value)) {
+            $value = $operator;
+            $operator = '=';
+        }
         $this->wheres[] = [
             'type' => 'AND',
             'column' => $column,
@@ -114,6 +139,21 @@ class QueryBuilder extends Grammar implements QueryBuilderInterface
 
         return $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
     }
+
+    public function first()
+    {
+        [$sql,  $wheresParams] = $this->buildWhereClause($this->readStatement());
+
+        $statement = $this->connection->prepare($sql);
+
+        $this->bindValues($statement, $wheresParams);
+
+        $statement->execute();
+
+        $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this->model));
+
+        return $statement->fetch();
+    }
     public function all()
     {
 
@@ -124,8 +164,15 @@ class QueryBuilder extends Grammar implements QueryBuilderInterface
         return $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
     }
 
+    /**
+     * Execute a query for a single record by ID.
+     *
+     * @param  int|string  $id
+     * @param  array|string  $columns
+     * @return mixed|static
+     */
     public function find($id)
     {
-        return $this->where('id', '=', $id)->get();
+        return $this->where('id', '=', $id)->first();
     }
 }

@@ -5,13 +5,8 @@ namespace TurFramework\Database\Grammars;
 
 class Grammar
 {
-    /**
-     * @var mixed columns
-     */
     protected $columns = '*';
-    /**
-     * @var mixed table
-     */
+    protected $limit;
     protected $table;
     protected $wheres;
     /**
@@ -30,18 +25,32 @@ class Grammar
     {
         [$columns, $values] = $this->getFields($fields);
 
-        return 'UPDATE ' . $this->table . '(' . $columns . ') VALUES(' . $values . ')';
+        return 'UPDATE ' . $this->table . 'SET (' . $columns . ') VALUES(' . $values . ')';
     }
-    protected function selectColumns($columns = ['*'])
+    protected function setColumns($columns = ['*'])
     {
-        $columns = is_array($columns) ? $columns : func_get_args();
-
         $this->columns = implode(',', $columns);
     }
 
-    protected function buildWhereClause()
+    protected function buildWhereClause($statement)
     {
+        $wheresParams = [];
+        if (!empty($this->wheres)) {
+            $statement .= ' WHERE ';
+            foreach ($this->wheres as $key => $where) {
+                if ($key > 0) {
+                    $statement .= ' ' . $where['type'] . ' ';
+                }
+                $wheresParams[$where['column']] = $where['value'];
+                $condition = $where['column'] . ' ' . $where['operator'] . ' ' . ':' . $where['column'];
+                $statement .=  "$condition";
+            }
+        }
+
+        return [$statement,  $wheresParams];
     }
+
+
     /**
      * bindValues
      *
@@ -59,16 +68,7 @@ class Grammar
     protected function readStatement()
     {
         $statement = 'SELECT ' . $this->columns . ' FROM ' . $this->table;
-        if (!empty($this->wheres)) {
-            $statement .= ' WHERE ';
-            foreach ($this->wheres as $key => $where) {
-                if ($key > 0) {
-                    $statement .= ' ' . $where['type'] . ' ';
-                }
-                $parameters[$where['column']] = $where['value'];
-                $statement .=  $where['column'] . ' ' . $where['operator'] . ' ' . $where['value'];
-            }
-        }
+
         return $statement;
     }
 

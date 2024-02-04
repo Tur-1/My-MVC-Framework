@@ -33,7 +33,10 @@ class Connector
     public function createConnection($dsn, $username, $password)
     {
 
-        return $this->createPdoConnection($dsn, $username, $password, $this->options);
+        $pdo = $this->createPdoConnection($dsn, $username, $password, $this->options);
+
+
+        return $pdo;
     }
 
     /**
