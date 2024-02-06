@@ -2,16 +2,25 @@
 
 namespace TurFramework\Database;
 
-use TurFramework\Database\Managers\MySQLManager;
-use TurFramework\Database\DatabaseManager;
-
-
 abstract class Model
 {
+
+
+    /**
+     * @var mixed manager
+     */
+    private static $manager;
+
+    /**
+     * @var mixed attributes
+     */
+    private $attributes = [];
+    /**
+     * The connection name for the model.
+     *
+     * @var string|null
+     */
     protected $connection;
-    protected static $manager;
-    protected static $model;
-    protected $attributes = [];
     /**
      * The table associated with the model.
      *
@@ -55,49 +64,36 @@ abstract class Model
     {
         return $this->connection;
     }
-    public static function connection($connection = null)
+    public static function connection($connection)
     {
         $model = new static;
 
         $model->setConnection($connection);
 
-        return $model->newQuery($model);
+        return $model->newQuery();
     }
-    /**
-     * Create a new Eloquent query builder for the model.
-     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
-     */
-    private function newQueryBuilder()
-    {
-        return (new DatabaseManager())->makeConnection($this->getConnectionName());
-    }
+
     /**
      * Begin querying the model.
      *
-     * @return \TurFramework\Database\Managers\MySQLManager
+     *@return \TurFramework\Database\Contracts\DatabaseManagerInterface
      */
     public static function query()
     {
-        $model = new static;
 
-        return $model->newQuery($model);
+        return (new static)->newQuery();
     }
-
-    private function newQuery($model)
-    {
-        return $this->newQueryBuilder()->setModel($model);
-    }
-
-
     /**
-     * Get the table associated with the model.
+     * Resolve a connection instance.
      *
-     * @return string
+     * @param  string|null  $connection
+     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
      */
-    public function getTable()
+    public static function resolveConnection($connection = null)
     {
-        return $this->table ?? pluralStudly(class_basename($this));
+        return static::$manager->makeConnection($connection);
     }
+
     /**
      * Set the table associated with the model.
      *
@@ -110,6 +106,38 @@ abstract class Model
 
         return $this;
     }
+    /**
+     * Get the table associated with the model.
+     *
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table ?? pluralStudly(class_basename($this));
+    }
+    /**
+     * Create a new Eloquent query builder for the model.
+     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
+     */
+    private function newQueryBuilder()
+    {
+        return $this->getConnection()->setModel($this);
+    }
+    private function newQuery()
+    {
+        return $this->newQueryBuilder();
+    }
+    /**
+     * Get the database connection for the model.
+     *
+     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
+     */
+    private function getConnection()
+    {
+        return static::resolveConnection($this->getConnectionName());
+    }
+
+
     public function __get($key)
     {
         return $this->attributes[$key] ?? null;
@@ -121,14 +149,25 @@ abstract class Model
         $this->setTable($this->getTable());
     }
     /**
-     * Set the default connection .
+     * Set Database Manager.
      *
-     * @param  
+     * @param 
      * @return void
      */
-    public static function setDefaultConnection($connection)
+    public static function setDatabaseManager($manager)
     {
-        static::$connection = $connection;
+        static::$manager = $manager;
+    }
+    /**
+     * Handle dynamic method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->$method(...$parameters);
     }
 
     /**

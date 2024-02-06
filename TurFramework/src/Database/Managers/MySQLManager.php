@@ -3,7 +3,6 @@
 namespace TurFramework\Database\Managers;
 
 use PDO;
-use TurFramework\Database\Connectors\MySQLConnector;
 use TurFramework\Database\Model;
 use TurFramework\Database\Grammars\MySQLGrammar;
 use TurFramework\Database\Contracts\DatabaseManagerInterface;

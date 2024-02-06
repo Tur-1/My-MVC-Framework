@@ -7,7 +7,6 @@ use TurFramework\Database\Model;
 
 interface DatabaseManagerInterface
 {
-
     /**
      * Set a model instance for the model being queried.
      * 

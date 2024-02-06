@@ -6,9 +6,8 @@ use TurFramework\Database\Connectors\Connector;
 use TurFramework\Database\Contracts\ConnectorInterface;
 
 
-class MySQLConnector extends Connector
+class MySQLConnector extends Connector implements ConnectorInterface
 {
-
 
 
     /**
@@ -18,7 +17,7 @@ class MySQLConnector extends Connector
     public function connect($config): \PDO
     {
 
-        $connection = $this->createConnection($this->getDsn($config), $config['username'], '');
+        $connection = $this->createConnection($this->getDsn($config), $config['username'], $config['password']);
         return $connection;
     }
 

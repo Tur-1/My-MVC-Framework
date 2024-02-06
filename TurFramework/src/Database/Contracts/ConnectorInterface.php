@@ -6,9 +6,9 @@ interface ConnectorInterface
 {
 
     /**
-     * connect
+     * connect 
      *
      * @return \PDO
      */
-    public function connect($connectionConfig): \PDO;
+    public function connect($config): \PDO;
 }
