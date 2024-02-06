@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Product;
+
+use App\Models\Brand;
 use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
 
@@ -11,6 +13,7 @@ class HomeController extends Controller
 
     public function index(Request $request, ExampleServiceInterface $exampleService)
     {
+        dd(Product::connection('mysql')->all());
 
         return view('pages.HomePage');
     }

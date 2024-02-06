@@ -8,9 +8,8 @@ use TurFramework\Database\Model;
 use TurFramework\Database\Grammars\MySQLGrammar;
 use TurFramework\Database\Contracts\DatabaseManagerInterface;
 
-class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
+class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 {
-    use MySQLGrammar;
 
     /**
      * The model being queried.
@@ -24,6 +23,16 @@ class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
     protected $wheres;
 
 
+    /**
+     * @var \PDO 
+     */
+    protected $connection;
+
+
+    public function __construct($connection, $config)
+    {
+        $this->connection = $connection;
+    }
 
     /**
      * Set a model instance for the model being queried.
@@ -43,7 +52,7 @@ class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
 
     public function create(array $fields)
     {
-        $statement = self::$connection->prepare($this->insertStatement($fields));
+        $statement = $this->connection->prepare($this->insertStatement($fields));
         $this->bindValues($statement, $fields);
         return  $statement->execute();
     }
@@ -56,7 +65,7 @@ class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
      */
     public function update(array $fields)
     {
-        $statement = self::$connection->prepare($this->updateStatement($fields));
+        $statement = $this->connection->prepare($this->updateStatement($fields));
         $this->bindValues($statement, $fields);
         return  $statement->execute();
     }
@@ -106,7 +115,7 @@ class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
     public function get()
     {
 
-        $statement = self::$connection->prepare($this->readStatement());
+        $statement = $this->connection->prepare($this->readStatement());
 
         $statement->execute();
 
@@ -117,7 +126,7 @@ class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
     {
         [$sql,  $wheresParams] = $this->buildWhereClause($this->readStatement());
 
-        $statement = self::$connection->prepare($sql);
+        $statement = $this->connection->prepare($sql);
 
         $this->bindValues($statement, $wheresParams);
 
@@ -130,7 +139,7 @@ class MySQLManager extends MySQLConnector implements DatabaseManagerInterface
     public function all()
     {
 
-        $statement = self::$connection->prepare($this->readStatement());
+        $statement = $this->connection->prepare($this->readStatement());
 
         $statement->execute();
 

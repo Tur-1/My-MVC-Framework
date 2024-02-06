@@ -16,10 +16,15 @@ class QueryBuilder
     public function __construct(DatabaseManagerInterface $manager)
     {
         $this->manager = $manager;
-
-        $this->manager->connect();
     }
 
+    public function makeConnection($connection =null)
+    {
+       
+        $this->manager->connect($connection);
+
+        return $this;
+    }
     /**
      * Set a model instance for the model being queried.
      * 

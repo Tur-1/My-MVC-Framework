@@ -11,8 +11,8 @@ return [
     | you may use many connections at once using the Database library.
     |
     */
-    
-    'driver' => env('DB_CONNECTION', 'mysql'),
+
+    'default' => env('DB_CONNECTION', 'mysql'),
     /*
     |--------------------------------------------------------------------------
     | Database Connections
@@ -35,8 +35,51 @@ return [
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
+            'username' => env('DB_USERNAME', 'root'),
             'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+        'mysql2' => [
+            'driver' => 'mysql',
+            'host' => env('DB_SEC_HOST', '127.0.0.1'),
+            'port' => env('DB_SEC_PORT', '3306'),
+            'database' => env('DB_SEC_DATABASE', 'forge'),
+            'username' => env('DB_SEC_USERNAME', 'root'),
+            'password' => env('DB_SEC_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
+        'pgsql' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_pgsql_HOST', '127.0.0.1'),
+            'port' => env('DB_pgsql_PORT', '3306'),
+            'database' => env('DB_pgsql_DATABASE', 'forge'),
+            'username' => env('DB_pgsql_USERNAME', 'root'),
+            'password' => env('DB_pgsql_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+        'pgsql2' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_pgsql_SEC_HOST', '127.0.0.1'),
+            'port' => env('DB_pgsql_SEC_PORT', '3306'),
+            'database' => env('DB_pgsql_SEC_DATABASE', 'forge'),
+            'username' => env('DB_pgsql_SEC_USERNAME', 'root'),
+            'password' => env('DB_pgsql_SEC_PASSWORD', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',

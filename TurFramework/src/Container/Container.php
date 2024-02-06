@@ -73,6 +73,48 @@ class Container
 
         $this->bindings[$abstract] = $this->build($concrete);
     }
+    /**
+     * Register a singleton binding with the container.
+     *
+     * @param  string  $abstract
+     * @param  \Closure|string|null  $concrete
+     * @return void
+     *
+     * @throws \TypeError
+     */
+    public function singleton($abstract, $concrete = null)
+    {
+        if (is_null($concrete)) {
+            $concrete = $abstract;
+        }
+
+        if (!$concrete instanceof Closure && !is_string($concrete)) {
+            throw new \TypeError(self::class . '::singleton(): Argument #2 ($concrete) must be of type Closure|string|null');
+        }
+
+        $this->bindings[$abstract] = $this->share(function ($container) use ($concrete) {
+            return $container->build($concrete);
+        });
+    }
+
+    /**
+     * Share the Closure across the application.
+     *
+     * @param  \Closure  $closure
+     * @return \Closure
+     */
+    public function share(Closure $closure)
+    {
+        return function ($container) use ($closure) {
+            static $instance;
+
+            if (is_null($instance)) {
+                $instance = $closure($container);
+            }
+
+            return $instance;
+        };
+    }
 
     /**
      * Resolve the given type from the container.

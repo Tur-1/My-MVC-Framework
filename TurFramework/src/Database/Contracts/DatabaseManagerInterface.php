@@ -9,12 +9,6 @@ interface DatabaseManagerInterface
 {
 
     /**
-     * connect
-     *
-     * @return \PDO
-     */
-    public function connect(): \PDO;
-    /**
      * Set a model instance for the model being queried.
      * 
      * @param \TurFramework\Database\Model $model

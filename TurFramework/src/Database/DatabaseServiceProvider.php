@@ -10,16 +10,8 @@ class DatabaseServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $db = new DatabaseManager($this->getDatabaseDriver());
-
-        Model::setManager($db->getManager());
-    }
-    private function getDatabaseDriver()
-    {
-
-        return match (config('database.driver')) {
-            'mysql' =>  new MySQLManager,
-            default =>  new MySQLManager,
-        };
+         
+        // SET default database connection
+        //  Model::setConnection(config('database.default'));
     }
 }

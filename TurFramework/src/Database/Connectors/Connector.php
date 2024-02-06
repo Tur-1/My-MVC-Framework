@@ -7,6 +7,8 @@ use PDO;
 class Connector
 {
 
+    public $vawslue = 0;
+
     /**
      * The default PDO connection options.
      *
@@ -46,6 +48,8 @@ class Connector
      */
     protected function createPdoConnection($dsn, $username, $password, $options): \PDO
     {
-        return new PDO($dsn, $username, $password, $options);
+        $prdo = new PDO($dsn, $username, $password, $options);
+
+        return $prdo;
     }
 }

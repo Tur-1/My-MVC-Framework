@@ -6,27 +6,20 @@ use TurFramework\Database\Connectors\Connector;
 use TurFramework\Database\Contracts\ConnectorInterface;
 
 
-class MySQLConnector extends Connector implements ConnectorInterface
+class MySQLConnector extends Connector
 {
 
-    /**
-     * @var \PDO $connection
-     */
-    protected static $connection;
 
 
     /**
      * connect database
-     *
-     * @return \PDO
+     * 
      */
-    public function connect(): \PDO
+    public function connect($config): \PDO
     {
-        if (!self::$connection) {
-            self::$connection = $this->createConnection($this->getDsn(), 'root', '');
-        }
 
-        return self::$connection;
+        $connection = $this->createConnection($this->getDsn($config), $config['username'], '');
+        return $connection;
     }
 
     /**
@@ -35,8 +28,11 @@ class MySQLConnector extends Connector implements ConnectorInterface
      * @param  array  $config
      * @return string
      */
-    private  function getDsn()
+    private  function getDsn($config)
     {
-        return 'mysql:host=localhost;dbname=nodejs_database';
+
+        extract($config, EXTR_SKIP);
+
+        return "mysql:host={$host};port={$port};dbname={$database}";
     }
 }

@@ -10,5 +10,5 @@ interface ConnectorInterface
      *
      * @return \PDO
      */
-    public function connect(): \PDO;
+    public function connect($connectionConfig): \PDO;
 }
