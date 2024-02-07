@@ -4,7 +4,7 @@ namespace TurFramework\Database;
 
 abstract class Model
 {
-
+    protected $relations = [];
 
     /**
      * @var mixed manager
@@ -56,6 +56,40 @@ abstract class Model
 
 
     /**
+     * hasMany
+     *
+     * @param Model related
+     * @param mixed foreignKey
+     *
+     * @return void
+     */
+    protected function hasMany($related, $foreignKey, $localKey)
+    {
+
+        $instance =  new $related;
+
+        return $instance->newQuery();
+    }
+
+    /**
+     * Create a new instance of the given model.
+     *
+     * @return static
+     */
+    public function newInstance()
+    {
+
+        $model = new static;
+
+        $model->setConnection($this->getConnectionName());
+
+        $model->setTable($this->getTable());
+
+
+        return $model;
+    }
+
+    /**
      * Get the current connection name for the model.
      *
      * @return string|null
@@ -80,7 +114,6 @@ abstract class Model
      */
     public static function query()
     {
-
         return (new static)->newQuery();
     }
     /**

@@ -9,68 +9,80 @@ class MySQLGrammar
     protected $limit;
     protected $table;
     protected $wheres;
+    protected $wheresParams;
     /**
      * Compile an insert statement into SQL.
      *
      * @return string
      */
-    protected function insertStatement($fields)
+    protected function insertQuery($fields)
     {
         [$columns, $values] = $this->getFields($fields);
 
         return 'INSERT INTO ' . $this->table . '(' . $columns . ') VALUES(' . $values . ')';
     }
 
-    protected function updateStatement($fields)
+    protected function updateQuery($fields)
     {
         [$columns, $values] = $this->getFields($fields);
 
         return 'UPDATE ' . $this->table . 'SET (' . $columns . ') VALUES(' . $values . ')';
+    }
+    protected function readQuery()
+    {
+        $statement = 'SELECT ' . $this->columns . ' FROM ' . $this->table . $this->whereStatement();
+
+        return $statement;
     }
     protected function setColumns($columns = ['*'])
     {
         $this->columns = implode(',', $columns);
     }
 
-    protected function buildWhereClause($statement)
+    protected function whereStatement()
     {
-        $wheresParams = [];
+        $statement = $this->buildWhereClause();
+
+        return $statement;
+    }
+
+    protected function getWhereValues()
+    {
+        return  $this->wheresParams;
+    }
+    private function buildWhereClause()
+    {
         if (!empty($this->wheres)) {
-            $statement .= ' WHERE ';
+            $statement = ' WHERE ';
             foreach ($this->wheres as $key => $where) {
                 if ($key > 0) {
                     $statement .= ' ' . $where['type'] . ' ';
                 }
-                $wheresParams[$where['column']] = $where['value'];
+                $this->wheresParams[$where['column']] = $where['value'];
                 $condition = $where['column'] . ' ' . $where['operator'] . ' ' . ':' . $where['column'];
                 $statement .=  "$condition";
             }
+            return $statement;
         }
-
-        return [$statement,  $wheresParams];
     }
-
 
     /**
      * bindValues
      *
      * @param mixed statement
-     * @param mixed fields
+     * @param array fields
      *
      * @return void
      */
-    protected function bindValues($statement, array $fields)
+    protected function bindValues($statement, $fields)
     {
-        foreach ($fields as $key => $value) {
-            $statement->bindValue(':' . $key, $value);
+        if ($fields) {
+            foreach ($fields as $key => $value) {
+                $statement->bindValue(':' . $key, $value);
+            }
         }
     }
-    protected function readStatement()
-    {
-        $statement = 'SELECT ' . $this->columns . ' FROM ' . $this->table;
 
-        return $statement;
-    }
 
     private function getFields($fields)
     {

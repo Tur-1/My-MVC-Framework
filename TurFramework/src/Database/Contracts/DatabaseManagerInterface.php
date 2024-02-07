@@ -15,11 +15,13 @@ interface DatabaseManagerInterface
      */
     public function setModel(Model $model);
 
-    public function all();
+    public function get();
 
     public function create(array $fields);
 
     public function update(array $fields);
+
+    public function delete();
 
     public function select($columns = ['*']);
 
@@ -29,7 +31,7 @@ interface DatabaseManagerInterface
 
     public function first();
 
-    public function get();
-
     public function find($id);
+
+    public function with($relation);
 }
