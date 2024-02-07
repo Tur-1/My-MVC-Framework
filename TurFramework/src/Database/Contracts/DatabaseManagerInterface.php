@@ -15,21 +15,21 @@ interface DatabaseManagerInterface
      */
     public function setModel(Model $model);
 
-    public function all();
+    public function get();
 
     public function create(array $fields);
 
     public function update(array $fields);
+
+    public function delete();
+
+    public function first();
+
+    public function find($id);
 
     public function select($columns = ['*']);
 
     public function where($column, $operator = null, $value = null);
 
     public function orWhere($column, $operator = null, $value = null);
-
-    public function first();
-
-    public function get();
-
-    public function find($id);
 }
