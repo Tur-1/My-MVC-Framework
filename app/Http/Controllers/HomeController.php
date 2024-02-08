@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Size;
+use App\Models\User;
+use App\Models\Brand;
+use App\Models\Product;
 use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
 
@@ -10,6 +14,7 @@ class HomeController extends Controller
 
     public function index(Request $request, ExampleServiceInterface $exampleService)
     {
+
 
         return view('pages.HomePage');
     }

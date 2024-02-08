@@ -19,8 +19,12 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     protected $columns = '*';
     protected $limit;
     protected $table;
-    protected $wheres;
-
+    /**
+     * The relationships that should be eager loaded.
+     *
+     * @var array
+     */
+    protected $eagerLoad = [];
 
     /**
      * @var \PDO 
@@ -48,34 +52,73 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         return $this;
     }
 
+    public function getModel()
+    {
+        return  $this->model;
+    }
 
     public function create(array $fields)
     {
-        $statement = $this->connection->prepare($this->insertStatement($fields));
+
+        $statement = $this->connection->prepare($this->insertQuery($fields));
+
         $this->bindValues($statement, $fields);
         return  $statement->execute();
     }
 
-    /**
-     * Update records in the database.
-     *
-     * @param  array  $fields
-     * @return int
-     */
+
     public function update(array $fields)
     {
-        $statement = $this->connection->prepare($this->updateStatement($fields));
+        $statement = $this->connection->prepare($this->updateQuery($fields));
         $this->bindValues($statement, $fields);
         return  $statement->execute();
     }
 
-    /**
-     * Set the columns to be selected.
-     *
-     * @param  array|string $columns
-     * @return $this
-     */
-    public function select($columns = ['*'])
+    public function get()
+    {
+
+
+        $statement = $this->connection->prepare($this->readQuery());
+        $this->bindValues($statement, $this->getWhereValues());
+        $statement->execute();
+
+        $res = $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
+
+        return $res;
+    }
+
+    public function first()
+    {
+
+        $statement = $this->connection->prepare($this->readQuery());
+
+        $this->bindValues($statement, $this->getWhereValues());
+
+        $statement->execute();
+
+        $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this->model));
+
+        $res = $statement->fetch();
+
+        return $res;
+    }
+    public function all()
+    {
+        return $this->get();
+    }
+
+    public function delete()
+    {
+        $statement = $this->connection->prepare($this->deleteQuery());
+        $this->bindValues($statement, $this->getWhereValues());
+        return $statement->execute();
+    }
+    public function find($id)
+    {
+        return $this->where('id', '=', $id)->first();
+    }
+
+    public function select($columns = ['*']): self
     {
         $columns = is_array($columns) ? $columns : func_get_args();
 
@@ -83,77 +126,43 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
         return $this;
     }
-    public function where($column, $operator = null, $value = null)
+    public function where($column, $operator = null, $value = null, $type = 'AND'): self
     {
-
-        if (is_null($value)) {
-            $value = $operator;
-            $operator = '=';
-        }
-        $this->wheres[] = [
-            'type' => 'AND',
-            'column' => $column,
-            'operator' => $operator,
-            'value' => $value
-        ];
+        $this->addWhere($column, $operator, $value, $type);
+        return $this;
+    }
+    public function orWhere($column, $operator = null, $value = null): self
+    {
+        $this->where($column, $operator, $value, 'OR');
 
         return $this;
     }
-    public function orWhere($column, $operator = null, $value = null)
+    public function whereIn($column, $values = []): self
     {
-        $this->wheres[] = [
-            'type' => 'OR',
-            'column' => $column,
-            'operator' => $operator,
-            'value' => $value
-        ];
+        $this->where($column, 'IN', $values, 'AND');
+        return $this;
+    }
+    public function orWhereIn($column, $values = []): self
+    {
 
+        $this->where($column, 'IN', $values, 'OR');
         return $this;
     }
 
-    public function get()
+    public function whereNull($column): self
     {
-
-        $statement = $this->connection->prepare($this->readStatement());
-
-        $statement->execute();
-
-        return $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
+        $this->where($column, 'IS NULL', 'null');
+        return $this;
     }
 
-    public function first()
+    public function whereNotNull($column): self
     {
-        [$sql,  $wheresParams] = $this->buildWhereClause($this->readStatement());
-
-        $statement = $this->connection->prepare($sql);
-
-        $this->bindValues($statement, $wheresParams);
-
-        $statement->execute();
-
-        $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this->model));
-
-        return $statement->fetch();
+        $this->where($column, 'IS NOT NULL', 'null');
+        return $this;
     }
-    public function all()
+    public function limit(int $number): self
     {
-
-        $statement = $this->connection->prepare($this->readStatement());
-
-        $statement->execute();
-
-        return $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
-    }
-
-    /**
-     * Execute a query for a single record by ID.
-     *
-     * @param  int|string  $id
-     * @param  array|string  $columns
-     * @return mixed|static
-     */
-    public function find($id)
-    {
-        return $this->where('id', '=', $id)->first();
+        $this->setQueryLimit($number);
+        return $this;
     }
 }
