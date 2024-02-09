@@ -456,7 +456,7 @@ You can access different database connections using models by specifying the con
 Brand::connection('mysql_database_2')->get();
 
 ```
-# you can set the default connection for a model using the 
+## you can set the default connection for a model using the 
 
 ```php
 
