@@ -182,13 +182,11 @@ class MySQLGrammar
         // passed to the method, we will assume that the operator is an equals sign
         // and keep going. Otherwise, we'll require the operator to be passed in.
 
-
         [$value, $operator] = $this->prepareValueAndOperator(
             $value,
             $operator,
-            func_num_args() === 4 && is_null($value)
-        );;
-
+            func_num_args() === 2 && is_null($value)
+        );
         $this->wheres[] = [
             'type' => $type,
             'column' => $column,
@@ -196,6 +194,8 @@ class MySQLGrammar
             'value' => $value
         ];
     }
+
+
     /**
      * Prepare the value and operator for a where clause.
      *
@@ -206,7 +206,7 @@ class MySQLGrammar
      *
      * @throws \InvalidArgumentException
      */
-    private function prepareValueAndOperator($value, $operator, $useDefault = false)
+    protected function prepareValueAndOperator($value, $operator, $useDefault = false)
     {
         if ($useDefault) {
             return [$operator, '='];

@@ -96,10 +96,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
         $statement->execute();
 
-        $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this->model));
-
-        $res = $statement->fetch();
-
+        $res = $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
         return $res;
     }
     public function all()
@@ -128,11 +125,17 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     }
     public function where($column, $operator = null, $value = null, $type = 'AND'): self
     {
-        $this->addWhere($column, $operator, $value, $type);
+        $this->addWhere(...func_get_args());
         return $this;
     }
     public function orWhere($column, $operator = null, $value = null): self
     {
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2 && is_null($value)
+        );
+
         $this->where($column, $operator, $value, 'OR');
 
         return $this;
