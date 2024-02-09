@@ -30,8 +30,8 @@ class MySQLGrammar
      */
     protected function insertQuery($fields)
     {
-
-        return 'INSERT INTO ' . $this->table . $this->setColumnsAndValues($fields);
+        [$columns, $values] = $this->setColumnsAndValues($fields);
+        return 'INSERT INTO ' . $this->table . ' (' . $columns . ') VALUES(' . $values . ')';
     }
     protected function deleteQuery()
     {
@@ -39,7 +39,14 @@ class MySQLGrammar
     }
     protected function updateQuery($fields)
     {
-        return 'UPDATE ' . $this->table . 'SET ' . $this->setColumnsAndValues($fields);
+
+        foreach ($fields as $column => $value) {
+            $columns[] = "$column = :$column";
+        }
+
+        $query = implode(', ', $columns);
+
+        return 'UPDATE ' . $this->table . ' SET ' . $query . $this->whereStatement();
     }
     protected function readQuery()
     {
@@ -145,7 +152,6 @@ class MySQLGrammar
      */
     protected function bindValues($statement, $fields)
     {
-
         if ($fields) {
             foreach ($fields as $column => $value) {
                 if (is_array($value)) {
@@ -166,7 +172,7 @@ class MySQLGrammar
         $columns = $this->prepareColumns(array_keys($fields));
         $values = $this->prepareValues(array_keys($fields));
 
-        return  ' (' . $columns . ') VALUES(' . $values . ')';
+        return [$columns, $values];
     }
     private function prepareColumns(array $columns)
     {

@@ -15,6 +15,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
      *
      * @var \TurFramework\Database\Model
      */
+    protected $fetchMode = PDO::FETCH_CLASS;
     protected $model;
     protected $columns = '*';
     protected $limit;
@@ -56,12 +57,39 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     {
         return  $this->model;
     }
+    /**
+     * Execute an SQL statement and return the boolean result.
+     *
+     * @param  string  $query
+     * @param  array  $bindings
+     * @return bool
+     */
+    public function statement($query, $bindings = [])
+    {
+
+        return $statement->execute();
+    }
+
+    /**
+     * Run the query as a "select" statement against the connection.
+     *
+     * @return array
+     */
+
+    protected function runSelect()
+    {
+        $statement = $this->connection->prepare($this->readQuery());
+        $this->bindValues($statement, $this->getWhereValues());
+        $statement->execute();
+        $statement->setFetchMode($this->fetchMode, get_class($this->getModel()));
+
+        return $statement->fetchAll();
+    }
 
     public function create(array $fields)
     {
 
         $statement = $this->connection->prepare($this->insertQuery($fields));
-
         $this->bindValues($statement, $fields);
         return  $statement->execute();
     }
@@ -69,35 +97,22 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
     public function update(array $fields)
     {
+
+
         $statement = $this->connection->prepare($this->updateQuery($fields));
         $this->bindValues($statement, $fields);
+        $this->bindValues($statement, $this->getWhereValues());
         return  $statement->execute();
     }
 
     public function get()
     {
-
-
-        $statement = $this->connection->prepare($this->readQuery());
-        $this->bindValues($statement, $this->getWhereValues());
-        $statement->execute();
-
-        $res = $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
-
-        return $res;
+        return $this->runSelect();
     }
 
     public function first()
     {
-
-        $statement = $this->connection->prepare($this->readQuery());
-
-        $this->bindValues($statement, $this->getWhereValues());
-
-        $statement->execute();
-
-        $res = $statement->fetchAll(PDO::FETCH_CLASS, get_class($this->model));
-        return $res;
+        return $this->limit(1)->get()[0];
     }
     public function all()
     {
