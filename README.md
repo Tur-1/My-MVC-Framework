@@ -16,6 +16,7 @@
 - [Route Middleware](#section-12)
 - [Multiple Database Connections](#section-13)
 - [Models](#section-14)
+- [Views](#section-15)
 
 <a name="section-1"></a>
 
@@ -387,10 +388,39 @@ Route::get('/about', [AboutController::class, 'index'])
 
 <a name="section-13"></a>
 
+## Views
+ 
+To render views ,use the global view helper like so
+
+```php
+ 
+ <?php
+class HomeController extends Controller
+{
+
+    public function index(Request $request, ExampleServiceInterface $exampleService)
+    {
+
+        $users = User::query()->get();
+
+        return view('pages.HomePage', ['users' => $users]);
+    }
+}
+ ```
+
+Views may also be returned using the View facade:
+
+ ```php
+ 
+use TurFramework\Facades\View;
+ 
+return View::make('pages.HomePage', ['name'=> $name]);
+ ```
 
 
+<a name="section-14"></a>
 
-
+ 
 ## Multiple Database Connections
 You can configure additional database connections by defining the connection details
  in the .env file and the config/database.php file.
@@ -460,7 +490,7 @@ You can access different database connections using models by specifying the con
 Brand::connection('mysql_database_2')->get();
 
 ```
-or you can set the default connection for a model using the 
+or you can set the default connection for a model using the $connection property
 
 ```php
 
@@ -472,64 +502,89 @@ class Brand extends Model
 
 
 ```
-<a name="section-14"></a>
+<a name="section-15"></a>
 
 ## Models
  
+to Define a Model with Custom Table Name 
+
 ```php
-<?php
+ 
+ <?php
 namespace App\Models;
 
 use TurFramework\Database\Model;
 
 class Brand extends Model
 {
+    /**
+     * The table name
+     *
+     * @var string
+     */
+    protected $table = 'brands';
 }
 ?>
 
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Models\Brand; 
-use TurFramework\Http\Request;
-use App\Services\ExampleServiceInterface;
-
-class HomeController extends Controller
-{
- 
-    public function edit(Request $request, ExampleServiceInterface $exampleService, $id)
-    {
-       
-        Brand::query()->select('name', 'id')->get();
-
-        Brand::query()->limit(5)->get();
-
-        Brand::query()->orderBy('name', 'desc')->get();
-
-        Brand::query()->whereNull('name')->orWhereNull('slug')->get();
-
-        Brand::query()->whereNotNull('name')->orWhereNotNull('slug')->get();
-
-        Brand::query()->find($id);
-
-        Brand::query()->where('id', $id)->orWhere('name', '!=', $name)->first();
-
-
-        Brand::query()->create([
-            'name' => $request->get('name'),
-            'slug' => $request->get('slug'),
-        ]);
-
-        Brand::query()
-            ->where('id', 2)
-            ->update([
-                'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
-            ]);
-
-        Brand::query()->where('id', 2)->delete();
- 
-    }
-}
 ```
+
+ 
+       
+Limit Models:
+```php
+ Brand::query()->select('name', 'id')->get()
+ ```  
+       
+
+get Models with Limit:
+```php
+ Brand::query()->limit(5)->get();
+ ```        
+
+Order Brands by Name (Descending):
+```php
+ Brand::query()->orderBy('name', 'desc')->get();
+ ```     
+
+        
+get Models with Null Values for Name or Slug:
+```php
+Brand::query()->whereNull('name')->orWhereNull('slug')->get();
+ ```
+        
+
+get Models with Not Null Values for Name or Slug:
+```php
+Brand::query()->whereNotNull('name')->orWhereNotNull('slug')->get();
+ ```
+     
+
+Find Model by ID or Name:
+```php
+Brand::query()->where('id', $id)->orWhere('name', '!=', $name)->first();
+ ```
+
+
+Create a New Model:
+```php
+Brand::query()->create([
+        'name' => $request->get('name'),
+        'slug' => $request->get('slug'),
+        ]);
+ ```
+
+Update an Existing Model:
+```php
+ Brand::query()->where('id', 2)
+       ->update([
+         'name' => $request->get('name'),
+         'slug' => $request->get('slug'),
+        ]);
+ ```
+
+ Delete a Model:
+```php
+Brand::query()->where('id', 2)->delete();
+ ```
+
+

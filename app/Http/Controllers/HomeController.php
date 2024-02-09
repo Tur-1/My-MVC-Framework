@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
+use TurFramework\Facades\View;
 
 class HomeController extends Controller
 {
@@ -11,10 +13,7 @@ class HomeController extends Controller
     public function index(Request $request, ExampleServiceInterface $exampleService)
     {
 
-        return view('pages.HomePage');
-    }
 
-    public function store(Request $request, ExampleServiceInterface $exampleService, $id, $name)
-    {
+        return View::make('pages.HomePage');
     }
 }
