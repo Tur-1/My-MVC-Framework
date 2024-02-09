@@ -387,6 +387,10 @@ Route::get('/about', [AboutController::class, 'index'])
 
 <a name="section-13"></a>
 
+
+
+
+
 ## Multiple Database Connections
 You can configure additional database connections by defining the connection details
  in the .env file and the config/database.php file.
@@ -456,7 +460,7 @@ You can access different database connections using models by specifying the con
 Brand::connection('mysql_database_2')->get();
 
 ```
-## you can set the default connection for a model using the 
+or you can set the default connection for a model using the 
 
 ```php
 
@@ -464,6 +468,9 @@ class Brand extends Model
 {
     protected $connection = 'mysql_database_2';
 }
+
+
+
 ```
 <a name="section-14"></a>
 
