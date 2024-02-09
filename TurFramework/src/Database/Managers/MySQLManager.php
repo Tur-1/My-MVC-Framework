@@ -3,6 +3,7 @@
 namespace TurFramework\Database\Managers;
 
 use PDO;
+use TurFramework\Support\Arr;
 use TurFramework\Database\Model;
 use TurFramework\Database\Grammars\MySQLGrammar;
 use TurFramework\Database\Contracts\DatabaseManagerInterface;
@@ -17,15 +18,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
      */
     protected $fetchMode = PDO::FETCH_CLASS;
     protected $model;
-    protected $columns = '*';
-    protected $limit;
-    protected $table;
-    /**
-     * The relationships that should be eager loaded.
-     *
-     * @var array
-     */
-    protected $eagerLoad = [];
+
 
     /**
      * @var \PDO 
@@ -57,18 +50,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     {
         return  $this->model;
     }
-    /**
-     * Execute an SQL statement and return the boolean result.
-     *
-     * @param  string  $query
-     * @param  array  $bindings
-     * @return bool
-     */
-    public function statement($query, $bindings = [])
-    {
 
-        return $statement->execute();
-    }
 
     /**
      * Run the query as a "select" statement against the connection.
@@ -78,10 +60,13 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
     protected function runSelect()
     {
+
         $statement = $this->connection->prepare($this->readQuery());
-        $this->bindValues($statement, $this->getWhereValues());
-        $statement->execute();
+
+        $this->bindValues($statement, $this->bindings);
+
         $statement->setFetchMode($this->fetchMode, get_class($this->getModel()));
+        $statement->execute();
 
         return $statement->fetchAll();
     }
@@ -90,7 +75,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     {
 
         $statement = $this->connection->prepare($this->insertQuery($fields));
-        $this->bindValues($statement, $fields);
+        $this->bindValues($statement, $this->bindings);
         return  $statement->execute();
     }
 
@@ -98,10 +83,9 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     public function update(array $fields)
     {
 
-
         $statement = $this->connection->prepare($this->updateQuery($fields));
-        $this->bindValues($statement, $fields);
-        $this->bindValues($statement, $this->getWhereValues());
+
+        $this->bindValues($statement, $this->bindings);
         return  $statement->execute();
     }
 
@@ -112,17 +96,21 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
     public function first()
     {
-        return $this->limit(1)->get()[0];
+        return Arr::first($this->limit(1)->get(), default: []);
     }
     public function all()
     {
         return $this->get();
     }
 
-    public function delete()
+    public function delete($id = null)
     {
+        if (!is_null($id)) {
+            $this->where('id', '=', $id);
+        }
+
         $statement = $this->connection->prepare($this->deleteQuery());
-        $this->bindValues($statement, $this->getWhereValues());
+        $this->bindValues($statement, $this->bindings);
         return $statement->execute();
     }
     public function find($id)
@@ -172,15 +160,41 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->where($column, 'IS NULL', 'null');
         return $this;
     }
+    public function orWhereNull($column): self
+    {
+        $this->where($column, 'IS NULL', 'null', 'OR');
+        return $this;
+    }
 
     public function whereNotNull($column): self
     {
+
         $this->where($column, 'IS NOT NULL', 'null');
         return $this;
     }
+    public function orWhereNotNull($column): self
+    {
+        $this->where($column, 'IS NOT NULL', 'null', 'OR');
+        return $this;
+    }
+
     public function limit(int $number): self
     {
         $this->setQueryLimit($number);
+        return $this;
+    }
+
+    /**
+     * Add an "order by" clause to the query.
+     *
+     * @param  string  $column
+     * @param  string  $direction
+     * @return $this
+     *
+     */
+    public function orderBy($column, $direction = 'ASC'): self
+    {
+        $this->setOrderBy($column, $direction);
         return $this;
     }
 }

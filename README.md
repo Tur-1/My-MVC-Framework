@@ -14,8 +14,8 @@
 - [Route Service Provider](#section-10)
 - [Global Middleware](#section-11)
 - [Route Middleware](#section-12)
-
-
+- [Multiple Database Connections](#section-13)
+- [Models](#section-14)
 
 <a name="section-1"></a>
 
@@ -385,3 +385,144 @@ Route::get('/about', [AboutController::class, 'index'])
 
 ```
 
+<a name="section-13"></a>
+
+## Multiple Database Connections
+You can configure additional database connections by defining the connection details
+ in the .env file and the config/database.php file.
+
+.env file
+
+```php
+DB_CONNECTION=mysql_1
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=mysql_database_1
+DB_USERNAME=root
+DB_PASSWORD=
+
+DB_2_CONNECTION=mysql_2
+DB_2_HOST=127.0.0.1
+DB_2_PORT=3306
+DB_2_DATABASE=mysql_database_2
+DB_2_USERNAME=root
+DB_2_PASSWORD=
+ 
+```
+config/database.php file
+```php
+
+     // Setting Default Connection
+    'default' => env('DB_CONNECTION', 'mysql_1'),
+
+    // database connections
+    'connections' => [
+        'mysql_1' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+        'mysql_2' => [
+            'driver' => 'mysql',
+            'host' => env('DB_SEC_HOST', '127.0.0.1'),
+            'port' => env('DB_SEC_PORT', '3306'),
+            'database' => env('DB_SEC_DATABASE', 'forge'),
+            'username' => env('DB_SEC_USERNAME', 'root'),
+            'password' => env('DB_SEC_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+    ],
+```
+
+## Accessing Database Connections Using Models
+You can access different database connections using models by specifying the connection using the connection() method.
+
+```php
+ 
+Brand::connection('mysql_database_2')->get();
+
+```
+# you can set the default connection for a model using the 
+
+```php
+
+class Brand extends Model
+{
+    protected $connection = 'mysql_database_2';
+}
+```
+<a name="section-14"></a>
+
+## Models
+ 
+```php
+<?php
+namespace App\Models;
+
+use TurFramework\Database\Model;
+
+class Brand extends Model
+{
+}
+?>
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Brand; 
+use TurFramework\Http\Request;
+use App\Services\ExampleServiceInterface;
+
+class HomeController extends Controller
+{
+ 
+    public function edit(Request $request, ExampleServiceInterface $exampleService, $id)
+    {
+       
+        Brand::query()->select('name', 'id')->get();
+
+        Brand::query()->limit(5)->get();
+
+        Brand::query()->orderBy('name', 'desc')->get();
+
+        Brand::query()->whereNull('name')->orWhereNull('slug')->get();
+
+        Brand::query()->whereNotNull('name')->orWhereNotNull('slug')->get();
+
+        Brand::query()->find($id);
+
+        Brand::query()->where('id', $id)->orWhere('name', '!=', $name)->first();
+
+
+        Brand::query()->create([
+            'name' => $request->get('name'),
+            'slug' => $request->get('slug'),
+        ]);
+
+        Brand::query()
+            ->where('id', 2)
+            ->update([
+                'name' => $request->get('name'),
+                'slug' => $request->get('slug'),
+            ]);
+
+        Brand::query()->where('id', 2)->delete();
+ 
+    }
+}
+```

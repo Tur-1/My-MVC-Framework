@@ -10,6 +10,16 @@ class MySQLGrammar
     protected $wheres;
     protected $wheresValues;
     protected $limit;
+    protected $orderByColumn;
+    protected $orderDirection;
+    /**
+     * The current query value bindings.
+     *
+     * @var array
+     */
+    protected $bindings = [];
+
+
     /**
      * All of the available clause operators.
      *
@@ -30,7 +40,12 @@ class MySQLGrammar
      */
     protected function insertQuery($fields)
     {
-        [$columns, $values] = $this->setColumnsAndValues($fields);
+        $columns = implode(', ', array_keys($fields));
+
+        $values = trim(str_repeat('?,', count(array_keys($fields))), ',');
+
+        $this->bindings[] = array_values($fields);
+
         return 'INSERT INTO ' . $this->table . ' (' . $columns . ') VALUES(' . $values . ')';
     }
     protected function deleteQuery()
@@ -41,7 +56,8 @@ class MySQLGrammar
     {
 
         foreach ($fields as $column => $value) {
-            $columns[] = "$column = :$column";
+            $columns[] = "$column = ?";
+            $this->bindings[] = $value;
         }
 
         $query = implode(', ', $columns);
@@ -50,7 +66,12 @@ class MySQLGrammar
     }
     protected function readQuery()
     {
-        $statement = 'SELECT ' . $this->columns . ' FROM ' . $this->table . $this->whereStatement() .   $this->limit();
+        $statement = 'SELECT ' . $this->columns .
+            ' FROM ' .
+            $this->table .
+            $this->whereStatement()
+            . $this->getOrderBy()
+            .   $this->limit();
 
         return $statement;
     }
@@ -78,10 +99,7 @@ class MySQLGrammar
         }
     }
 
-    protected function getWhereValues()
-    {
-        return  $this->wheresValues;
-    }
+
 
     private function buildWhereClause()
     {
@@ -98,23 +116,18 @@ class MySQLGrammar
 
         return $statement;
     }
-    private function setWhereValues($column, $value)
-    {
-        return  $this->wheresValues[$column] = $value;
-    }
+
     private function buildWhereStatement($where)
     {
         if ($this->isNullOrNotNull($where['operator'])) {
             return $this->buildWhereNull($where);
         }
 
-        $this->setWhereValues($where['column'], $where['value']);
-
         if ($this->isWhereIn($where['operator'])) {
             return $this->buildWhereInStatement($where);
         }
-
-        return $where['column'] . ' ' . $where['operator'] . ' :' . $where['column'];
+        $this->bindings[] = $where['value'];
+        return $where['column'] . ' ' . $where['operator'] . ' ?';
     }
     private function isNullOrNotNull($operator)
     {
@@ -131,8 +144,11 @@ class MySQLGrammar
     private function buildWhereInStatement($where)
     {
         foreach ($where['value'] as $index => $value) {
-            $valuess[] = ':' . $where['column'] . $index;
+            $valuess[] = '?';
+            $this->bindings[] = $value;
         }
+
+
 
         return $where['column'] . ' IN (' . implode(', ', $valuess) . ')';
     }
@@ -150,38 +166,13 @@ class MySQLGrammar
      *
      * @return void
      */
-    protected function bindValues($statement, $fields)
+    protected function bindValues($statement, $bindings)
     {
-        if ($fields) {
-            foreach ($fields as $column => $value) {
-                if (is_array($value)) {
-                    foreach ($value as $index => $val) {
-                        $statement->bindValue(':' . $column . $index, $val);
-                    }
-                } else {
-
-                    $statement->bindValue(':' . $column, $value);
-                }
-            }
+        foreach ($bindings as $key => $value) {
+            $statement->bindValue($key + 1, $value);
         }
     }
 
-
-    private function setColumnsAndValues($fields)
-    {
-        $columns = $this->prepareColumns(array_keys($fields));
-        $values = $this->prepareValues(array_keys($fields));
-
-        return [$columns, $values];
-    }
-    private function prepareColumns(array $columns)
-    {
-        return implode(',',  $columns);
-    }
-    private function prepareValues(array $columns)
-    {
-        return ':' . implode(',:', $columns);
-    }
     protected function addWhere($column, $operator = null, $value = null, $type = 'AND')
     {
         // Here we will make some assumptions about the operator. If only 2 values are
@@ -234,5 +225,17 @@ class MySQLGrammar
     protected function invalidOperatorAndValue($operator, $value)
     {
         return is_null($value) && in_array($operator, $this->operators) && !in_array($operator, ['=', '<>', '!=']);
+    }
+
+
+    protected function setOrderBy($column, $direction)
+    {
+        $this->orderByColumn = $column;
+        $this->orderDirection = $direction;
+    }
+
+    protected function getOrderBy()
+    {
+        return $this->orderByColumn ? ' ORDER BY ' . $this->orderByColumn . ' ' . $this->orderDirection : '';
     }
 }

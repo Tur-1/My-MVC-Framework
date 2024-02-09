@@ -12,7 +12,8 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'mysql_1'),
+
     /*
     |--------------------------------------------------------------------------
     | Database Connections
@@ -20,17 +21,17 @@ return [
     |
     | Here are each of the database connections setup for your application.
     | Of course, examples of configuring each database platform that is
-    | supported by Laravel is shown below to make development simple.
+    | supported by Tur-Framework is shown below to make development simple.
     |
     |
-    | All database work in Laravel is done through the PHP PDO facilities
+    | All database work in Tur-Framework is done through the PHP PDO facilities
     | so make sure you have the driver for your particular database of
     | choice installed on your machine before you begin development.
     |
     */
 
     'connections' => [
-        'mysql' => [
+        'mysql_1' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
@@ -44,7 +45,7 @@ return [
             'strict' => true,
             'engine' => null,
         ],
-        'mysql2' => [
+        'mysql_2' => [
             'driver' => 'mysql',
             'host' => env('DB_SEC_HOST', '127.0.0.1'),
             'port' => env('DB_SEC_PORT', '3306'),
@@ -59,7 +60,7 @@ return [
             'engine' => null,
         ],
 
-        'pgsql' => [
+        'pgsql_1' => [
             'driver' => 'pgsql',
             'host' => env('DB_pgsql_HOST', '127.0.0.1'),
             'port' => env('DB_pgsql_PORT', '3306'),
@@ -73,7 +74,7 @@ return [
             'strict' => true,
             'engine' => null,
         ],
-        'pgsql2' => [
+        'pgsql_2' => [
             'driver' => 'pgsql',
             'host' => env('DB_pgsql_SEC_HOST', '127.0.0.1'),
             'port' => env('DB_pgsql_SEC_PORT', '3306'),
@@ -89,16 +90,5 @@ return [
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Migration Repository Table
-    |--------------------------------------------------------------------------
-    |
-    | This table keeps track of all the migrations that have already run for
-    | your application. Using this information, we can determine which of
-    | the migrations on disk haven't actually been run in the database.
-    |
-    */
 
-    'migrations' => 'migrations',
 ];

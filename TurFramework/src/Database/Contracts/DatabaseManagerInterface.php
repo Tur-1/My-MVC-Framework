@@ -21,7 +21,7 @@ interface DatabaseManagerInterface
 
     public function update(array $fields);
 
-    public function delete();
+    public function delete($id = null);
 
     public function first();
 
@@ -41,5 +41,11 @@ interface DatabaseManagerInterface
 
     public function whereNull($column): self;
 
+    public function orWhereNull($column): self;
+
     public function whereNotNull($column): self;
+
+    public function orWhereNotNull($column): self;
+
+    public function orderBy($column, $direction = 'ASC'): self;
 }

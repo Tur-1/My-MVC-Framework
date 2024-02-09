@@ -26,60 +26,8 @@ abstract class Model
      * @var string
      */
     protected $table;
-    /**
-     * The name of the "created at" column.
-     *
-     * @var string|null
-     */
-    const CREATED_AT = 'created_at';
-
-    /**
-     * The name of the "updated at" column.
-     *
-     * @var string|null
-     */
-    const UPDATED_AT = 'updated_at';
-
-    /**
-     * Set the connection associated with the model.
-     *
-     * @param  string|null  $name
-     * @return $this
-     */
-    public function setConnection($name)
-    {
-        $this->connection = $name;
-
-        return $this;
-    }
 
 
-    /**
-     * Create a new instance of the given model.
-     *
-     * @return static
-     */
-    public function newInstance()
-    {
-
-        $model = new static;
-
-        $model->setConnection($this->getConnectionName());
-
-        $model->setTable($this->getTable());
-
-        return $model;
-    }
-
-    /**
-     * Get the current connection name for the model.
-     *
-     * @return string|null
-     */
-    public function getConnectionName()
-    {
-        return $this->connection;
-    }
     public static function connection($connection)
     {
         $model = new static;
@@ -96,7 +44,9 @@ abstract class Model
      */
     public static function query()
     {
-        return (new static)->newQuery();
+        $model = new static;
+
+        return $model->newQuery();
     }
     /**
      * Resolve a connection instance.
@@ -104,7 +54,7 @@ abstract class Model
      * @param  string|null  $connection
      * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
      */
-    public static function resolveConnection($connection = null)
+    private static function resolveConnection($connection = null)
     {
         return static::$manager->makeConnection($connection);
     }
@@ -152,17 +102,40 @@ abstract class Model
         return static::resolveConnection($this->getConnectionName());
     }
 
+    /**
+     * Set the connection associated with the model.
+     *
+     * @param  string|null  $name
+     * @return $this
+     */
+    private function setConnection($name)
+    {
+        $this->connection = $name;
 
+        return $this;
+    }
+
+    /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    private function getConnectionName()
+    {
+        return $this->connection;
+    }
     public function __get($key)
     {
+
         return $this->attributes[$key] ?? null;
     }
 
     public function __set($key, $value)
     {
         $this->attributes[$key] = $value;
-        $this->setTable($this->getTable());
     }
+
+
     /**
      * Set Database Manager.
      *
