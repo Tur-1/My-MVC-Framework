@@ -14,9 +14,9 @@
 - [Route Service Provider](#section-10)
 - [Global Middleware](#section-11)
 - [Route Middleware](#section-12)
-- [Multiple Database Connections](#section-13)
-- [Models](#section-14)
-- [Views](#section-15)
+- [Views](#section-13)
+- [Multiple Database Connections](#section-14)
+- [Models](#section-15)
 
 <a name="section-1"></a>
 
