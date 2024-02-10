@@ -81,16 +81,12 @@ abstract class Model
         return $this->table ?? pluralStudly(class_basename($this));
     }
     /**
-     * Create a new Eloquent query builder for the model.
+     * Create a new query for the model.
      * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
      */
-    private function newQueryBuilder()
-    {
-        return $this->getConnection()->setModel($this);
-    }
     private function newQuery()
     {
-        return $this->newQueryBuilder();
+        return $this->getConnection()->setModel($this);
     }
     /**
      * Get the database connection for the model.

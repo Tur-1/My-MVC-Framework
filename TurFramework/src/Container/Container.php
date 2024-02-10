@@ -209,23 +209,12 @@ class Container
         $results = [];
 
         foreach ($dependencies as $dependency) {
-            $name = $dependency->getName();
             $type = $dependency->getType();
-
-            if (!$type) {
-                throw ContainerException::missingTypeHint($abstract, $name);
-            }
-            if ($type instanceof \ReflectionUnionType) {
-                throw  ContainerException::unionType($abstract, $name);
-            }
 
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
                 $results[] = $this->resolve($type->getName());
             }
-            throw  ContainerException::invalidParam($abstract, $name);
-            break;
         }
-
         return $results;
     }
     /**

@@ -23,17 +23,13 @@ class DatabaseManager
     public function makeConnection($name)
     {
         $name = $name ?: $this->getDefaultConnection();
-
-        //  get the configuration settings for the specified connection name from the config/database.php file.
+ 
         $config = $this->getConfiguration($name);
-
-        // Check if the connection is already stored in the connections array
-        if (!isset(self::$connections[$name])) {
-            // If not, create a new connection using the retrieved configuration
+ 
+        if (!isset(self::$connections[$name])) { 
             self::$connections[$name] = $this->createConnection($config);
         }
-
-        // we will return database manager based on the connection driver
+ 
         return $this->getDatabaseManager(self::$connections[$name], $config);
     }
 

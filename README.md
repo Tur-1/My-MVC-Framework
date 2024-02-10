@@ -16,7 +16,7 @@
 - [Route Middleware](#section-12)
 - [Views](#section-13)
 - [Multiple Database Connections](#section-14)
-- [Models](#section-15)
+- [Models](#section-15) 
 
 <a name="section-1"></a>
 
