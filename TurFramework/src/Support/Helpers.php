@@ -181,7 +181,17 @@ if (!function_exists('view')) {
     }
 }
 
+if (!function_exists('csrf_token')) {
 
+    // Helper function to generate HTML input with CSRF token
+    function csrf_token()
+    {
+        // Generate CSRF token
+        $token =  bin2hex(random_bytes(32));
+        // Return HTML input with CSRF token
+        return "<input type=\"hidden\" name=\"_token\" value=\"{$token}\">";
+    }
+}
 if (!function_exists('import')) {
     /**
      * Render a view with optional data.

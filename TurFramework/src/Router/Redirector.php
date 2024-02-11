@@ -2,7 +2,6 @@
 
 namespace TurFramework\Router;
 
-use TurFramework\Facades\Request;
 use TurFramework\Http\RedirectResponse;
 
 
@@ -31,7 +30,7 @@ class Redirector
      */
     public function back()
     {
-        return $this->to(url: (new Request)->previousUrl());
+        return $this->to(url: app('request')->previousUrl());
     }
 
     /**

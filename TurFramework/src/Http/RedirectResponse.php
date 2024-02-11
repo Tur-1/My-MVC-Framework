@@ -59,7 +59,7 @@ class RedirectResponse
     public function flashToSession()
     {
         foreach ($this->withData as $key => $value) {
-            Session::flash($key, $value);
+            session()->flash($key, $value);
         }
     }
     public function __destruct()

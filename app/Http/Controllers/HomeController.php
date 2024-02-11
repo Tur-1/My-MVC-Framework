@@ -13,6 +13,12 @@ class HomeController extends Controller
     public function index(Request $request, ExampleServiceInterface $exampleService)
     {
 
+
         return View::make('pages.HomePage');
+    }
+    public function store(Request $request)
+    {
+
+        redirect()->back()->with('message', 'was sent succssfully');
     }
 }

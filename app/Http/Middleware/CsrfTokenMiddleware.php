@@ -13,9 +13,9 @@ class CsrfTokenMiddleware
     {
         if (
             $request->isPost() &&
-            !$request->has('csrf_token')
+            !$request->has('_token')
         ) {
-            abort(500);
+            abort(419);
         }
     }
 }

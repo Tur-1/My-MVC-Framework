@@ -2,6 +2,8 @@
 
 namespace TurFramework\Session;
 
+use TurFramework\Support\Arr;
+
 class Store
 {
     /**
@@ -12,6 +14,10 @@ class Store
     protected $attributes = [];
 
 
+    public function __construct()
+    {
+        $this->attributes = $_SESSION;
+    }
     /**
      * Put a value in the session.
      *
@@ -20,9 +26,15 @@ class Store
      * 
      * @return void
      */
-    public function put(string $key, $value): void
+    public function put($key, $value = null)
     {
-        $_SESSION[$key] = $value;
+        if (!is_array($key)) {
+            $key = [$key => $value];
+        }
+
+        foreach ($key as $arrayKey => $arrayValue) {
+            Arr::set($_SESSION, $arrayKey, $arrayValue);
+        }
     }
     /**
      * Get all of the session data.
@@ -31,26 +43,31 @@ class Store
      */
     public function all()
     {
-        return $_SESSION;
+        return  $_SESSION;
     }
 
     /**
-     * Get a value from the session.
+     * Get an item from the session.
      *
-     * @param string $key
-     * @param mixed $default
+     * @param  string  $key
+     * @param  mixed  $default
      * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get($key, $default = null)
     {
-        if (isset($_SESSION['_flash'][$key])) {
-            $sestion = $_SESSION['_flash'][$key];
-            self::remove('_flash');
+
+        if ($this->hasflash($key)) {
+            $sestion = Arr::get($_SESSION['_flash'], $key, $default);
+            $this->remove('_flash');
             return $sestion;
         }
-        return $_SESSION[$key] ?? $default;
+        return Arr::get($_SESSION, $key, $default);
     }
 
+    private function hasflash($key)
+    {
+        return isset($_SESSION['_flash']) ? Arr::get($_SESSION['_flash'], $key) : false;
+    }
     /**
      * Check if a key exists in the session.
      *
@@ -60,9 +77,9 @@ class Store
     public function has(string $key): bool
     {
         if (isset($_SESSION['_flash'][$key])) {
-            return (bool) isset($_SESSION['_flash'][$key]);
+            return Arr::exists($_SESSION['_flash'], $key);
         }
-        return (bool) isset($_SESSION[$key]);
+        return Arr::exists($_SESSION, $key);
     }
 
     /**
@@ -73,13 +90,7 @@ class Store
      */
     public function forget(array $keys)
     {
-
-        if (count($keys) === 0) {
-            return;
-        }
-        foreach ($keys as $value) {
-            unset($_SESSION[$value]);
-        }
+        Arr::forget($_SESSION, $keys);
     }
 
 
@@ -92,7 +103,8 @@ class Store
      */
     public function remove(string $key)
     {
-        unset($_SESSION[$key]);
+
+        Arr::forget($_SESSION, $key);
     }
 
 
@@ -104,8 +116,12 @@ class Store
      * @param string|null $value
      * @return mixed
      */
-    public function flash(string $key, $value = null)
+    public function flash($key, $value = null)
     {
-        $_SESSION['_flash'][$key] = $value;
+
+        if (!is_array($key)) {
+            $key = [$key => $value];
+        }
+        $this->put('_flash', $key);
     }
 }
