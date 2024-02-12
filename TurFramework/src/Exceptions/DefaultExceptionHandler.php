@@ -10,8 +10,11 @@ class DefaultExceptionHandler
     {
         $errorData = [];
 
-        $message = $exception->getMessage();
+        $primary_message = $exception->getMessage();
+        $secondary_message = self::getSecondaryMessage($exception);
+
         $multipleMessages = self::getMultipleMessages($exception);
+
         $className = self::getClassName($exception);
 
         $trace = $exception->getTrace();
@@ -45,7 +48,10 @@ class DefaultExceptionHandler
     {
         return method_exists($exception, 'getMultipleMessages') ? $exception->getMultipleMessages() : [];
     }
-
+    private static function getSecondaryMessage($exception)
+    {
+        return method_exists($exception, 'getSecondaryMessage') ? $exception->getSecondaryMessage() : [];
+    }
     private static function getClassName($exception)
     {
         $className = explode('\\', get_class($exception));

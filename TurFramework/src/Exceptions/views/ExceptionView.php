@@ -224,7 +224,10 @@
                         <span></span> <?php echo $className; ?> </span>
                     </div>
                     <div class="errorMessage">
-                        <span> <?php echo $message; ?> </span>
+                        <span> <?php echo $primary_message; ?> </span>
+                    </div>
+                    <div class="errorMessage mt-4 " style="font-size:15px">
+                        <span> <?php echo $secondary_message; ?> </span>
                     </div>
                 </div>
                 <div class="w-25 text-end">

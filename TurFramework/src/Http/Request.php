@@ -2,6 +2,8 @@
 
 namespace TurFramework\Http;
 
+use Attribute;
+use TurFramework\Support\Arr;
 
 class Request
 {
@@ -167,6 +169,10 @@ class Request
         return $this->getUri();
     }
 
+    public function only($keys)
+    {
+        return Arr::only($this->all(), $keys);
+    }
     /**
      * Check if the request method matches the given method.
      *
@@ -276,6 +282,7 @@ class Request
      */
     public function all(): array
     {
+
         return $this->allInputsRequest();
     }
     /**
@@ -338,5 +345,17 @@ class Request
     private function getServer($key)
     {
         return Server::get($key);
+    }
+
+
+    /**
+     * Get an input element from the request.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return Arr::get($this->all(), $key);
     }
 }
