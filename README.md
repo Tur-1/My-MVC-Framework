@@ -641,7 +641,33 @@ class StoreUserRequest extends FormRequest
         ];
    }
 }    
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Http\Requests\StoreUserRequest;
+
+class UserController extends Controller
+{
+
+    public function store(StoreUserRequest $request)
+    {
+
+        $validatedRequest = $request->validated();
+
+        User::query()->create($validatedRequest);
+
+        return redirect()->back();
+    }
+}
+
+
 ```
+
+
 <a name="section-17"></a>
 
 ## Validation Rules

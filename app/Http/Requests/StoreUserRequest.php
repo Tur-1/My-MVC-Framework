@@ -21,6 +21,7 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'email' => ['required', 'email', 'unique:users'],
             'password' => 'required|min:6',
