@@ -22,6 +22,7 @@ class HomeController extends Controller
 
         $request->validated();
 
-        redirect()->back()->with('message', 'was sent succssfully');
+
+        return redirect()->back();
     }
 }

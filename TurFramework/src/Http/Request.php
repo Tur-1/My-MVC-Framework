@@ -4,6 +4,7 @@ namespace TurFramework\Http;
 
 use Attribute;
 use TurFramework\Support\Arr;
+use TurFramework\Validation\Validator;
 
 class Request
 {
@@ -60,6 +61,26 @@ class Request
         return $refererPath;
     }
 
+    /**
+     * Get the previous path from the referer URL in the server array.
+     *
+     * @param array $rules
+     * @param array $messages
+     * @return array
+     */
+    public function validate(array $rules, array $messages = [])
+    {
+
+        $vaildator = new Validator($this->only(array_keys($rules)), $rules, $messages);
+        $validatedRequest = $vaildator->validate();
+
+
+        if ($vaildator->fails()) {
+            redirect()->back()->withErrors($vaildator->getErrors());
+        }
+
+        return $validatedRequest;
+    }
     /**
      * Get the previous URL with query string from the referer URL in the server array.
      *

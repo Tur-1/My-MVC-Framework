@@ -227,7 +227,7 @@
                         <span> <?php echo $primary_message; ?> </span>
                     </div>
                     <div class="errorMessage mt-4 " style="font-size:15px">
-                        <span> <?php echo $secondary_message; ?> </span>
+                        <span> <?php echo $secondary_message ?? ''; ?> </span>
                     </div>
                 </div>
                 <div class="w-25 text-end">
@@ -267,7 +267,7 @@
                             for ($i = $value['start_line'] - 1; $i < $value['end_line']; ++$i) {
                                 $codeSnippet = htmlspecialchars($value['file_content'][$i]);
 
-                                echo '<span>' . $i . ':' . $codeSnippet . '</span>';
+                                echo '<span>' . $i . ': ' . ' ' . $codeSnippet . '</span>';
                             }
                             echo '</pre> </code>'; ?>
 

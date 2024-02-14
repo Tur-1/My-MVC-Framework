@@ -64,6 +64,21 @@ class MySQLGrammar
 
         return 'UPDATE ' . $this->table . ' SET ' . $query . $this->whereStatement();
     }
+
+    protected function existsQuery()
+    {
+        $existsSql = $this->getExistsSql();
+
+        return "SELECT $existsSql AS record_exists";
+    }
+
+    private function getExistsSql()
+    {
+        $table = $this->table;
+        $whereClause = $this->whereStatement();
+
+        return  'EXISTS(SELECT 1 FROM ' . $table . $whereClause . ')';
+    }
     protected function readQuery()
     {
         $statement = 'SELECT ' . $this->columns .

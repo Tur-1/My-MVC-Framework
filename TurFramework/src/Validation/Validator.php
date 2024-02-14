@@ -8,6 +8,7 @@ class Validator
     protected $data;
     protected $messages;
     protected $rule;
+    protected $errorsBag = [];
 
     public function __construct(array $data, array $rules, array $messages = [])
     {
@@ -21,39 +22,76 @@ class Validator
 
     public function validate()
     {
-        $errors = [];
-
 
         foreach ($this->reuqestRules as $field => $rules) {
-            foreach ($rules as $rule) {
-                [$rule, $params] = $this->parseRule($rule);
+            foreach ($this->resloveRules($rules) as $rule) {
+                [$rule, $params] = $this->getRuleParams($rule);
+
                 if (!method_exists($this->rule, $rule)) {
                     throw  RuleException::invalidRule($field, $rules, $rule);
                     break;
                 }
-                if (!$this->rule->$rule($field, $params)) {
-                    $errors[$field][] = $this->getMessage($field, $rule);
-                }
+
+                $this->applyRule($field, $rule, $params);
             }
         }
 
-        if (!empty($errors)) {
-
-            redirect()->back()->withErrors($errors);
-        }
+        return  $this->data;
     }
 
-    public function parseRule($rule)
+    public function getErrors()
+    {
+        return $this->errorsBag;
+    }
+    /**
+     * Determine if the data fails the validation rules.
+     *
+     * @return bool
+     */
+    public function fails()
+    {
+        return !empty($this->errorsBag);
+    }
+
+    private function resloveRules($rules)
+    {
+
+        if (is_string($rules)) {
+            return explode('|', $rules);
+        }
+
+        return $rules;
+    }
+    private function applyRule($field, $rule, $params)
+    {
+
+
+        if (!$this->rule->$rule($field, ...$params)) {
+            $this->errorsBag[$field][] = $this->getMessage($field, $rule);
+        }
+    }
+    public function getRuleParams($rule)
     {
 
         $params = [];
-        if (strpos($rule, ':') !== false) {
-            [$rule, $params] = explode(':', $rule, 2);
+        if ($this->isRuleHasParam($rule)) {
+
+            [$rule, $param] = $this->getParam($rule);
+
+            $params = explode(',', $param);
         }
 
         return [$rule, $params];
     }
 
+    private function getParam($rule)
+    {
+        return  explode(':', $rule, 2);
+    }
+    private function isRuleHasParam($rule)
+    {
+        return str_contains($rule, ':');
+    }
     protected function getMessage($field, $rule)
     {
 

@@ -28,7 +28,7 @@ abstract class Model
     protected $table;
 
 
-    public static function connection($connection)
+    public static function connection($connection = null)
     {
         $model = new static;
 

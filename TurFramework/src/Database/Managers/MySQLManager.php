@@ -197,4 +197,25 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->setOrderBy($column, $direction);
         return $this;
     }
+
+    public function table($table)
+    {
+        $this->table = $table;
+        return $this;
+    }
+    public function exstis($id = null)
+    {
+        if (!is_null($id)) {
+            $this->where('id', $id);
+        }
+
+
+        $statement = $this->connection->prepare($this->existsQuery());
+
+        $this->bindValues($statement, $this->bindings);
+
+        $statement->execute();
+
+        return $statement->fetchColumn() ? true : false;
+    }
 }

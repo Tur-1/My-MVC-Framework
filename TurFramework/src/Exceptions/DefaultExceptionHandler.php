@@ -4,7 +4,7 @@ namespace TurFramework\Exceptions;
 
 class DefaultExceptionHandler
 {
-    public static $exceptionViewPath = 'views/ExceptionView.php';
+
 
     public static function handle($exception)
     {
@@ -39,18 +39,16 @@ class DefaultExceptionHandler
         }
 
 
-        include self::$exceptionViewPath;
-
-        exit; // Ensure that code below doesn't execute
+        return [$errorData, $primary_message, $secondary_message, $multipleMessages, $className, $trace];
     }
 
     private static function getMultipleMessages($exception)
     {
-        return method_exists($exception, 'getMultipleMessages') ? $exception->getMultipleMessages() : [];
+        return method_exists($exception, 'getMultipleMessages') ? $exception->getMultipleMessages() : '';
     }
     private static function getSecondaryMessage($exception)
     {
-        return method_exists($exception, 'getSecondaryMessage') ? $exception->getSecondaryMessage() : [];
+        return method_exists($exception, 'getSecondaryMessage') ? $exception->getSecondaryMessage() : '';
     }
     private static function getClassName($exception)
     {

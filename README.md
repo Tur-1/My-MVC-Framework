@@ -17,6 +17,8 @@
 - [Views](#section-13)
 - [Multiple Database Connections](#section-14)
 - [Models](#section-15) 
+- [Form Request Validation](#section-16) 
+- [Validation Rules](#section-17) 
 
 <a name="section-1"></a>
 
@@ -588,3 +590,96 @@ Brand::query()->where('id', 2)->delete();
  ```
 
 
+<a name="section-16"></a>
+
+## Form Request Validation
+
+To define form request validation, create a new class that extends `FormRequest`. You can specify the validation rules using either a string or an array format. Here's an example of how to define validation logic:
+
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use TurFramework\Http\FormRequest;
+
+class StoreUserRequest extends FormRequest
+{
+
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+    
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => 'required|min:6',
+        ];
+    }
+
+    /**
+     * Get the validation error messages.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Email is required',
+            'password.required' => 'Password is required',
+            'password.min' => 'The minimum password length is 6 characters',
+        ];
+   }
+}    
+```
+<a name="section-17"></a>
+
+## Validation Rules
+Below is a list of all available validation rules and their function.
+
+
+unique:table,column.
+
+Checks the value of the field is unique in a given database table.
+
+```php
+'email' => 'unique:users' 
+```
+
+---------------------------------------------
+
+
+Instead of specifying the table name directly, you may specify the Eloquent model which should be used to determine the table name:
+```php
+
+'email' => 'unique:App\Models\User,email_address' 
+
+```
+ If the column option is not specified, the name of the field under validation will be used.
+
+
+---------------------------------------------
+
+
+Specifying a Custom Database Connection
+Occasionally, you may need to set a custom connection for database queries made by the Validator. To accomplish this, you may prepend the connection name to the table name:
+
+```php
+
+'email' => 'unique:connection.users,email_address' 
+
+or
+
+'email' => 'unique:connection.App\Models\User,email_address' 
+
+```

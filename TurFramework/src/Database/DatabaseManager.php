@@ -20,16 +20,16 @@ class DatabaseManager
      * make database connection
      * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
      */
-    public function makeConnection($name)
+    public function makeConnection($name = null)
     {
         $name = $name ?: $this->getDefaultConnection();
- 
+
         $config = $this->getConfiguration($name);
- 
-        if (!isset(self::$connections[$name])) { 
+
+        if (!isset(self::$connections[$name])) {
             self::$connections[$name] = $this->createConnection($config);
         }
- 
+
         return $this->getDatabaseManager(self::$connections[$name], $config);
     }
 

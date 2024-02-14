@@ -96,14 +96,30 @@ class ExceptionHandler
     private static function getDefaultExceptionHandler($exception)
     {
 
+
         foreach (self::$Exceptions as $key => $class) {
             if ($exception instanceof $class) {
                 ob_clean();
-                DefaultExceptionHandler::handle($exception);
+                [
+                    $errorData,
+                    $primary_message,
+                    $secondary_message,
+                    $multipleMessages,
+                    $className
+                ] = DefaultExceptionHandler::handle($exception);
+
                 break;
             }
         }
+
+        ob_start();
+        include 'views/ExceptionView.php';
+
+        echo ob_get_clean();
+
+        exit;
     }
+
     private static function handleHttpException($exception)
     {
 

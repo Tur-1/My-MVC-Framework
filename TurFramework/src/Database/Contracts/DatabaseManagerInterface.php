@@ -48,4 +48,7 @@ interface DatabaseManagerInterface
     public function orWhereNotNull($column): self;
 
     public function orderBy($column, $direction = 'ASC'): self;
+
+    public function exstis($id = null);
+    public function table($table);
 }
