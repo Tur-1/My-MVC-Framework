@@ -641,7 +641,10 @@ class StoreUserRequest extends FormRequest
         ];
    }
 }    
+```
 
+now we can update UserController like
+```php
 
 <?php
 

@@ -52,6 +52,18 @@ if (!function_exists('pluralStudly')) {
 }
 
 
+if (!function_exists('errors')) {
+    /**
+     * Gets errors
+     * 
+     * @return array
+     */
+    function errors()
+    {
+        session('errors');
+    }
+}
+
 if (!function_exists('env')) {
     /**
      * Gets the value of an environment variable.
