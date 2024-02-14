@@ -646,18 +646,18 @@ class StoreUserRequest extends FormRequest
 
 ## Validation Rules
 Below is a list of all available validation rules and their function.
+ 
 
-
-unique:table,column.
-
-Checks the value of the field is unique in a given database table.
-
+- **unique:table,column**:
+Checks the value of the field is unique in a given database table
+ 
 ```php
+ 
 'email' => 'unique:users' 
 ```
+If the column option is not specified, the name of the field under validation will be used.
 
 ---------------------------------------------
-
 
 Instead of specifying the table name directly, you may specify the Eloquent model which should be used to determine the table name:
 ```php
@@ -665,11 +665,8 @@ Instead of specifying the table name directly, you may specify the Eloquent mode
 'email' => 'unique:App\Models\User,email_address' 
 
 ```
- If the column option is not specified, the name of the field under validation will be used.
-
 
 ---------------------------------------------
-
 
 Specifying a Custom Database Connection, you may prepend the connection name to the table name:
 
