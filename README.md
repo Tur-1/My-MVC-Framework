@@ -671,8 +671,8 @@ Instead of specifying the table name directly, you may specify the Eloquent mode
 ---------------------------------------------
 
 
-Specifying a Custom Database Connection
-Occasionally, you may need to set a custom connection for database queries made by the Validator. To accomplish this, you may prepend the connection name to the table name:
+Specifying a Custom Database Connection, To accomplish this 
+you may prepend the connection name to the table name:
 
 ```php
 
