@@ -648,7 +648,7 @@ class StoreUserRequest extends FormRequest
 Below is a list of all available validation rules and their function.
  
 
-- **`unique:table,column`**:
+- `unique:table,column`
 Checks the value of the field is unique in a given database table
  ```php
 
@@ -672,3 +672,10 @@ or
 'email' => 'unique:connection.App\Models\User,email_address' 
 
 ```
+
+- `unique:table,column`
+The field under validation must be formatted as an email address.
+
+ ```php
+'email' => 'email' 
+ ```
