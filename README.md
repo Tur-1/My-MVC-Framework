@@ -673,9 +673,16 @@ or
 
 ```
 
-- `unique:table,column`
+- `email`
 The field under validation must be formatted as an email address.
 
  ```php
 'email' => 'email' 
+ ```
+
+- `required`
+The field under validation must be present in the input data and not empty
+
+ ```php
+'email' => 'required' 
  ```
