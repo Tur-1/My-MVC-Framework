@@ -200,6 +200,7 @@ if (!function_exists('csrf_token')) {
     {
         // Generate CSRF token
         $token =  bin2hex(random_bytes(32));
+
         // Return HTML input with CSRF token
         return "<input type=\"hidden\" name=\"_token\" value=\"{$token}\">";
     }
