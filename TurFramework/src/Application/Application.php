@@ -1,6 +1,9 @@
 <?php
 
+
 namespace TurFramework\Application;
+
+
 
 use TurFramework\Http\Request;
 use TurFramework\Facades\Route;
@@ -25,6 +28,7 @@ class Application extends Container
 
     public function __construct()
     {
+
         static::setInstance($this);
 
         // 1- laod Configuration and bind config into the Container 

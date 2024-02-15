@@ -128,7 +128,7 @@ class Router
      */
     public  function delete($route, $action)
     {
-        return $this->addRoute(self::METHOD_DELETE, $route, $action);
+        return $this->addRoute(self::METHOD_POST, $route, $action);
     }
     /**
      * Add a route to the internal routes collection.

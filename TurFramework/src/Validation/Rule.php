@@ -57,4 +57,19 @@ class Rule
 
         return true;
     }
+
+    public function confirmed($field)
+    {
+        $field_confirmation = $field . '_confirmation';
+
+        if (!isset($this->data[$field_confirmation])) {
+            return false;
+        }
+        $data_field = $this->data[$field];
+        $data_confirmation = $this->data[$field_confirmation];
+
+        $match = $data_field === $data_confirmation;
+
+        return isset($data_field) && isset($data_confirmation) && $match;
+    }
 }

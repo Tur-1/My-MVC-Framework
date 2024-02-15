@@ -44,7 +44,7 @@ class MySQLGrammar
 
         $values = trim(str_repeat('?,', count(array_keys($fields))), ',');
 
-        $this->bindings[] = array_values($fields);
+        $this->bindings = array_values($fields);
 
         return 'INSERT INTO ' . $this->table . ' (' . $columns . ') VALUES(' . $values . ')';
     }
@@ -57,10 +57,10 @@ class MySQLGrammar
 
         foreach ($fields as $column => $value) {
             $columns[] = "$column = ?";
-            $this->bindings[] = $value;
         }
 
         $query = implode(', ', $columns);
+        $this->bindings = array_values($fields);
 
         return 'UPDATE ' . $this->table . ' SET ' . $query . $this->whereStatement();
     }

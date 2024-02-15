@@ -12,6 +12,10 @@
                 <li class="nav-item">
                     <a class="nav-link <?php echo request()->is(route('aboutPage')) ? 'active  border rounded' : '' ?>" aria-current="page" href="<?php echo route('aboutPage') ?>">About</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo request()->is(route('usersList') . '.*') ? 'active  border rounded' : '' ?>" aria-current="page" href="<?php echo route('usersList') ?>">Users</a>
+                </li>
+
             </ul>
         </div>
     </div>

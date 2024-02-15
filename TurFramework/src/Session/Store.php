@@ -3,6 +3,7 @@
 namespace TurFramework\Session;
 
 use TurFramework\Support\Arr;
+use TurFramework\Validation\ErrorsBag;
 
 class Store
 {
@@ -15,6 +16,12 @@ class Store
 
 
     public function __construct()
+    {
+
+        $this->loadSesstion();
+    }
+
+    public function loadSesstion()
     {
         $this->attributes = $_SESSION;
     }

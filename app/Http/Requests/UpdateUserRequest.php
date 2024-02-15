@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use TurFramework\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
 
     /**
@@ -23,10 +23,10 @@ class StoreUserRequest extends FormRequest
     {
 
         return [
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => 'required|min:6|confirmed',
+            'email' => ['required', 'email'],
+            'password' => 'required|confirmed',
             'password_confirmation' => 'required',
-            'name' => 'required',
+            'name' => 'required'
         ];
     }
 
@@ -35,6 +35,8 @@ class StoreUserRequest extends FormRequest
         return [
             'email.required' => 'email is required',
             'password.required' => 'password is required',
+
+            'password.min' => 'the minmum password is 6',
         ];
     }
 }

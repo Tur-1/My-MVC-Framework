@@ -71,10 +71,15 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         return $statement->fetchAll();
     }
 
+    private function getFields($fields)
+    {
+        return  $this->getModel()->getFillable() ? Arr::only($fields, $this->getModel()->getFillable()) : $fields;
+    }
     public function create(array $fields)
     {
 
-        $statement = $this->connection->prepare($this->insertQuery($fields));
+        $statement = $this->connection->prepare($this->insertQuery($this->getFields($fields)));
+
         $this->bindValues($statement, $this->bindings);
         return  $statement->execute();
     }
@@ -83,7 +88,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     public function update(array $fields)
     {
 
-        $statement = $this->connection->prepare($this->updateQuery($fields));
+        $statement = $this->connection->prepare($this->updateQuery($this->getFields($fields)));
 
         $this->bindValues($statement, $this->bindings);
         return  $statement->execute();

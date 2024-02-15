@@ -56,11 +56,11 @@ if (!function_exists('errors')) {
     /**
      * Gets errors
      * 
-     * @return array
+     * @return \TurFramework\Validation\ErrorsBag
      */
     function errors()
     {
-        session('errors');
+        return new \TurFramework\Validation\ErrorsBag;
     }
 }
 

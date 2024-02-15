@@ -17,7 +17,6 @@ class View
      */
     public function make($view, array $data = [])
     {
-
         // Return a new instance of View
         return new ViewFactory($view,  $data);
     }

@@ -6,6 +6,12 @@ abstract class Model
 {
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [];
+    /**
      * @var mixed manager
      */
     private static $manager;
@@ -110,7 +116,10 @@ abstract class Model
 
         return $this;
     }
-
+    public function getFillable()
+    {
+        return $this->fillable;
+    }
     /**
      * Get the current connection name for the model.
      *
@@ -122,7 +131,6 @@ abstract class Model
     }
     public function __get($key)
     {
-
         return $this->attributes[$key] ?? null;
     }
 

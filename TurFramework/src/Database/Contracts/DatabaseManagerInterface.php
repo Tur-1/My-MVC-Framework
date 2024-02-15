@@ -50,5 +50,6 @@ interface DatabaseManagerInterface
     public function orderBy($column, $direction = 'ASC'): self;
 
     public function exstis($id = null);
+
     public function table($table);
 }
