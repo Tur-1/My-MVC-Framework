@@ -266,7 +266,8 @@ if (!function_exists('old')) {
      */
     function old($key, $default = null)
     {
-        return app('session')->get('old')[$key] ?? $default;
+
+        return session('old')[$key] ?? $default;
     }
 }
 

@@ -19,7 +19,7 @@
             </div>
             <div class="mb-2">
                 <label for="formControlInput2" class="form-label">Email address</label>
-                <input type="email" class="form-control" name="email" id="formControlInput2" placeholder="name@example.com">
+                <input type="text" class="form-control" name="email" id="formControlInput2" placeholder="name@example.com">
                 <div id="formControlInput2" class="invalid-feedback">
 
                 </div>

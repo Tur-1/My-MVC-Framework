@@ -116,6 +116,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
         $statement = $this->connection->prepare($this->deleteQuery());
         $this->bindValues($statement, $this->bindings);
+
         return $statement->execute();
     }
     public function find($id)

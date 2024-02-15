@@ -34,7 +34,7 @@
                                 <td><?php echo $user->email ?></td>
                                 <td>
 
-                                    <form action="<?php echo route('usersDelete', ['id' => 456]) ?>" method="post">
+                                    <form action="<?php echo route('usersDelete', ['id' => $user->id]) ?>" method="post">
                                         <?php echo csrf_token() ?>
 
                                         <a href="<?php echo route('usersEdit', ['id' => $user->id]) ?>" class="btn btn-secondary btn-sm"> Edit</a>
