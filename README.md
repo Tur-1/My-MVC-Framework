@@ -18,7 +18,9 @@
 - [Multiple Database Connections](#section-14)
 - [Models](#section-15) 
 - [Form Request Validation](#section-16) 
+- [Displaying the Validation Errors](#section-18) 
 - [Validation Rules](#section-17) 
+
 
 <a name="section-1"></a>
 
@@ -667,6 +669,37 @@ class UserController extends Controller
     }
 }
 
+
+```
+<a name="section-18"></a>
+
+## Displaying the Validation Errors
+ 
+ To display the first validation error message for a specific field.
+
+ ```php
+<?= errors()->first('name') ?>
+```
+
+To check if there are any validation errors for a specific field.
+
+ ```php
+<?= errors()->has('name') ?>
+```
+
+To display all validation error messages.
+
+ ```php
+ 
+<?php if (errors()->any()) : ?>
+    <div class="alert alert-danger">
+        <ul>
+            <?php foreach (errors()->all() as $error) : ?>
+                <li><?= $error ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+<?php endif ?>
 
 ```
 
