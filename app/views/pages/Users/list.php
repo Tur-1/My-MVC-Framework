@@ -3,7 +3,7 @@
     <div class="container">
         <?php if (session()->has('success')) : ?>
             <div class="alert alert-success" role="alert">
-                <?php echo session('success') ?>
+                <?= session('success') ?>
             </div>
         <?php endif ?>
         <div class="row mb-3">

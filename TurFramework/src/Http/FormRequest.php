@@ -55,7 +55,10 @@ abstract class FormRequest extends Request
             $validatedRequest = $vaildator->validate();
 
             if ($vaildator->fails()) {
-                throw redirect()->back()->withErrors($vaildator->getErrors());
+                session()->put('errors', $vaildator->getErrors());
+                session()->flash('old', $validatedRequest);
+
+                throw redirect()->back();
             }
 
             return $validatedRequest;

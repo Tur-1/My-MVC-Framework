@@ -8,7 +8,6 @@ class ErrorsBag
     protected $errors = [];
 
 
-
     /**
      * Add an error message to the bag.
      *
@@ -40,8 +39,7 @@ class ErrorsBag
     public function all()
     {
 
-        $errors = [...array_values($this->errors)];
-        return $errors;
+        return $this->errors;
     }
 
 

@@ -18,6 +18,7 @@ class UserController extends Controller
 
     public function create()
     {
+
         return view('pages.Users.create');
     }
 
@@ -33,6 +34,7 @@ class UserController extends Controller
     }
     public function edit($id)
     {
+
 
         $user = User::query()->find($id);
 

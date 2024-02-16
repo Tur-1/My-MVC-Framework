@@ -3,27 +3,26 @@
 namespace TurFramework\Session;
 
 use TurFramework\Support\Arr;
-use TurFramework\Validation\ErrorsBag;
+use TurFramework\Validation\MessageBag;
 
 class Store
 {
-    /**
-     * The session attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
 
     public function __construct()
     {
-
-        $this->loadSesstion();
+        $this->loadErrosMessages();
     }
 
-    public function loadSesstion()
+
+    public function loadErrosMessages()
     {
-        $this->attributes = $_SESSION;
+        $errorBag = new MessageBag;
+
+        foreach ($this->get('errors') as $key => $value) {
+            $errorBag->add($key, $value);
+        }
+
+        $this->put('errors', $errorBag);
     }
     /**
      * Put a value in the session.
@@ -62,18 +61,27 @@ class Store
      */
     public function get($key, $default = null)
     {
-
-        if ($this->hasflash($key)) {
-            $sestion = Arr::get($_SESSION['_flash'], $key, $default);
-            $this->remove('_flash');
-            return $sestion;
+        if ($this->flashHas($key)) {
+            $value = Arr::get($_SESSION['_flash'], $key, $default);
+            unset($_SESSION['_flash'][$key]);
+            return $value;
         }
+
         return Arr::get($_SESSION, $key, $default);
     }
 
-    private function hasflash($key)
+    public function getOldValue($key, $default = null)
     {
-        return isset($_SESSION['_flash']) ? Arr::get($_SESSION['_flash'], $key) : false;
+        if ($this->flashHas('old')) {
+            $value = Arr::get($_SESSION['_flash']['old'], $key, $default);
+            unset($_SESSION['_flash']['old'][$key]);
+            return $value;
+        }
+    }
+
+    public function flashHas($key)
+    {
+        return isset($_SESSION['_flash'][$key]);
     }
     /**
      * Check if a key exists in the session.
@@ -83,8 +91,8 @@ class Store
      */
     public function has(string $key): bool
     {
-        if (isset($_SESSION['_flash'][$key])) {
-            return Arr::exists($_SESSION['_flash'], $key);
+        if ($this->flashHas($key)) {
+            return true;
         }
         return Arr::exists($_SESSION, $key);
     }

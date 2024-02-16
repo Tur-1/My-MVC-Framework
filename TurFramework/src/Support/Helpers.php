@@ -56,11 +56,11 @@ if (!function_exists('errors')) {
     /**
      * Gets errors
      * 
-     * @return \TurFramework\Validation\ErrorsBag
+     * @return \TurFramework\Validation\MessageBag
      */
     function errors()
     {
-        return new \TurFramework\Validation\ErrorsBag;
+        return session('errors');
     }
 }
 
@@ -267,8 +267,7 @@ if (!function_exists('old')) {
      */
     function old($key, $default = null)
     {
-
-        return session('old')[$key] ?? $default;
+        return session()->getOldValue($key) ?? $default;
     }
 }
 

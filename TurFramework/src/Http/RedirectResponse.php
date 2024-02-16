@@ -32,36 +32,13 @@ class RedirectResponse
     public function with($key, $value = null)
     {
         $this->withData = is_array($key) ? $key : [$key => $value];
-
-        return $this;
-    }
-
-    public function withInput(array $input)
-    {
-        $this->withData['input'] = $input;
-
-        return $this;
-    }
-
-    public function withErrors(array $errors)
-    {
-        $this->withData['errors'] = $errors;
-
-        return $this;
-    }
-
-
-    /**
-     * Flash the stored data to the session.
-     *
-     * @return void
-     */
-    public function flashToSession()
-    {
         foreach ($this->withData as $key => $value) {
             session()->flash($key, $value);
         }
+        return $this;
     }
+
+
     public function __destruct()
     {
         $this->send($this->url, $this->statusCode);
@@ -73,8 +50,6 @@ class RedirectResponse
      */
     public function send()
     {
-        $this->flashToSession();
-
         header('Location: ' . $this->url, true,  $this->statusCode);
         exit();
     }
