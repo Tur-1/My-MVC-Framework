@@ -188,7 +188,9 @@ Inspecting the Request Path / Route
     });
 
 ```
-Validate Incoming Request Data, you can use $request->validate($rules , $messages)
+
+To Validate Incoming Request Data, you can use
+`$request->validate($rules , $messages)`
 
 ```php
 class UserController extends Controller
