@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use TurFramework\Http\Request;
 
 class UserController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $users = User::query()->get();
 
-        return view('pages.Users.list', ['users' => $users]);
+        return view('pages.Users.list')->with('users', $users);
     }
 
     public function create()

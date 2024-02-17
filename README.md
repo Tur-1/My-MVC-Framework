@@ -148,9 +148,45 @@ class HomeController extends Controller
         // get all input data from the request.
         $input = $request->all();
     }
+
+   
 }
 ```
 
+Validate Incoming Request Data, you can use $request->validate($rules , $messages)
+
+```php
+class UserController extends Controller
+{
+
+    /**
+     * store
+     *
+     * @param \TurFramework\Http\Request $request 
+     */
+   public function store(Request $request)
+    {
+        $validatedRequest = $request->validate(
+            [
+            'email' => ['required', 'email', 'unique:users'],
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required',
+            'name' => 'required',
+        ], 
+        [
+            'email.required' => 'email is required',
+            'password.required' => 'password is required',
+        ]);
+
+
+        User::query()->create($validatedRequest);
+
+
+        return redirect()->to(route('users.list'))
+            ->with('success', 'New User was added successfully.');
+    }
+}
+```
 <a name="section-6"></a>
 
 ## Dependency Injection
@@ -533,6 +569,52 @@ class Brand extends Model
 ```
 
  
+### Fillable Property
+
+The `fillable` property in the model determines which fields are allowed to be mass-assigned. 
+the fillable property is defined as follows:
+
+```php
+
+<?php
+
+namespace App\Models;
+
+use TurFramework\Database\Model;
+
+class User extends Model
+{
+
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+}
+
+
+```
+the fillable property is used to specify which fields you want to pass to the database when using methods like `create()` or `update()`.
+```php
+
+ $validatedRequest = $request->validate([
+            'email' => ['required', 'email', 'unique:users'],
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required',
+            'name' => 'required',
+        ]);
+
+
+  User::query()->where('id', $id)->update($validatedRequest); 
+
+```
+ 
        
 Limit Models:
 ```php
@@ -570,11 +652,14 @@ Brand::query()->where('id', $id)->orWhere('name', '!=', $name)->first();
 
 
 Create a New Model:
+
 ```php
 Brand::query()->create([
         'name' => $request->get('name'),
         'slug' => $request->get('slug'),
         ]);
+
+        
  ```
 
 Update an Existing Model:
