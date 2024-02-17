@@ -226,14 +226,14 @@ class AppServiceProvider extends ServiceProvider
 
 ## Register Custom Service Provider
 
-You can register your own custom service providers to extend the functionality of the application. Here's how you can do it:
+You can register your own custom service providers :
 
-### `config/app.php`
+### `bootstrap/providers.php`
 
-In the `providers` array, add the namespace of your custom service provider.
+ add the namespace of your custom service provider.
 
 ```php
-'providers' => [
+return [
     App\Providers\AppServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
     // Add your custom service provider here

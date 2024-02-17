@@ -80,8 +80,5 @@ return [
     */
 
     'key' => env('APP_KEY'),
-    'providers' => [
-        App\Providers\AppServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-    ],
+
 ];

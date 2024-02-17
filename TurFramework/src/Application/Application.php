@@ -101,11 +101,16 @@ class Application extends Container
     public function registerConfiguredProviders()
     {
 
-        $providers = $this->make('config')->get('app.providers');
+        $providers = $this->getProviders();
 
         foreach ($providers as $provider) {
             $this->register($provider);
         }
+    }
+
+    private function getProviders()
+    {
+        return require base_path('/bootstrap/providers.php');
     }
     /**
      * load Configuration

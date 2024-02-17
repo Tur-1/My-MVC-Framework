@@ -18,7 +18,7 @@ class Store
     {
         $errorBag = new MessageBag;
 
-        foreach ($this->get('errors') as $key => $value) {
+        foreach ($this->get('errors', []) as $key => $value) {
             $errorBag->add($key, $value);
         }
 
