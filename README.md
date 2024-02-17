@@ -245,7 +245,7 @@ You can register your own custom service providers :
 
 ### `bootstrap/providers.php`
 
- add the namespace of your custom service provider.
+add the namespace of your custom service provider.
 
 ```php
 return [
@@ -254,8 +254,12 @@ return [
     // Add your custom service provider here
     App\Providers\CustomServiceProvider::class,
 ],
+```
 
+### `app/Providers/CustomServiceProvider.php`
 
+your custom service provider
+```php
 <?php
 
 namespace App\Providers;
