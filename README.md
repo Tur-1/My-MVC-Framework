@@ -7,8 +7,7 @@
 - [Define Route](#section-3)
 - [Route Parameters](#section-4)
 - [Request](#section-5)
-- [Dependency Injection](#section-6)
-- [Constructor Dependency Injection](#section-7)
+- [Dependency Injection](#section-6) 
 - [Binding Interface to Service Class](#section-8)
 - [Register Custom Service Provider](#section-9)
 - [Route Service Provider](#section-10)
@@ -134,18 +133,19 @@ class HomeController extends Controller
 
      public function index(Request $request)
     {
-        // Assume we have a URL like http://www.example.com/?name=mahedi. Now let's check if the 'name' parameter exists in the request.
+
+         // Check if the request has a 'name' parameter.
         if ($request->has('name')) {
         }
 
-        //Now get the value from request like:
+         // Get specific values from the request.
         $name = $request->get('name');
         $email = $request->get('email');
 
-        // Get the URL of the previous page (if any) from the request.
+       // Get the previous URL from the request.
         $previousUrl = $request->previousUrl();
 
-        // Collect all input data from the request.
+        // get all input data from the request.
         $input = $request->all();
     }
 }
@@ -155,7 +155,7 @@ class HomeController extends Controller
 
 ## Dependency Injection
 
-Now look at that, how you can use dependency injection.
+to inject dependencies into a Controller constructor or method
 
 ```php
 
@@ -167,39 +167,21 @@ use TurFramework\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * You can pass as many class as you want as parameter
-     */
-    public function index(
-        Request $request, //class dependency injection
-    ) {
-
-       return view('pages.HomePage');
-    }
-
-}
-```
-
-<a name="section-7"></a>
-
-## Constructor Dependency Injection
-
-Now look at that, how you can use dependency injection using constructor.
-
-```php
-
-namespace App\Http\Controllers;
-
-use App\Services\ExampleService;
-
-class HomeController extends Controller
-{
     public $exampleService;
 
     public function __construct(ExampleService $exampleService)
     {
        $this->exampleService = $exampleService;
     }
+
+    /**
+     * You can pass as many class as you want as parameter
+     */
+    public function index(Request $request) {
+
+       return view('pages.HomePage');
+    }
+
 }
 ```
 
@@ -228,8 +210,7 @@ class AppServiceProvider extends ServiceProvider
     {
         /**
          * To bind an interface to a service class, use the following syntax:
-         * $this->app->bind(interface::class, service::class);
-         * This ensures that when the interface is requested, an instance of the service class is provided.
+         * $this->app->bind(interface::class, service::class); 
          */
 
         $this->app->bind(ExampleServiceInterface::class, ExampleService::class);
