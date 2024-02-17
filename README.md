@@ -147,12 +147,43 @@ class HomeController extends Controller
 
         // get all input data from the request.
         $input = $request->all();
-    }
+ 
+    
+    } 
+} 
+``` 
+Inspecting the Request Path / Route
+```php
 
-   
-}
+   /*
+     * The is method allows you to verify that the incoming request path matches a given pattern.
+     *  You may use the * character as a wildcard when utilizing this method:
+     */
+    
+    $request->is('/users*');
+
+    or
+
+    $request->is(route('users.list') . '*');
+
+   // users routes
+    Route::controller(UserController::class)->group(function () {
+
+        Route::get('/users',  'index')->name('users.list');
+
+        Route::get('/users/create',  'create')->name('users.create');
+
+        Route::get('/users/{id}/edit',  'edit')->name('users.edit');
+
+        Route::post('/users/store',  'store')->name('users.store');
+
+        Route::post('/users/update/{id}',  'update')->name('users.update');
+
+        Route::delete('/users/{id}/delete',  'delete')->name('users.delete');
+
+    });
+
 ```
-
 Validate Incoming Request Data, you can use $request->validate($rules , $messages)
 
 ```php

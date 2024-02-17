@@ -4,13 +4,6 @@ namespace TurFramework\Database;
 
 abstract class Model
 {
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [];
     /**
      * @var mixed manager
      */
@@ -20,6 +13,14 @@ abstract class Model
      * @var mixed attributes
      */
     private $attributes = [];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [];
+
     /**
      * The connection name for the model.
      *
