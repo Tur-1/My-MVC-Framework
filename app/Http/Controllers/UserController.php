@@ -29,7 +29,7 @@ class UserController extends Controller
 
         User::query()->create($validatedRequest);
 
-        return redirect()->to(route('usersList'))
+        return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');
     }
     public function edit($id)

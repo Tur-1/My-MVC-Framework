@@ -20,7 +20,7 @@
 - [Form Request Validation](#section-16) 
 - [Displaying the Validation Errors](#section-18) 
 - [Validation Rules](#section-17) 
-
+- [Helpers](#section-19) 
 
 <a name="section-1"></a>
 
@@ -55,13 +55,28 @@ To define route, navigate to this file and update
 use TurFramework\Facades\Route;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', [HomeController::class, 'index'])->name('homePage');
-Route::controller(HomeController::class)->group(function () {
-      Route::post('/user/{id}', 'user')->name('user');
-});
 
-Route::get('/about', [AboutController::class, 'about'])->name('aboutPage');
+
+Route::get('/about', [AboutController::class, 'index'])->name('aboutPage');
+
+
+Route::controller(UserController::class)->group(function () {
+
+    Route::get('/users',  'index')->name('users.list');
+
+    Route::get('/users/create',  'create')->name('users.create');
+
+    Route::get('/users/{id}/edit',  'edit')->name('users.edit');
+
+    Route::post('/users/store',  'store')->name('users.store');
+
+    Route::post('/users/update/{id}',  'update')->name('users.update');
+
+    Route::delete('/users/{id}/delete',  'delete')->name('users.delete');
+});
 
 ```
 
@@ -748,3 +763,92 @@ The field under validation must be present in the input data and not empty
  ```php
 'email' => 'required' 
  ```
+
+-------------------------------------------------------
+
+
+<a name="section-19"></a>
+
+## Helpers
+
+
+Get the app instance or resolve an abstract.
+ ```php
+app($abstract = null)
+ ```
+
+Get the class "basename" of the given object / class.
+  ```php
+class_basename($class)
+ ```
+
+ Get validation errors bag.
+```php
+errors()
+ ```
+ Get the value of an environment variable.
+ ```php
+env($key, $default = null)
+```
+Get the value or execute a closure if the value is a closure.
+ ```php
+value($value)
+```
+Get the specified configuration value.
+ ```php
+config($key = null, $default = null)
+```
+Get the path to the application directory.
+ ```php
+app_path($path = '')
+```
+Get the base path of the application.
+ ```php
+base_path($path = '')
+```
+Get the path to a view file.
+ ```php
+view_path($path)
+```
+Render a view with optional data.
+ ```php
+view($viewPath, array $data = [])
+```
+Generate HTML input with CSRF token.
+ ```php
+csrf_token()
+```
+Render a view with optional data.
+ ```php
+import($viewPath, array $data = [])
+```
+Retrieve an instance of the Redirector class.
+ ```php
+redirect()
+```
+Get / set the specified session value.
+ ```php
+session($key = null, $default = null)
+```
+Get old input data from the session.
+ ```php
+old($key, $default = null)
+```
+Throw an HttpException with the given data if the given condition is true.
+ ```php
+abort_if($condition, $code = 404, $message = '')
+```
+Throw an HttpException with the given data.
+ ```php
+abort($code = 404, $message = '')
+```
+Retrieve an instance of the current request or an input item from the request.
+ ```php
+request($key = null)
+
+```
+
+Retrieve a route by name and parameters
+ ```php
+route($routeName, $parameters = [])
+```

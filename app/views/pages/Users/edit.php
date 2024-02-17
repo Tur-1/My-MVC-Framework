@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <form class="row g-3" action="<?= route('usersUpdate', ['id' => $user->id]) ?>" method="post">
+        <form class="row g-3" action="<?= route('users.update', ['id' => $user->id]) ?>" method="post">
             <?php echo csrf_token() ?>
             <div class="mb-2">
                 <label for="FormControlInput1" class="form-label">Name</label>

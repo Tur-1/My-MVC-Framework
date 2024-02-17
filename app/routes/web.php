@@ -13,15 +13,15 @@ Route::get('/about', [AboutController::class, 'index'])->name('aboutPage');
 
 Route::controller(UserController::class)->group(function () {
 
-    Route::get('/users',  'index')->name('usersList');
+    Route::get('/users',  'index')->name('users.list');
 
-    Route::get('/users/create',  'create')->name('usersCreate');
+    Route::get('/users/create',  'create')->name('users.create');
 
-    Route::get('/users/{id}/edit',  'edit')->name('usersEdit');
+    Route::get('/users/{id}/edit',  'edit')->name('users.edit');
 
-    Route::post('/users/store',  'store')->name('usersStore');
+    Route::post('/users/store',  'store')->name('users.store');
 
-    Route::post('/users/update/{id}',  'update')->name('usersUpdate');
+    Route::post('/users/update/{id}',  'update')->name('users.update');
 
-    Route::delete('/users/{id}/delete',  'delete')->name('usersDelete');
+    Route::delete('/users/{id}/delete',  'delete')->name('users.delete');
 });

@@ -8,7 +8,7 @@
             </div>
         </div>
 
-        <form class="row g-3" action="<?php echo route('usersStore') ?>" method="post">
+        <form class="row g-3" action="<?php echo route('users.store') ?>" method="post">
             <?php echo csrf_token() ?>
             <div class="mb-2">
                 <label for="FormControlInput1" class="form-label">Name</label>
