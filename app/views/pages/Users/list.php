@@ -1,6 +1,6 @@
 <?php import('layouts.Header'); ?>
-<main class=" mt-4 mb-2">
-    <div class="container">
+
+ 
         <?php if (session()->has('success')) : ?>
             <div class="alert alert-success" role="alert">
                 <?= session('success') ?>
@@ -52,7 +52,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-</main>
+ 
 
 <?php import('layouts.Footer'); ?>

@@ -1,8 +1,6 @@
 <?php import('layouts.Header'); ?>
-<main>
-    <h1>Home</h1>
-
-
-</main>
+<div>
+ <h1>Home  </h1>
+ </div>
 
 <?php import('layouts.Footer'); ?>

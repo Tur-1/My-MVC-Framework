@@ -27,3 +27,5 @@
 
 <body>
     <?php import('layouts.navbar'); ?>
+
+    <main class="container mt-4 mb-2">
