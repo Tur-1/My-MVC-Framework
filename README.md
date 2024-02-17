@@ -774,81 +774,119 @@ The field under validation must be present in the input data and not empty
 
 Get the app instance or resolve an abstract.
  ```php
+ <?php
+
 app($abstract = null)
  ```
 
 Get the class "basename" of the given object / class.
   ```php
+  <?php
+
 class_basename($class)
  ```
 
  Get validation errors bag.
 ```php
+<?php
+
 errors()
  ```
  Get the value of an environment variable.
  ```php
+ <?php
+
 env($key, $default = null)
 ```
 Get the value or execute a closure if the value is a closure.
  ```php
+ <?php
+
 value($value)
 ```
 Get the specified configuration value.
  ```php
+ <?php
+
 config($key = null, $default = null)
 ```
 Get the path to the application directory.
  ```php
+ <?php
+
 app_path($path = '')
 ```
 Get the base path of the application.
  ```php
+ <?php
+
 base_path($path = '')
 ```
 Get the path to a view file.
  ```php
+ <?php
+
 view_path($path)
 ```
 Render a view with optional data.
  ```php
+ <?php
+ 
 view($viewPath, array $data = [])
 ```
 Generate HTML input with CSRF token.
  ```php
+ <?php
+ 
 csrf_token()
 ```
 Render a view with optional data.
  ```php
+ <?php
+ 
 import($viewPath, array $data = [])
 ```
 Retrieve an instance of the Redirector class.
  ```php
+ <?php
+ 
 redirect()
 ```
 Get / set the specified session value.
  ```php
+ <?php
+ 
 session($key = null, $default = null)
 ```
 Get old input data from the session.
  ```php
+ <?php
+ 
 old($key, $default = null)
 ```
 Throw an HttpException with the given data if the given condition is true.
  ```php
+ <?php
+ 
 abort_if($condition, $code = 404, $message = '')
 ```
 Throw an HttpException with the given data.
  ```php
+ <?php
+ 
 abort($code = 404, $message = '')
 ```
 Retrieve an instance of the current request or an input item from the request.
  ```php
+ <?php
+ 
 request($key = null)
 
 ```
 
 Retrieve a route by name and parameters
  ```php
+ <?php
+ 
 route($routeName, $parameters = [])
 ```
