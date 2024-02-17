@@ -72,11 +72,14 @@ class Request
     {
 
         $vaildator = new Validator($this->only(array_keys($rules)), $rules, $messages);
+
         $validatedRequest = $vaildator->validate();
 
-
         if ($vaildator->fails()) {
-            redirect()->back()->withErrors($vaildator->getErrors());
+            session()->put('errors', $vaildator->getErrors());
+            session()->flash('old', $validatedRequest);
+
+            throw redirect()->back();
         }
 
         return $validatedRequest;

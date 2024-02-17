@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use TurFramework\Http\Request;
 
-class CsrfTokenMiddleware
+class CsrfTokenMiddleware implements Middleware
 {
     /**
      * Handle an incoming request.

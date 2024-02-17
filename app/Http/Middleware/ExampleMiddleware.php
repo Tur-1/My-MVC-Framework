@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use TurFramework\Http\Request;
+use App\Http\Middleware\Middleware;
 
-class ExampleMiddleware
+class ExampleMiddleware implements Middleware
 {
     /**
      * Handle an incoming request.

@@ -357,7 +357,7 @@ namespace App\Http\Middleware;
 
 use TurFramework\Http\Request;
 
-class IsAdmin
+class IsAdmin implements Middleware
 {
     /**
      * Handle an incoming request.
