@@ -160,12 +160,16 @@ Inspecting the Request Path / Route
      *  You may use the * character as a wildcard when utilizing this method:
      */
     
-    $request->is('/users*');
+    if($request->is('/users*')){
 
+    }
+     
     or
 
-    $request->is(route('users.list') . '*');
+    if($request->is(route('users.list') . '*')){
 
+    } 
+    
    // users routes
     Route::controller(UserController::class)->group(function () {
 
