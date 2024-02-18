@@ -22,10 +22,19 @@
 
     main {
         min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .nav-link.active {
+        font-weight: 600;
+        border-bottom: 2px solid;
     }
 </style>
 
 <body>
     <?php import('layouts.navbar'); ?>
 
-    <main class="container mt-4 mb-2">
+    <main class="container">

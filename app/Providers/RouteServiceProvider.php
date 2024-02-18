@@ -21,5 +21,7 @@ class RouteServiceProvider extends ServiceProvider
 
         // Load API routes from the 'app/routes/api.php' file.
         Route::group(base_path('app/routes/api.php'));
+
+        Route::group(base_path('app/routes/auth.php'));
     }
 }

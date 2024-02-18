@@ -47,7 +47,8 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        User::query()->where('id', $id)->update($validatedRequest);
+        User::query()->where('id', $id)
+            ->update($validatedRequest);
 
         return redirect()->back()
             ->with('success', 'User was updated successfully.');

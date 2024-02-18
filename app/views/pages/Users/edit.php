@@ -10,7 +10,7 @@
 <div class="card shadow-sm">
     <div class="card-body">
         <form class="row g-3" action="<?= route('users.update', ['id' => $user->id]) ?>" method="post">
-            <?php echo csrf_token() ?>
+            <?= csrf_token() ?>
             <div class="mb-2">
                 <label for="FormControlInput1" class="form-label">Name</label>
                 <input value="<?= old('name', $user->name) ?>" type="text" class="form-control <?= errors()->has('name') ? 'is-invalid' : '' ?>" name="name" id="FormControlInput1" placeholder="name">
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary" type="submit">update </button>
+                <button class="btn btn-md btn-dark" type="submit">update </button>
             </div>
         </form>
     </div>

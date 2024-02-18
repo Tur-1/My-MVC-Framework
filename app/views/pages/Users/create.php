@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary" type="submit">Save </button>
+                <button class="btn btn-md btn-dark" type="submit">create</button>
             </div>
         </form>
     </div>

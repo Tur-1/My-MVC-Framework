@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
 
-class HomeController extends Controller
+class DashboardController extends Controller
 {
 
     public function index(Request $request, ExampleServiceInterface $exampleService)
     {
 
-        return view('pages.homePage');
+        return view('pages.dashboard');
     }
 }
