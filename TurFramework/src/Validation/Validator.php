@@ -2,33 +2,30 @@
 
 namespace TurFramework\Validation;
 
+use TurFramework\Validation\ValidationMessages;
+
 class Validator
 {
     protected $reuqestRules;
     protected $data;
     protected $messages;
+    protected $attributes;
     protected $rule;
     protected $errorsBag = [];
 
-    public function __construct(array $data, array $rules, array $messages = [])
+    public function __construct(array $data, array $rules, array $messages = [], array $attributes = [])
     {
         $this->data = $data;
 
         $this->reuqestRules = $rules;
         $this->messages = $messages;
 
+        $this->attributes = $attributes;
+
         $this->rule = new Rule($data);
         $this->errorsBag = new ErrorsBag();
     }
 
-    public static function make(array $data, array $rules, array $messages = [])
-    {
-        $self = new self($data, $rules, $messages);
-
-        $self->validate();
-
-        return $self;
-    }
     public function validate()
     {
 
@@ -41,9 +38,11 @@ class Validator
                     break;
                 }
 
+
                 $this->applyRule($field, $rule, $params);
             }
         }
+
 
         return  $this->data;
     }
@@ -68,18 +67,16 @@ class Validator
 
     private function applyRule($field, $rule, $params)
     {
-
+        if (empty($this->data[$field]) && $rule == 'nullable') {
+            unset($this->data[$field]);
+        }
         if (!$this->rule->$rule($field, ...$params)) {
             $this->errorsBag->add($field, $this->getMessage($field, $rule));
         }
     }
 
-    protected function getMessage($field, $rule)
+    protected  function getMessage($field, $rule)
     {
-
-        if (isset($this->messages[$field . '.' . $rule])) {
-            return $this->messages[$field . '.' . $rule];
-        }
-        return ucfirst($field) . ' does not meet the ' . $rule . ' rule.';
+        return ValidationMessages::generateMessage($field, $rule, $this->messages, $this->attributes);
     }
 }

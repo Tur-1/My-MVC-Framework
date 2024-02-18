@@ -24,19 +24,14 @@ class UpdateUserRequest extends FormRequest
 
         return [
             'email' => ['required', 'email'],
-            'password' => 'required|confirmed',
-            'password_confirmation' => 'required',
+            'password' => 'nullable|confirmed',
+            'password_confirmation' => 'nullable|same:password',
             'name' => 'required'
         ];
     }
 
     public function messages(): array
     {
-        return [
-            'email.required' => 'email is required',
-            'password.required' => 'password is required',
-
-            'password.min' => 'the minmum password is 6',
-        ];
+        return [];
     }
 }

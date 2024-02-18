@@ -764,6 +764,14 @@ class StoreUserRequest extends FormRequest
             'password.min' => 'The minimum password length is 6 characters',
         ];
    }
+
+   
+    public function attributes(): array
+    {
+        return [
+            'email' => 'email address',
+        ];
+    }
 }    
 ```
 

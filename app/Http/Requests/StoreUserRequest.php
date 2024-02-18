@@ -25,16 +25,21 @@ class StoreUserRequest extends FormRequest
         return [
             'email' => ['required', 'email', 'unique:users'],
             'password' => 'required|min:6|confirmed',
-            'password_confirmation' => 'required',
+            'password_confirmation' => 'required|same:password',
             'name' => 'required',
         ];
     }
 
     public function messages(): array
     {
+        return [];
+    }
+
+
+    public function attributes(): array
+    {
         return [
-            'email.required' => 'email is required',
-            'password.required' => 'password is required',
+            'email' => 'email address',
         ];
     }
 }

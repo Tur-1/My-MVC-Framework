@@ -166,5 +166,7 @@ class Router
     public function middleware($middleware)
     {
         $this->routes->setMiddleware($middleware);
+
+        return $this;
     }
 }

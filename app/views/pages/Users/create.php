@@ -1,13 +1,12 @@
-<?php import('layouts.Header'); ?>
-<main class=" mt-4 mb-2">
-    <div class="container">
+<?php import('layouts.Header', ['title' => 'create']); ?>
 
-        <div class="row mb-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <h1>Create</h1>
-            </div>
-        </div>
-
+<div class="row mb-3">
+    <div class="d-flex align-items-center justify-content-between">
+        <h1>Create</h1>
+    </div>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body">
         <form class="row g-3" action="<?php echo route('users.store') ?>" method="post">
             <?php echo csrf_token() ?>
             <div class="mb-2">
@@ -45,6 +44,6 @@
             </div>
         </form>
     </div>
-</main>
+</div>
 
 <?php import('layouts.Footer'); ?>

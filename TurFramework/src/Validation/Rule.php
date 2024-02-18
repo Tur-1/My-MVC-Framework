@@ -3,6 +3,7 @@
 namespace TurFramework\Validation;
 
 use TurFramework\Database\Model;
+use TurFramework\Support\Arr;
 
 class Rule
 {
@@ -60,16 +61,20 @@ class Rule
 
     public function confirmed($field)
     {
-        $field_confirmation = $field . '_confirmation';
+        return $this->same($field, $field . '_confirmation');
+    }
+    public function nullable()
+    {
+        return true;
+    }
 
-        if (!isset($this->data[$field_confirmation])) {
-            return false;
+    public function same($field, $otherField)
+    {
+
+        if ($this->required($field) || $this->required($otherField)) {
+            return $this->data[$field] === $this->data[$otherField];
         }
-        $data_field = $this->data[$field];
-        $data_confirmation = $this->data[$field_confirmation];
 
-        $match = $data_field === $data_confirmation;
-
-        return isset($data_field) && isset($data_confirmation) && $match;
+        return true;
     }
 }

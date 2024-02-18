@@ -95,11 +95,8 @@ class ExceptionHandler
 
     private static function getDefaultExceptionHandler($exception)
     {
-
-
         foreach (self::$Exceptions as $key => $class) {
             if ($exception instanceof $class) {
-                ob_clean();
                 [
                     $errorData,
                     $primary_message,
@@ -112,12 +109,16 @@ class ExceptionHandler
             }
         }
 
+        ob_end_clean();
+
         ob_start();
         include 'views/ExceptionView.php';
+        $errorPageContent = ob_get_clean();
 
-        echo ob_get_clean();
+        echo $errorPageContent;
 
-        exit;
+
+        exit();
     }
 
     private static function handleHttpException($exception)

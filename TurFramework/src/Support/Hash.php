@@ -11,7 +11,7 @@ class Hash
 
     public static function make($value)
     {
-        return sha1($value.time());
+        return sha1($value . time());
     }
 
     public static function verify($value, $hashedValue)

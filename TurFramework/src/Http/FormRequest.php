@@ -24,6 +24,16 @@ abstract class FormRequest extends Request
         return [];
     }
     /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [];
+    }
+
+    /**
      * Get data to be validated from the request.
      *
      * @return array
@@ -71,6 +81,6 @@ abstract class FormRequest extends Request
 
     private function createValidator($data, $rules)
     {
-        return new Validator($data, $rules, $this->messages());
+        return new Validator($data, $rules, $this->messages(), $this->attributes());
     }
 }

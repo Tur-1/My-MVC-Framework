@@ -3,3 +3,9 @@
         <?= session('success') ?>
     </div>
 <?php endif ?>
+
+<script>
+    setTimeout(() => {
+        document.querySelector('.alert-success').style.display = 'none';
+    }, 3000);
+</script>
