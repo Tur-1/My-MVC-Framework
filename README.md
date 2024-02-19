@@ -607,7 +607,7 @@ class Brand extends Model
 ```
 
  
-### Fillable Property
+#### Fillable Property
 
 The `fillable` property in the model determines which fields are allowed to be mass-assigned. 
 the fillable property is defined as follows:
