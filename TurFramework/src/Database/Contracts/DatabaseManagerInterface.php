@@ -52,4 +52,8 @@ interface DatabaseManagerInterface
     public function exstis($id = null);
 
     public function table($table);
+
+    public function preformUpdate(array $attributes);
+
+    public function insert(array $attributes);
 }

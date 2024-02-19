@@ -15,7 +15,8 @@
 - [Route Middleware](#section-12)
 - [Views](#section-13)
 - [Multiple Database Connections](#section-14)
-- [Models](#section-15) 
+- [Models](#section-15)
+- [Model Accessors & Mutators](#section-20)
 - [Form Request Validation](#section-16) 
 - [Displaying the Validation Errors](#section-18) 
 - [Validation Rules](#section-17) 
@@ -712,6 +713,64 @@ Update an Existing Model:
 ```php
 Brand::query()->where('id', 2)->delete();
  ```
+
+<a name="section-20"></a>
+
+## Model Accessors & Mutators
+Model accessors and mutators allow you to transform attribute values when you retrieve or set them on model instances.
+
+
+# Defining An Accessor
+```php
+
+<?php
+
+namespace App\Models;
+
+use TurFramework\Database\Model; 
+
+class User extends Model
+{
+
+    /**
+     * Get the user's name.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+}
+```
+
+# Defining A Mutator
+```php
+
+<?php
+
+namespace App\Models;
+
+use TurFramework\Database\Model; 
+use TurFramework\Support\Hash;
+
+class User extends Model
+{
+
+   
+    /**
+     * Set the user's Password
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::password($value);
+    }
+}
+```
 
 
 <a name="section-16"></a>

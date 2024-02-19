@@ -20,8 +20,28 @@ class User extends Model
         'password',
     ];
 
+
+
+
+    /**
+     * Set the user's Password
+     *
+     * @param  string  $value
+     * @return void
+     */
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::password($value);
+    }
+
+    /**
+     * Get the user's name.
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
     }
 }
