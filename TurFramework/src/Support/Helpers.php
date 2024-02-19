@@ -193,18 +193,42 @@ if (!function_exists('view')) {
     }
 }
 
-if (!function_exists('csrf_token')) {
 
-    // Helper function to generate HTML input with CSRF token
-    function csrf_token()
+
+if (!function_exists('csrf_field')) {
+
+    /**
+     * Generate a CSRF token form field.
+     *
+     * @return \TurFramework\Support\HtmlString
+     */
+    function csrf_field()
     {
-        // Generate CSRF token
-        $token =  bin2hex(random_bytes(32));
-
-        // Return HTML input with CSRF token
-        return "<input type=\"hidden\" name=\"_token\" value=\"{$token}\">";
+        return new \TurFramework\Support\HtmlString('<input type="hidden" name="_token" value="' . csrf_token() . '" autocomplete="off">');
     }
 }
+
+
+if (!function_exists('csrf_token')) {
+    /**
+     * Get the CSRF token value.
+     *
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    function csrf_token()
+    {
+        $session = app('session');
+
+        if (isset($session)) {
+            return $session->token();
+        }
+
+        throw new \RuntimeException('Application session store not set.');
+    }
+}
+
 if (!function_exists('import')) {
     /**
      * Render a view with optional data.

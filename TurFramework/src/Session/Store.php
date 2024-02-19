@@ -4,14 +4,64 @@ namespace TurFramework\Session;
 
 use TurFramework\Support\Arr;
 use TurFramework\Validation\MessageBag;
+use SessionHandlerInterface;
 
 class Store
 {
 
+    /**
+     * The session attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+    /**
+     * The session handler implementation.
+     *
+     * @var \SessionHandlerInterface
+     */
+    protected $handler;
+    /**
+     * Session store started status.
+     *
+     * @var bool
+     */
+    protected $started = false;
+
+
     public function __construct()
     {
+        $this->start();
+    }
+
+    /**
+     * Start the session, reading the data from a handler.
+     *
+     * @return bool
+     */
+    public function start()
+    {
+        $this->loadSession();
+
+        if (!$this->has('_token')) {
+            $this->regenerateToken();
+        }
+
+        return $this->started = true;
+    }
+
+    /**
+     * Load the session data from the handler.
+     *
+     * @return void
+     */
+    protected function loadSession()
+    {
+        $this->attributes = $_SESSION;
+
         $this->loadErrosMessages();
     }
+
 
 
     public function loadErrosMessages()
@@ -123,6 +173,25 @@ class Store
     }
 
 
+    /**
+     * Get the CSRF token value.
+     *
+     * @return string
+     */
+    public function token()
+    {
+        return $this->get('_token');
+    }
+
+    /**
+     * Regenerate the CSRF token value.
+     *
+     * @return void
+     */
+    public function regenerateToken()
+    {
+        $this->put('_token', bin2hex(random_bytes(32)));
+    }
     /**
      * Make the value available for the next request.
      * (Flash message)

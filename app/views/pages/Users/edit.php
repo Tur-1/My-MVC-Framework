@@ -10,7 +10,7 @@
 <div class="card shadow-sm">
     <div class="card-body">
         <form class="row g-3" action="<?= route('users.update', ['id' => $user->id]) ?>" method="post">
-            <?= csrf_token() ?>
+            <?= csrf_field() ?>
             <div class="mb-2">
                 <label for="FormControlInput1" class="form-label">Name</label>
                 <input value="<?= old('name', $user->name) ?>" type="text" class="form-control <?= errors()->has('name') ? 'is-invalid' : '' ?>" name="name" id="FormControlInput1" placeholder="name">

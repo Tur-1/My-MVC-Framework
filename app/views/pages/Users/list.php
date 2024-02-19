@@ -5,7 +5,7 @@
 <div class="row mb-3">
     <div class="d-flex align-items-center justify-content-between">
         <h4>users </h4>
-        <a href="<?php echo route('users.create') ?>" class="btn btn-primary">
+        <a href="<?php echo route('users.create') ?>" class="btn btn-dark">
             new user
         </a>
     </div>
@@ -34,7 +34,7 @@
                                 <td>
 
                                     <form action="<?php echo route('users.delete', ['id' => $user->id]) ?>" method="post">
-                                        <?php echo csrf_token() ?>
+                                        <?= csrf_field() ?>
 
                                         <a href="<?php echo route('users.edit', ['id' => $user->id]) ?>" class="btn btn-secondary btn-sm"> Edit</a>
 

@@ -9,7 +9,7 @@
     <div class="card shadow-sm" style="max-width: 700px;">
         <div class="card-body">
             <form class="row g-3" action="<?= route('register.store') ?>" method="post">
-                <?= csrf_token() ?>
+                <?= csrf_field() ?>
                 <div class="mb-2">
                     <label for="FormControlInput1" class="form-label">Name</label>
                     <input value="<?= old('name') ?>" type="text" class="form-control <?= errors()->has('name') ? 'is-invalid' : '' ?>" name="name" id="FormControlInput1" placeholder="name">

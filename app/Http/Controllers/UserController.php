@@ -28,7 +28,7 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        User::query()->create($validatedRequest);
+        User::create($validatedRequest);
 
         return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');
@@ -47,8 +47,7 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        User::query()->where('id', $id)
-            ->update($validatedRequest);
+        User::query()->where('id', $id)->update($validatedRequest);
 
         return redirect()->back()
             ->with('success', 'User was updated successfully.');

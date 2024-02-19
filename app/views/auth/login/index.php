@@ -9,7 +9,7 @@
     <div class="card shadow-sm" style="max-width: 700px;">
         <div class="card-body">
             <form class="row g-3" action="<?= route('login.store') ?>" method="post">
-                <?= csrf_token() ?>
+                <?= csrf_field() ?>
 
                 <div class="mb-2">
                     <label for="formControlInput2" class="form-label">Email address</label>

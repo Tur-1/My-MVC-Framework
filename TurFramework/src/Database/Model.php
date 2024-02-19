@@ -12,7 +12,7 @@ abstract class Model
     /**
      * @var mixed attributes
      */
-    private $attributes = [];
+    protected $attributes = [];
 
     /**
      * The attributes that are mass assignable.
@@ -33,8 +33,36 @@ abstract class Model
      * @var string
      */
     protected $table;
+    /**
+     * Set model attribute 
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return $this
+     */
+    protected function setAttribute($key, $value)
+    {
 
+        $method = 'set' . ucfirst($key) . 'Attribute';
+        if (method_exists($this, $method)) {
+            return $this->$method($value);
+        }
 
+        $this->attributes[$key] = $value;
+
+        return $this;
+    }
+
+    protected function getAttribute($key)
+    {
+        $method = 'get' . ucfirst($key) . 'Attribute';
+
+        if (method_exists($this, $method)) {
+            return $this->$method();
+        }
+
+        return  $this->attributes[$key] ?? null;
+    }
     public static function connection($connection = null)
     {
         $model = new static;
@@ -55,6 +83,33 @@ abstract class Model
 
         return $model->newQuery();
     }
+    public static function create(array $fields)
+    {
+
+        $model = new static;
+
+        $model->fillAttributes($model, $fields);
+
+        return static::query()->create($model->attributes);
+    }
+
+    private function fillAttributes($model, $fields)
+    {
+
+        foreach ($fields as $key => $value) {
+            $model->setAttribute($key, $value);
+        }
+    }
+    // public static function update(array $fields)
+    // {
+
+    //     $model = new static;
+
+    //     $model->fillAttributes($model, $fields);
+
+
+    //     return static::query()->update($model->attributes);
+    // }
     /**
      * Resolve a connection instance.
      *
@@ -121,6 +176,7 @@ abstract class Model
     {
         return $this->fillable;
     }
+
     /**
      * Get the current connection name for the model.
      *
@@ -132,12 +188,12 @@ abstract class Model
     }
     public function __get($key)
     {
-        return $this->attributes[$key] ?? null;
+        return $this->getAttribute($key);
     }
 
     public function __set($key, $value)
     {
-        $this->attributes[$key] = $value;
+        $this->setAttribute($key, $value);
     }
 
 

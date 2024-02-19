@@ -1,5 +1,6 @@
 <?php
 
+
 //Starting the session will be the first we do.
 session_start();
 

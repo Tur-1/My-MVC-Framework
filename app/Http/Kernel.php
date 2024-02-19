@@ -13,7 +13,7 @@ class Kernel
      */
     protected $middleware = [
         \App\Http\Middleware\ExampleMiddleware::class,
-        \App\Http\Middleware\CsrfTokenMiddleware::class
+        \App\Http\Middleware\VerifyCsrfToken::class,
     ];
 
     /**

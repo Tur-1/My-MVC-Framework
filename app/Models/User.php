@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use TurFramework\Database\Model;
+use TurFramework\Support\Hash;
 
 class User extends Model
 {
@@ -18,4 +19,9 @@ class User extends Model
         'email',
         'password',
     ];
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::password($value);
+    }
 }
