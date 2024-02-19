@@ -265,7 +265,7 @@ class HomeController extends Controller
 
 To bind an interface with a service class, you can use the `AppServiceProvider`,
 
-### `app/Providers/AppServiceProvider.php`
+#### `app/Providers/AppServiceProvider.php`
 
 ```php
 namespace App\Providers;
@@ -298,7 +298,7 @@ class AppServiceProvider extends ServiceProvider
 
 You can register your own custom service providers :
 
-### `bootstrap/providers.php`
+#### `bootstrap/providers.php`
 
 add the namespace of your custom service provider.
 
@@ -311,7 +311,7 @@ return [
 ],
 ```
 
-### `app/Providers/CustomServiceProvider.php`
+#### `app/Providers/CustomServiceProvider.php`
 
 your custom service provider
 ```php
@@ -720,7 +720,7 @@ Brand::query()->where('id', 2)->delete();
 Model accessors and mutators allow you to transform attribute values when you retrieve or set them on model instances.
 
 
-# Defining An Accessor
+#### Defining An Accessor
 ```php
 
 <?php
@@ -745,7 +745,7 @@ class User extends Model
 }
 ```
 
-# Defining A Mutator
+#### Defining A Mutator
 ```php
 
 <?php
