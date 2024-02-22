@@ -79,7 +79,7 @@ class MySQLGrammar
 
         return  'EXISTS(SELECT 1 FROM ' . $table . $whereClause . ')';
     }
-    protected function readQuery()
+    protected function selectQuery()
     {
         $statement = 'SELECT ' . $this->columns .
             ' FROM ' .

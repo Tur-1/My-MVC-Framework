@@ -2,27 +2,16 @@
 
 namespace TurFramework\Database;
 
-use TurFramework\Database\Contracts\DatabaseManagerInterface;
+use TurFramework\Database\Concerns\ModelAttributes;
 
 abstract class Model
 {
+    use ModelAttributes;
+
     /**
      * @var mixed manager
      */
     private static $manager;
-
-    /**
-     * @var mixed attributes
-     */
-    protected $attributes = [];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [];
-
     /**
      * The connection name for the model.
      *
@@ -35,6 +24,7 @@ abstract class Model
      * @var string
      */
     protected $table;
+
     /**
      * Indicates if the model exists.
      *
@@ -42,42 +32,6 @@ abstract class Model
      */
     public $exists = false;
 
-
-    /**
-     * Set model attribute 
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return $this
-     */
-    protected function setAttribute($key, $value)
-    {
-
-        $method = 'set' . ucfirst($key) . 'Attribute';
-        if (method_exists($this, $method)) {
-            return $this->$method($value);
-        }
-
-        $this->attributes[$key] = $value;
-
-        return $this;
-    }
-
-    protected function getAttribute($key)
-    {
-
-        $method = 'get' . ucfirst($key) . 'Attribute';
-
-        if (array_key_exists($key, $this->attributes)) {
-            $value = $this->attributes[$key];
-        }
-        if (method_exists($this, $method)) {
-            return $this->$method($value);
-        }
-
-
-        return  $value;
-    }
     public static function connection($connection = null)
     {
         $model = new static;
@@ -98,61 +52,7 @@ abstract class Model
 
         return $model->newQuery();
     }
-    public function create(array $fields)
-    {
-        return static::query()->create($fields);
-    }
 
-
-    /**
-     * Get the fillable attributes of a given array.
-     *
-     * @param  array  $attributes
-     * @return array
-     */
-    protected function fillableFromArray(array $attributes)
-    {
-        if (count($this->getFillable()) > 0) {
-            return array_intersect_key($attributes, array_flip($this->getFillable()));
-        }
-
-        return $attributes;
-    }
-    protected function fill($attributes)
-    {
-
-        $fillable = $this->fillableFromArray($attributes);
-
-        foreach ($fillable as $key => $value) {
-            $this->setAttribute($key, $value);
-        }
-    }
-    protected function save($query = null)
-    {
-
-
-        if ($this->exists) {
-            $saved = $this->performUpdate($query);
-        } else {
-
-            $query = $this->newQuery();
-            $saved = $this->performInsert($query);
-        }
-
-        return $saved;
-    }
-    protected function performUpdate(DatabaseManagerInterface $query)
-    {
-        $attributes = $this->getAttributes();
-
-        return $query->preformUpdate($attributes);
-    }
-    protected function performInsert($query)
-    {
-        $attributes = $this->getAttributes();
-
-        return $query->insert($attributes);
-    }
     /**
      * Create a new instance of the given model.
      *
@@ -164,7 +64,6 @@ abstract class Model
     {
 
         $model = new static;
-
         $model->exists = $exists;
 
         $model->setConnection($this->getConnectionName());
@@ -176,17 +75,24 @@ abstract class Model
         return $model;
     }
 
-    /**
-     * Resolve a connection instance.
-     *
-     * @param  string|null  $connection
-     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
-     */
-    private static function resolveConnection($connection = null)
-    {
-        return static::$manager->makeConnection($connection);
-    }
 
+    public function update(array $attributes)
+    {
+        return $this->fill($attributes)->save();
+    }
+    public function save()
+    {
+        $query = $this->newQuery();
+
+        if ($this->exists) {
+            $saved =  $query->performUpdate($this->getAttributes());
+        } else {
+            $saved =  $query->performInsert($this->getAttributes());
+        }
+
+
+        return $saved;
+    }
     /**
      * Set the table associated with the model.
      *
@@ -214,17 +120,10 @@ abstract class Model
      */
     private function newQuery()
     {
-        return $this->getConnection()->setModel($this);
+        return $this->getManager()->setModel($this);
     }
-    /**
-     * Get the database connection for the model.
-     *
-     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
-     */
-    private function getConnection()
-    {
-        return static::resolveConnection($this->getConnectionName());
-    }
+
+
 
     /**
      * Set the connection associated with the model.
@@ -238,24 +137,7 @@ abstract class Model
 
         return $this;
     }
-    /**
-     * Get the fillable attributes for the model.
-     *
-     * @return array<string>
-     */
-    public function getFillable()
-    {
-        return $this->fillable;
-    }
-    /**
-     * Get all of the current attributes on the model.
-     *
-     * @return array
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
+
     /**
      * Get the current connection name for the model.
      *
@@ -275,7 +157,25 @@ abstract class Model
         $this->setAttribute($key, $value);
     }
 
-
+    /**
+     * Get the database connection for the model.
+     *
+     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
+     */
+    private function getManager()
+    {
+        return static::resolveConnection($this->getConnectionName());
+    }
+    /**
+     * Resolve a connection instance.
+     *
+     * @param  string|null  $connection
+     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
+     */
+    private static function resolveConnection($connection = null)
+    {
+        return static::$manager->makeConnection($connection);
+    }
     /**
      * Set Database Manager.
      *

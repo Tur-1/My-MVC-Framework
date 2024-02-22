@@ -15,6 +15,11 @@ interface DatabaseManagerInterface
      */
     public function setModel(Model $model);
 
+    /**
+     *  first 
+     *  
+     * @return \TurFramework\Database\Model
+     */
     public function get();
 
     public function create(array $fields);
@@ -23,9 +28,20 @@ interface DatabaseManagerInterface
 
     public function delete($id = null);
 
+    /**
+     *  first 
+     *  
+     * @return \TurFramework\Database\Model
+     */
     public function first();
-
+    /**
+     *  first 
+     *  
+     * @return \TurFramework\Database\Model
+     */
     public function find($id);
+
+    public function exstis($id = null);
 
     public function select($columns = ['*']): self;
 
@@ -49,11 +65,9 @@ interface DatabaseManagerInterface
 
     public function orderBy($column, $direction = 'ASC'): self;
 
-    public function exstis($id = null);
-
     public function table($table);
 
-    public function preformUpdate(array $attributes);
+    public function performUpdate(array $attributes);
 
-    public function insert(array $attributes);
+    public function performInsert(array $attributes);
 }

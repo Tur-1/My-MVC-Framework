@@ -2,10 +2,10 @@
 
 namespace TurFramework\Database\Managers;
 
-use PDO;
 use TurFramework\Support\Arr;
 use TurFramework\Database\Model;
 use TurFramework\Database\Grammars\MySQLGrammar;
+use TurFramework\Database\Contracts\ConnectionInterface;
 use TurFramework\Database\Contracts\DatabaseManagerInterface;
 
 class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
@@ -16,125 +16,89 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
      *
      * @var \TurFramework\Database\Model
      */
-    protected $fetchMode = PDO::FETCH_CLASS;
     protected $model;
 
 
     /**
-     * @var \PDO 
+     * @var ConnectionInterface $connection
      */
     protected $connection;
 
 
-    public function __construct($connection, $config)
+    public function __construct(ConnectionInterface $connection, $config)
     {
         $this->connection = $connection;
     }
 
-    /**
-     * Set a model instance for the model being queried.
-     * 
-     * @param \TurFramework\Database\Model
-     * @return $this
-     */
-    public function setModel(Model $model)
+
+    public function create(array $attributes)
     {
-        $this->model = $model;
-
-        $this->table = $this->model->getTable();
-
-        return $this;
-    }
-
-    public function getModel()
-    {
-        return  $this->model;
-    }
-
-
-    /**
-     * Run the query as a "select" statement against the connection.
-     *
-     * @return array
-     */
-
-    protected function runSelect()
-    {
-
-        $statement = $this->connection->prepare($this->readQuery());
-
-        $this->bindValues($statement, $this->bindings);
-
-        $statement->setFetchMode($this->fetchMode, get_class($this->getModel()));
-        $statement->execute();
-
-        return $statement->fetchAll();
-    }
-
-
-    public function create(array $fields)
-    {
-
-        $model = $this->newModelInstance($fields);
+        $model = $this->newModelInstance($attributes);
 
         return $model->save();
     }
 
-    public function insert($attributes)
+    public function update(array $attributes)
     {
-        $statement = $this->connection->prepare($this->insertQuery($attributes));
+        $model = $this->newModelInstance($attributes, true);
 
-        $this->bindValues($statement, $this->bindings);
-        return  $statement->execute();
+        return $model->save();
     }
-    public function newModelInstance($attributes = [])
+    public function performUpdate(array $attributes)
     {
-        return $this->model->newInstance($attributes);
+        return $this->connection->update($this->updateQuery($attributes), $this->bindings);
     }
-    public function preformUpdate($attributes)
+    public function performInsert(array $attributes)
     {
-        $statement = $this->connection->prepare($this->updateQuery($attributes));
-
-        $this->bindValues($statement, $this->bindings);
-        return  $statement->execute();
+        return $this->connection->insert($this->insertQuery($attributes), $this->bindings);
     }
-    public function update(array $fields)
-    {
-        $model = $this->model->newInstance($fields, true);
-
-        return $model->save($this);
-    }
-
-    public function get()
-    {
-        return $this->runSelect();
-    }
-
-    public function first()
-    {
-        return Arr::first($this->limit(1)->get(), default: []);
-    }
-    public function all()
-    {
-        return $this->get();
-    }
-
     public function delete($id = null)
     {
         if (!is_null($id)) {
             $this->where('id', '=', $id);
         }
 
-        $statement = $this->connection->prepare($this->deleteQuery());
-        $this->bindValues($statement, $this->bindings);
-
-        return $statement->execute();
+        return $this->connection->delete($this->deleteQuery(), $this->bindings);
     }
+    public function get()
+    {
+        $models = $this->connection->select($this->selectQuery(), $this->bindings);
+
+        foreach ($models as $key => &$model) {
+            $model->exists = true;
+        }
+
+
+        return $models;
+    }
+
+    /**
+     * @return \TurFramework\Database\Model
+     */
+    public function first()
+    {
+        return Arr::first($this->limit(1)->get(), default: []);
+    }
+
+    public function all()
+    {
+        return $this->get();
+    }
+
+
+
     public function find($id)
     {
         return $this->where('id', '=', $id)->first();
     }
+    public function exstis($id = null)
+    {
+        if (!is_null($id)) {
+            $this->where('id', $id);
+        }
 
+        return $this->connection->exstis($this->existsQuery(), $this->bindings);
+    }
     public function select($columns = ['*']): self
     {
         $columns = is_array($columns) ? $columns : func_get_args();
@@ -201,14 +165,6 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         return $this;
     }
 
-    /**
-     * Add an "order by" clause to the query.
-     *
-     * @param  string  $column
-     * @param  string  $direction
-     * @return $this
-     *
-     */
     public function orderBy($column, $direction = 'ASC'): self
     {
         $this->setOrderBy($column, $direction);
@@ -220,19 +176,31 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->table = $table;
         return $this;
     }
-    public function exstis($id = null)
+
+    /**
+     * Set a model instance for the model being queried.
+     * 
+     * @param \TurFramework\Database\Model
+     * @return $this
+     */
+    public function setModel(Model $model)
     {
-        if (!is_null($id)) {
-            $this->where('id', $id);
-        }
+        $this->model = $model;
+
+        $this->table = $this->model->getTable();
+
+        $this->connection->setFetchMode(get_class($this->model));
+        return $this;
+    }
+
+    public function getModel()
+    {
+        return  $this->model;
+    }
 
 
-        $statement = $this->connection->prepare($this->existsQuery());
-
-        $this->bindValues($statement, $this->bindings);
-
-        $statement->execute();
-
-        return $statement->fetchColumn() ? true : false;
+    public function newModelInstance($attributes = [], $exists = false)
+    {
+        return $this->model->newInstance($attributes, $exists);
     }
 }

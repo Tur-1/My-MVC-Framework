@@ -7,5 +7,5 @@
 <script>
     setTimeout(() => {
         document.querySelector('.alert-success').style.display = 'none';
-    }, 3000);
+    }, 1500);
 </script>

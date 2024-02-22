@@ -36,7 +36,6 @@ class UserController extends Controller
     public function edit($id)
     {
 
-
         $user = User::query()->find($id);
 
         return view('pages.Users.edit')->with('user', $user);
@@ -47,7 +46,9 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        User::query()->where('id', $id)->update($validatedRequest);
+        $user = User::query()->where('id', $id)->first();
+
+        $user->update($validatedRequest);
 
         return redirect()->back()
             ->with('success', 'User was updated successfully.');

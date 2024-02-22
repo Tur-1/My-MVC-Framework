@@ -16,6 +16,7 @@
 - [Views](#section-13)
 - [Multiple Database Connections](#section-14)
 - [Models](#section-15)
+- [Inserting and Updating Models](#section-21)
 - [Model Accessors & Mutators](#section-20)
 - [Form Request Validation](#section-16) 
 - [Displaying the Validation Errors](#section-18) 
@@ -688,31 +689,81 @@ Find Model by ID or Name:
 Brand::query()->where('id', $id)->orWhere('name', '!=', $name)->first();
  ```
 
-
-Create a New Model:
-
-```php
-Brand::query()->create([
-        'name' => $request->get('name'),
-        'slug' => $request->get('slug'),
-        ]);
-
-        
- ```
-
-Update an Existing Model:
-```php
- Brand::query()->where('id', 2)
-       ->update([
-         'name' => $request->get('name'),
-         'slug' => $request->get('slug'),
-        ]);
- ```
-
  Delete a Model:
 ```php
-Brand::query()->where('id', 2)->delete();
+
+User::query()->where('id', 2)->delete();
+
+// OR
+
+User::query()->delete($id);
+
  ```
+
+<a name="section-21"></a>
+
+## Inserting and Updating Models
+
+
+#### Insert a Model:
+
+you may use the create method to save a new model using a single PHP statement.
+
+```php 
+
+User::query()->create([
+        'name' => $request->get('name'),
+        'email' => $request->get('email'),
+        ]);  
+
+ ```
+
+you can use the `save` method to save a new model 
+
+```php  
+ 
+  $user = new User();
+
+  $user->name = $request->get('name');
+  $user->email = $request->get('email');
+
+  $user->save();    
+ ```
+
+#### Update an Existing Model:
+
+The save method may also be used to update models that already exist 
+```php
+
+    $user = User::query()->where('id', $id)->first();
+
+    $user->name = $request->get('name');
+    $user->email = $request->get('email');
+
+    $user->save();  
+ ```
+
+or you can use update method to update an Existing Model
+
+```php 
+ User::query()->where('id', 2)
+       ->update([
+         'name' => $request->get('name'),
+         'email' => $request->get('email'),
+        ]);
+ 
+ // OR 
+
+     $user = User::query()->where('id', $id)->first();
+
+     $user->update([
+         'name' => $request->get('name'),
+         'email' => $request->get('email'),
+        ]);
+ ```
+
+
+
 
 <a name="section-20"></a>
 

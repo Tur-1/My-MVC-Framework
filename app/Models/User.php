@@ -29,7 +29,7 @@ class User extends Model
      * @param  string  $value
      * @return void
      */
-    public function setPasswordAttribute($value)
+    protected function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::password($value);
     }
@@ -40,7 +40,7 @@ class User extends Model
      * @param  string  $value
      * @return string
      */
-    public function getNameAttribute($value)
+    protected function getNameAttribute($value)
     {
         return ucfirst($value);
     }
