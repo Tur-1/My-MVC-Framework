@@ -164,6 +164,7 @@ class RouteCollection
     {
 
         $route = $this->getRoute($path);
+
         // Check if the route method is not allowed
         if ($this->isRequestMethodNotAllowed($route, $requestMethod)) {
             throw RouteException::requestMethodNotAllowed($requestMethod, $path, $route['method']);
@@ -179,7 +180,7 @@ class RouteCollection
     private function getRoute($path)
     {
         $route = null;
-        foreach ($this->routes as $key => $route) {
+        foreach ($this->routes as $key => $routeDetails) {
 
             // Replace route parameters with regex patterns to match dynamic values
             $pattern = preg_replace_callback('/\{(\w+)\}/', function ($matches) {
@@ -195,8 +196,8 @@ class RouteCollection
             if (preg_match($pattern, $path, $matches)) {
 
                 // Store route parameters and their values
-                $route['parameters'] = array_intersect_key($matches, array_flip($route['parameters']));
-                $route = $route;
+                $routeDetails['parameters'] = array_intersect_key($matches, array_flip($routeDetails['parameters']));
+                $route = $routeDetails;
                 break;
             }
         }
@@ -204,6 +205,7 @@ class RouteCollection
     }
     private function isRequestMethodNotAllowed($route, $requestMethod)
     {
+
         return !is_null($route) && $route['method'] !==  $requestMethod;
     }
 

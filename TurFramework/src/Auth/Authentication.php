@@ -9,12 +9,20 @@ class Authentication
 {
 
     protected $session;
-    protected $userProvider;
-    protected $guards = [];
 
-    public function __construct(Store $session)
+    protected $userProvider;
+
+    /**
+     * Create a new authentication guard.
+     *
+     * @param  \TurFramework\Session\Store $session
+     * @param  \TurFramework\Auth\UserProvider $provider
+     * @return void
+     */
+    public function __construct(Store $session, UserProvider $userProvider)
     {
         $this->session = $session;
+        $this->userProvider = $userProvider;
     }
 
     /**
@@ -26,18 +34,11 @@ class Authentication
      */
     public function attempt(array $credentials = [])
     {
-        $this->userProvider = new UserProvider($this->getGuard());
-
         $user = $this->userProvider->retrieveByCredentials($credentials);
 
-
         if ($this->hasValidCredentials($user, $credentials)) {
-            $this->login($user);
-
-            return true;
+            dd($user);
         }
-
-        return false;
     }
     /**
      * Determine if the user matches the credentials.
@@ -48,14 +49,9 @@ class Authentication
      */
     protected function hasValidCredentials($user, $credentials)
     {
-        return $this->userProvider->validateCredentials($user, $credentials);
+        return $this->userProvider->verifyPassword($user->password, $credentials['password']);
     }
-    public function login()
-    {
-    }
-    public function setUser()
-    {
-    }
+
     /**
      * Get a unique identifier for the auth session value.
      *
@@ -66,39 +62,6 @@ class Authentication
         return 'login_web' . sha1(static::class);
     }
 
-    /**
-     * Attempt to get the guard from the local cache.
-     *
-     * @param  string|null  $name 
-     */
-    public function guard($name = null)
-    {
-        $this->guards = $this->getConfig($name);
-
-        return $this;
-    }
-
-    protected function getGuard()
-    {
-        $name = $this->guards ?: $this->getConfig($this->getDefaultDriver());
-
-        return   $name;
-    }
-
-    protected function getConfig($name)
-    {
-        return config('auth.providers.' . $name);
-    }
-
-    /**
-     * Get the default authentication driver name.
-     *
-     * @return string
-     */
-    public function getDefaultDriver()
-    {
-        return config('auth.defaults.provider');
-    }
 
     /**
      * Update the session with the given ID.

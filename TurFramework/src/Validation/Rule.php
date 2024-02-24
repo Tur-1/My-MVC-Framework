@@ -23,6 +23,7 @@ class Rule
 
     public function min($field, $params)
     {
+
         return isset($this->data[$field]) && strlen($this->data[$field]) >= $params;
     }
 
@@ -66,6 +67,13 @@ class Rule
     public function nullable()
     {
         return true;
+    }
+    public function between($field, $min, $max)
+    {
+
+        $length = strlen($this->data[$field]);
+
+        return ($length >= $min && $length <= $max);
     }
 
     public function same($field, $otherField)

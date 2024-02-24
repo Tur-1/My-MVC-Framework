@@ -2,8 +2,9 @@
 
 namespace TurFramework\Auth;
 
-use TurFramework\Database\Contracts\ConnectionInterface;
 use TurFramework\Support\Hash;
+use TurFramework\Database\Model;
+use TurFramework\Database\Contracts\ConnectionInterface;
 
 class UserProvider
 {
@@ -14,12 +15,6 @@ class UserProvider
     protected $model;
 
 
-    /**
-     * The table containing the users.
-     *
-     * @var string
-     */
-    protected $table;
 
 
     public function __construct($model)
@@ -35,7 +30,31 @@ class UserProvider
     public function retrieveById($id)
     {
     }
+    /**
+     * Create a new instance of the model.
+     *
+     * @return \TurFramework\Database\Model
+     */
+    public function createModel()
+    {
+        $class = '\\' . ltrim($this->model, '\\');
 
+        return new $class;
+    }
+    /**
+     * Get a new query builder for the model instance.
+     *
+     * @param \TurFramework\Database\Model|null  $model
+     * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
+     */
+    protected function newModelQuery($model = null)
+    {
+        $query = is_null($model)
+            ? $this->createModel()->newQuery()
+            : $model->newQuery();
+
+        return $query;
+    }
     /**
      * Retrieve a user by the given credentials.
      *
@@ -43,19 +62,29 @@ class UserProvider
      */
     public function retrieveByCredentials(array $credentials)
     {
-        $this->model->query()->where('email', $credentials['email'])->where('email',);
+        return $this->newModelQuery()->where('email', $credentials['email'])->first();
     }
 
 
     /**
-     * Validate a user against the given credentials.
+     * Gets the name of the Eloquent user model.
      *
-     * @param  $user
-     * @param  array  $credentials
+     * @return string
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * Validate a user password against the given password.
+     *
+     * @param string $userPassword
+     * @param string $password
      * @return bool
      */
-    public function validateCredentials($user, array $credentials)
+    public function verifyPassword(string $userPassword, string $password)
     {
-        return Hash::verify($credentials['password'], $user->getAuthPassword());
+        return Hash::verify($password, $userPassword);
     }
 }

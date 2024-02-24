@@ -4,11 +4,11 @@ return [
 
 
     'defaults' => [
-        'provider' => 'users',
+        'guard' => 'users',
     ],
 
 
-    'providers' => [
+    'guards' => [
         'users' => App\Models\User::class,
         'admins' => App\Models\Admin::class,
     ],

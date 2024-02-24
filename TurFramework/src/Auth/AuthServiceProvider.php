@@ -10,18 +10,18 @@ class AuthServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->registerUrlGenerator();
+        $this->registerAuthenticator();
     }
+
     /**
-     * Register the URL generator service.
+     * Register the authenticator services.
      *
      * @return void
      */
-    protected function registerUrlGenerator()
+    protected function registerAuthenticator()
     {
+        $this->app->bind('auth', fn ($app) => new AuthManager($app));
 
-        $this->app->bind('auth', function ($app) {
-            return new Authentication($app->make('session'));
-        });
+        $this->app->bind('auth.guard', fn ($app) =>  $this->app->make('auth')->guard());
     }
 }

@@ -70,13 +70,14 @@ class Validator
         if (empty($this->data[$field]) && $rule == 'nullable') {
             unset($this->data[$field]);
         }
+
         if (!$this->rule->$rule($field, ...$params)) {
-            $this->errorsBag->add($field, $this->getMessage($field, $rule));
+            $this->errorsBag->add($field, $this->getMessage($field, $rule, $params));
         }
     }
 
-    protected  function getMessage($field, $rule)
+    protected  function getMessage($field, $rule, $params)
     {
-        return ValidationMessages::generateMessage($field, $rule, $this->messages, $this->attributes);
+        return ValidationMessages::generateMessage($field, $params, $rule, $this->messages, $this->attributes);
     }
 }
