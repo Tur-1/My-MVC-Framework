@@ -655,7 +655,7 @@ the fillable property is used to specify which fields you want to pass to the da
 ```
  
        
-Limit Models:
+get Models:
 ```php
  Brand::query()->select('name', 'id')->get()
  ```  

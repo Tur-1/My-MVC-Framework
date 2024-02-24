@@ -12,7 +12,6 @@ class Kernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        \App\Http\Middleware\ExampleMiddleware::class,
         \App\Http\Middleware\VerifyCsrfToken::class,
     ];
 

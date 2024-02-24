@@ -31,20 +31,23 @@ class RouteFileRegistrar
         require $routes;
     }
 
-    /**
-     * Loads route files from the 'app/routes' directory.
-     * Throws an exception if no route files are found.
-     */
-    protected function loadRoutesFiles()
+    public function load($routes)
     {
 
-        if (empty($this->getRoutesFiles())) {
-            throw RouteException::routeFilesNotFound();
+        if ($this->routesAreCached()) {
+            return  $this->loadCachedRoutes();
+        } else {
+
+            $this->loadRoutes($routes);
+
+            // Cache::store($this->getCachedRoutesPath(), $this->router->getRouteCollection()->getRoutes());
         }
+    }
 
-
-        foreach ($this->getRoutesFiles() as $routeFile) {
-            require $routeFile;
+    private function loadRoutes($routes)
+    {
+        foreach ($routes as $key => $routeFile) {
+            $this->register($routeFile);
         }
     }
 

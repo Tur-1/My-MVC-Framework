@@ -11,6 +11,7 @@ class MySQLGrammar
     protected $wheresValues;
     protected $limit;
     protected $orderByColumn;
+    protected $groupByColumn;
     protected $orderDirection;
     /**
      * The current query value bindings.
@@ -85,6 +86,7 @@ class MySQLGrammar
             ' FROM ' .
             $this->table .
             $this->whereStatement()
+            . $this->groupByColumn
             . $this->getOrderBy()
             .   $this->limit();
 
@@ -249,6 +251,10 @@ class MySQLGrammar
         $this->orderDirection = $direction;
     }
 
+    protected function setGroupBy($column)
+    {
+        $this->groupByColumn = ' GROUP BY ' . $column;
+    }
     protected function getOrderBy()
     {
         return $this->orderByColumn ? ' ORDER BY ' . $this->orderByColumn . ' ' . $this->orderDirection : '';

@@ -67,18 +67,19 @@ class Router
     public  function group($routes)
     {
 
-        if ($routes instanceof Closure) {
-            $routes();
-        } else {
-
-            (new RouteFileRegistrar($this))->register($routes);
-            $this->routes->refreshNameNameList();
-        }
-
+        $routes();
 
         return $this;
     }
 
+    public function load($routes)
+    {
+        $routeFiles = new RouteFileRegistrar($this);
+
+        $routeFiles->load($routes);
+
+        $this->routes->refreshNameNameList();
+    }
     /**
      * Set the controller for the route.
      *

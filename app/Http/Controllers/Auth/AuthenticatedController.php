@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use TurFramework\Facades\Auth;
+use TurFramework\Http\Request;
+
 class AuthenticatedController
 {
     public function index()
@@ -10,7 +13,7 @@ class AuthenticatedController
         return view('auth.login');
     }
 
-    public function store()
+    public function store(Request $request)
     {
     }
 

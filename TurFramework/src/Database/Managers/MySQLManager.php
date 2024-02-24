@@ -63,12 +63,9 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     public function get()
     {
         $models = $this->connection->select($this->selectQuery(), $this->bindings);
-
         foreach ($models as $key => &$model) {
             $model->exists = true;
         }
-
-
         return $models;
     }
 
@@ -176,7 +173,11 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->table = $table;
         return $this;
     }
-
+    public function groupBy($column): self
+    {
+        $this->setGroupBy($column);
+        return $this;
+    }
     /**
      * Set a model instance for the model being queried.
      * 
@@ -190,6 +191,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->table = $this->model->getTable();
 
         $this->connection->setFetchMode(get_class($this->model));
+
         return $this;
     }
 

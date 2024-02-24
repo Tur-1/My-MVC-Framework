@@ -13,15 +13,13 @@ class RouteServiceProvider extends ServiceProvider
 
 
         /**
-         * Use the Route::group() method to load route files.
+         * Use the Route::load() method to load route files.
          */
 
-        // Load web routes from the 'app/routes/web.php' file.
-        Route::group(base_path('app/routes/web.php'));
 
-        // Load API routes from the 'app/routes/api.php' file.
-        Route::group(base_path('app/routes/api.php'));
-
-        Route::group(base_path('app/routes/auth.php'));
+        Route::load([
+            base_path('app/routes/web.php'),
+            base_path('app/routes/auth.php')
+        ]);
     }
 }

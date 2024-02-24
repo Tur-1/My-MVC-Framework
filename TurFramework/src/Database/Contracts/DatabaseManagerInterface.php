@@ -67,6 +67,8 @@ interface DatabaseManagerInterface
 
     public function table($table);
 
+    public function groupBy($column): self;
+
     public function performUpdate(array $attributes);
 
     public function performInsert(array $attributes);

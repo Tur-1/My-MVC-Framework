@@ -8,6 +8,7 @@ namespace TurFramework\Application;
 use TurFramework\Http\Request;
 use TurFramework\Facades\Route;
 use TurFramework\Container\Container;
+use TurFramework\Auth\AuthServiceProvider;
 use TurFramework\Exceptions\HttpException;
 use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
@@ -67,6 +68,7 @@ class Application extends Container
     {
         $this->register(new DatabaseServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
+        $this->register(new AuthServiceProvider($this));
     }
     /**
      * Register a service provider with the application.
