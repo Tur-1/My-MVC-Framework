@@ -23,6 +23,17 @@ class User extends Model
 
 
     /**
+     * Set the user's Password
+     *
+     * @param  string  $value
+     * @return void
+     */
+    protected function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::isHashed($value) ? $value : Hash::password($value);
+    }
+
+    /**
      * Get the user's name.
      *
      * @param  string  $value

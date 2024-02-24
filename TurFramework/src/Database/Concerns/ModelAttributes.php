@@ -33,23 +33,22 @@ trait ModelAttributes
 
         $this->attributes[$key] = $value;
 
+
         return $this;
     }
 
     protected function getAttribute($key)
     {
 
-        $method = 'get' . ucfirst($key) . 'Attribute';
-
         if (array_key_exists($key, $this->attributes)) {
+            $method = 'get' . ucfirst($key) . 'Attribute';
             $value = $this->attributes[$key];
-        }
-        if (method_exists($this, $method)) {
-            return $this->$method($value);
-        }
+            if (method_exists($this, $method)) {
+                return $this->$method($value);
+            }
 
-
-        return  $value;
+            return  $value;
+        }
     }
 
     protected function fill($attributes)

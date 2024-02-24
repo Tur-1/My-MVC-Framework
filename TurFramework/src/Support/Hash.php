@@ -18,4 +18,15 @@ class Hash
     {
         return password_verify($value, $hashedValue);
     }
+
+    /**
+     * Determine if a given string is already hashed.
+     *
+     * @param  string  $value
+     * @return bool
+     */
+    public static function isHashed($value)
+    {
+        return password_get_info($value)['algo'] !== null;
+    }
 }
