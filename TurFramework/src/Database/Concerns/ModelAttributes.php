@@ -46,7 +46,6 @@ trait ModelAttributes
             if (method_exists($this, $method)) {
                 return $this->$method($value);
             }
-
             return  $value;
         }
     }

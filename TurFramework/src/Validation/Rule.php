@@ -64,8 +64,9 @@ class Rule
     {
         return $this->same($field, $field . '_confirmation');
     }
-    public function nullable()
+    public function nullable($field)
     {
+
         return true;
     }
     public function between($field, $min, $max)

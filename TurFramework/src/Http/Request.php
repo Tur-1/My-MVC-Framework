@@ -2,13 +2,18 @@
 
 namespace TurFramework\Http;
 
-use Attribute;
 use TurFramework\Support\Arr;
+use TurFramework\Validation\ValidationException;
+use TurFramework\Validation\ValidationHandlerTrait;
 use TurFramework\Validation\Validator;
+use TurFramework\Validation\ValidatorFactory;
 
 class Request
 {
+    use ValidationHandlerTrait;
 
+    protected $validator;
+    protected $session;
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
@@ -17,6 +22,7 @@ class Request
 
     public function __construct()
     {
+        $this->setSession(app('session'));
     }
 
     /**
@@ -61,6 +67,15 @@ class Request
         return $refererPath;
     }
 
+
+    protected function setValidator($validator)
+    {
+        $this->validator = $validator;
+    }
+    protected function getValidator()
+    {
+        return $this->validator;
+    }
     /**
      * Get the previous path from the referer URL in the server array.
      *
@@ -68,22 +83,33 @@ class Request
      * @param array $messages
      * @return array
      */
-    public function validate(array $rules, array $messages = [])
+    public function validate(array $rules, array $messages = [], array $attributes = [])
     {
+        $this->setValidator(ValidatorFactory::make($this->all(), $rules,  $messages, $attributes));
 
-        $vaildator = new Validator($this->only(array_keys($rules)), $rules, $messages);
-
-        $validatedRequest = $vaildator->validate();
-
-        if ($vaildator->fails()) {
-            session()->put('errors', $vaildator->getErrors());
-            session()->flash('old', $validatedRequest);
-
-            throw redirect()->back();
-        }
-
-        return $validatedRequest;
+        return $this->validateResolved();
     }
+
+    /**
+     * Get the session associated with the request.
+     *
+     * @return \TurFramework\Session\Store 
+     */
+    public function session()
+    {
+        return $this->session;
+    }
+    /**
+     * Set the session instance on the request.
+     *
+     * @param  \TurFramework\Session\Store $session
+     * @return void
+     */
+    public function setSession($session)
+    {
+        $this->session = $session;
+    }
+
     /**
      * Get the previous URL with query string from the referer URL in the server array.
      *
@@ -193,8 +219,16 @@ class Request
         return $this->getUri();
     }
 
+    /**
+     * Get a subset containing the provided keys with values from the input data.
+     *
+     * @param  array|mixed  $keys
+     * @return array
+     */
     public function only($keys)
     {
+        $keys = is_array($keys) ? $keys : func_get_args();
+
         return Arr::only($this->all(), $keys);
     }
     /**
@@ -267,7 +301,7 @@ class Request
     /**
      * Check if the request method is POST.
      *
-     * @return bool True if the request method is POST, false otherwise.
+     * @return bool
      */
     public function isPost(): bool
     {
@@ -277,7 +311,7 @@ class Request
     /**
      * Check if the request method is GET.
      *
-     * @return bool True if the request method is GET, false otherwise.
+     * @return bool
      */
     public function isGet(): bool
     {
@@ -288,7 +322,7 @@ class Request
     /**
      * Get valid HTTP request methods.
      *
-     * @return array An array containing valid HTTP request methods
+     * @return array 
      */
     public function getValidMethods(): array
     {
@@ -302,7 +336,7 @@ class Request
     /**
      * Retrieve all request parameters from both GET and POST methods.
      *
-     * @return array request parameters.
+     * @return array 
      */
     public function all(): array
     {

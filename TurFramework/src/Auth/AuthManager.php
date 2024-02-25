@@ -30,7 +30,7 @@ class AuthManager
 
         $prodfiver = new UserProvider($config);
 
-        $garud = new Authentication($this->app->make('session'), $prodfiver);
+        $garud = new Authentication($name, $this->app->make('session'), $prodfiver);
 
         return $garud;
     }

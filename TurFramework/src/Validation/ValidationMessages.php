@@ -5,7 +5,7 @@ namespace TurFramework\Validation;
 class ValidationMessages
 {
 
-    public static function generateMessage($field, $params, $rule, $messages, $attributes)
+    public static function generateMessage($field, $rule, $params = null, $messages = null, $attributes = null)
     {
 
 
@@ -89,6 +89,7 @@ class ValidationMessages
             'extensions' => 'The :attribute field must have one of the following extensions: :values.',
             'file' => 'The :attribute field must be a file.',
             'filled' => 'The :attribute field must have a value.',
+            'auth.failed' => 'These credentials do not match our records.',
 
             'hex_color' => 'The :attribute field must be a valid hexadecimal color.',
             'image' => 'The :attribute field must be an image.',

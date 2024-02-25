@@ -3,16 +3,19 @@
 namespace TurFramework\Http;
 
 use RuntimeException;
-use TurFramework\Validation\Validator;
+use TurFramework\Validation\ValidationHandlerTrait;
+use TurFramework\Validation\ValidatorFactory;
 
-abstract class FormRequest extends Request
+class FormRequest extends Request
 {
+    use ValidationHandlerTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     protected function authorize(): bool
     {
-        throw new RuntimeException(get_class($this) . ' does not implement authorize method.');
+        return true;
     }
     /**
      * Get custom messages for validator errors.
@@ -32,17 +35,6 @@ abstract class FormRequest extends Request
     {
         return [];
     }
-
-    /**
-     * Get data to be validated from the request.
-     *
-     * @return array
-     */
-    protected function validationData($rules)
-    {
-        return $this->only(array_keys($rules));
-    }
-
     /**
      * Get request rules
      *
@@ -57,30 +49,34 @@ abstract class FormRequest extends Request
 
     public function validated()
     {
-        if ($this->authorize()) {
-            $rules = $this->rules();
+        return $this->validateResolved();
+    }
 
-            $vaildator = $this->createValidator($this->validationData($rules), $rules);
+    /**
+     * Get the validator instance for the request.
+     *
+     * @return \TurFramework\Validation\Validator
+     */
+    protected function getValidatorInstance()
+    {
+        $validator =  ValidatorFactory::make(
+            $this->validationData(),
+            $this->rules(),
+            $this->messages(),
+            $this->attributes()
+        );
 
-            $validatedRequest = $vaildator->validate();
-
-            if ($vaildator->fails()) {
-                session()->put('errors', $vaildator->getErrors());
-                session()->flash('old', $validatedRequest);
-
-                throw redirect()->back();
-            }
-
-            return $validatedRequest;
-        } else {
-            abort(403);
-        }
+        return $validator;
     }
 
 
-
-    private function createValidator($data, $rules)
+    /**
+     * Get data to be validated from the request.
+     *
+     * @return array
+     */
+    protected function validationData()
     {
-        return new Validator($data, $rules, $this->messages(), $this->attributes());
+        return $this->all();
     }
 }

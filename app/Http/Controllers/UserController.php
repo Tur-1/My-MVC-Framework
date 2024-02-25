@@ -12,6 +12,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+
         $users = User::query()->get();
 
         return view('pages.Users.list')->with('users', $users);

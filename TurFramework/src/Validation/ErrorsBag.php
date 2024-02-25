@@ -22,6 +22,25 @@ class ErrorsBag
     }
 
     /**
+     * Determine if the message bag has any messages.
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return !$this->any();
+    }
+
+    /**
+     * Determine if the message bag has any messages.
+     *
+     * @return bool
+     */
+    public function isNotEmpty()
+    {
+        return $this->any();
+    }
+    /**
      * Determine if any errors exist in the bag.
      *
      * @return bool
@@ -38,7 +57,6 @@ class ErrorsBag
      */
     public function all()
     {
-
         return $this->errors;
     }
 

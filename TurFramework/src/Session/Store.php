@@ -63,6 +63,16 @@ class Store
     }
 
 
+    /**
+     * Remove all of the items from the session.
+     *
+     * @return void
+     */
+    public function flush()
+    {
+        $this->attributes = [];
+    }
+
 
     public function loadErrosMessages()
     {
@@ -190,6 +200,9 @@ class Store
      */
     public function regenerateToken()
     {
+
+        session_regenerate_id(true);
+
         $this->put('_token', bin2hex(random_bytes(32)));
     }
     /**

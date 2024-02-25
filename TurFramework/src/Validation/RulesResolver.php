@@ -13,7 +13,7 @@ class RulesResolver
 
         return $rules;
     }
-    public static function resolve($rule)
+    public static function resolveRuleParam($rule)
     {
         $params = [];
         if (static::isRuleHasParam($rule)) {

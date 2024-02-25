@@ -31,7 +31,7 @@
                         <li class="nav-item">
                             <form action="<?= route('logout') ?>" method="post">
                                 <?= csrf_field() ?>
-                                <a class="dropdown-item" role="button">Logout</a>
+                                <button class="dropdown-item" type="submit">Logout</button>
                             </form>
                         </li>
                     </ul>

@@ -3,6 +3,7 @@
 namespace TurFramework\Http;
 
 use TurFramework\Facades\Session;
+use TurFramework\Validation\MessageBag;
 
 class RedirectResponse
 {
@@ -38,6 +39,20 @@ class RedirectResponse
         return $this;
     }
 
+    public function withErrors($errorsMessages)
+    {
+        session()->put('errors', $errorsMessages);
+
+        return $this;
+    }
+    public function withOldValues($key, $value = null)
+    {
+        $withData = is_array($key) ? $key : [$key => $value];
+
+        session()->flash('old', $withData);
+
+        return $this;
+    }
 
     public function __destruct()
     {
