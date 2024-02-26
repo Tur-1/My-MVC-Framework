@@ -1,6 +1,6 @@
 <?php
 
-
+session_name('TurFramework_session');
 //Starting the session will be the first we do.
 session_start();
 

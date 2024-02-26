@@ -39,7 +39,7 @@ class LoginRequest extends FormRequest
                 [
                     'email' => 'These credentials do not match our records.'
                 ]
-            )->redirect();
+            );
         }
     }
 }

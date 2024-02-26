@@ -12,6 +12,7 @@ use CompileError;
 use ErrorException;
 use RuntimeException;
 use TurFramework\Exceptions\HttpException;
+use TurFramework\Validation\ValidationException;
 
 class ExceptionHandler
 {
@@ -25,6 +26,7 @@ class ExceptionHandler
         ParseError::class,
         TypeError::class,
         RuntimeException::class,
+
     ];
 
 
@@ -86,13 +88,24 @@ class ExceptionHandler
 
 
         if ($exception instanceof HttpException) {
-            self::handleHttpException($exception);
+            return  self::handleHttpException($exception);
+        }
+
+        if ($exception instanceof ValidationException) {
+            return self::handleValidationExceptionResponse($exception);
         }
 
         self::getDefaultExceptionHandler($exception);
     }
 
 
+    private static function handleValidationExceptionResponse($exception)
+    {
+        return redirect()
+            ->to($exception->redirectTo ?? request()->previousUrl())
+            ->withOldValues($exception->getOldValues())
+            ->withErrors($exception->errors());
+    }
     private static function getDefaultExceptionHandler($exception)
     {
         foreach (self::$Exceptions as $key => $class) {

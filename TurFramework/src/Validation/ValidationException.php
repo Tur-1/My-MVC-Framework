@@ -14,10 +14,14 @@ class ValidationException extends Exception
      */
     public $status = 422;
 
-    public $data = 422;
 
     public Validator $validator;
-
+    /**
+     * The path the client should be redirected to.
+     *
+     * @var string
+     */
+    public $redirectTo;
 
 
     public function __construct(Validator $validator)
@@ -45,19 +49,20 @@ class ValidationException extends Exception
     {
         return $this->validator->errorsBag()->all();
     }
-
-
+    public function getOldValues()
+    {
+        return $this->validator->getData();
+    }
     /**
      * Set the URL to redirect to on a validation error.
      *
      * @param  string  $url
      * @return $this
      */
-    public function redirect($url = null)
+    public function redirectTo($url)
     {
-        return redirect()
-            ->to($url ?? request()->previousUrl())
-            ->withOldValues($this->validator->getData())
-            ->withErrors($this->errors());
+        $this->redirectTo = $url;
+
+        return $this;
     }
 }

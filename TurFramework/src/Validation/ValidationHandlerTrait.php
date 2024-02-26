@@ -52,9 +52,7 @@ trait ValidationHandlerTrait
      */
     protected function failedValidation(Validator $validator)
     {
-        $exception = new ValidationException($validator);
-
-        throw $exception->redirect($this->getRedirectTo());
+        throw new ValidationException($validator);
     }
     protected function setRedirectTo($url)
     {
