@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
 
 class Authenticate implements Middleware
@@ -11,5 +12,9 @@ class Authenticate implements Middleware
      */
     public function handle(Request $request)
     {
+
+        if (Auth::guest()) {
+            return redirect()->to('/');
+        }
     }
 }

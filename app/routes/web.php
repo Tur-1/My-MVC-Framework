@@ -8,7 +8,7 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\DashboardController;
 
 
-Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('homePage');
+Route::get('/', [HomeController::class, 'index'])->name('homePage');
 
 Route::get('/about', function () {
 

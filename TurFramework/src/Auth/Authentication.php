@@ -17,11 +17,11 @@ class Authentication
     /**
      * The session used by the guard.
      *
-     * @var \Illuminate\Contracts\Session\Session
+     * @var \TurFramework\Session\Store;
      */
     protected $session;
     /**
-     * The name of the guard. Typically "web".
+     * The name of the guard. Typically "users".
      *
      * Corresponds to guard name in authentication configuration.
      *
@@ -29,6 +29,7 @@ class Authentication
      */
     public readonly string $name;
 
+    protected $user;
     /**
      * Indicates if the logout method has been called.
      *
@@ -68,11 +69,80 @@ class Authentication
 
         return false;
     }
-
+    /**
+     * Determine if the current user is authenticated.
+     *
+     * @return bool
+     */
+    public function check()
+    {
+        return $this->session->get($this->getAuthSessionName());
+    }
     public function login($user)
     {
         $this->updateSession($user->id);
+
+
+        $this->setUser($user);
     }
+    /**
+     * Determine if the current user is a guest.
+     *
+     * @return bool
+     */
+    public function guest()
+    {
+        return !$this->session->get($this->getAuthSessionName());
+    }
+
+    /**
+     * Get the currently authenticated user.
+     *
+     */
+    public function user()
+    {
+        // If we've already retrieved the user for the current request we can just
+        // return it back immediately. 
+        if (!is_null($this->user) || !empty($this->user)) {
+            return $this->user;
+        }
+
+        $userID = $this->session->get($this->getAuthSessionName()) ?? null;
+
+
+        $this->user = $userID  ? $this->userProvider->retrieveById($userID) : null;
+
+        if (!is_null($this->user)) {
+            // $this->updateSession($this->user->id);
+        }
+
+
+        return $this->user;
+    }
+
+    /**
+     * Return the currently cached user.
+     * 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set the current user.
+     *
+     * @param  $user
+     * @return $this
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        $this->loggedOut = false;
+        return $this;
+    }
+
     /**
      * Determine if the user matches the credentials.
      *

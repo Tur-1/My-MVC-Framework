@@ -19,29 +19,33 @@
             </ul>
 
             <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a role="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        auth
-                    </a>
-                    <ul class="dropdown-menu ">
-                        <li class="nav-item">
-                            <a class="dropdown-item" href="<?= route('dashboard') ?>">Dashboard</a>
-                        </li>
+                <?php if (auth()->check()) : ?>
+                    <li class="nav-item dropdown">
+                        <a role="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dashboard
+                        </a>
+                        <ul class="dropdown-menu ">
+                            <li class="nav-item">
+                                <a class="dropdown-item" href="<?= route('dashboard') ?>">Dashboard</a>
+                            </li>
 
-                        <li class="nav-item">
-                            <form action="<?= route('logout') ?>" method="post">
-                                <?= csrf_field() ?>
-                                <button class="dropdown-item" type="submit">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= route('login') ?>" class="nav-link <?= request()->is(route('login') . '*') ? 'active ' : '' ?>"> Log in</a>
-                </li>
-                <li class="nav-item">
-                    <a href="<?= route('register') ?>" class=" nav-link <?= request()->is(route('register') . '*') ? 'active ' : '' ?>">Register</a>
-                </li>
+                            <li class="nav-item">
+                                <form action="<?= route('logout') ?>" method="post">
+                                    <?= csrf_field() ?>
+                                    <button class="dropdown-item" type="submit">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                <?php endif ?>
+                <?php if (auth()->guest()) : ?>
+                    <li class="nav-item">
+                        <a href="<?= route('login') ?>" class="nav-link <?= request()->is(route('login') . '*') ? 'active ' : '' ?>"> Log in</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= route('register') ?>" class=" nav-link <?= request()->is(route('register') . '*') ? 'active ' : '' ?>">Register</a>
+                    </li>
+                <?php endif ?>
             </ul>
 
         </div>

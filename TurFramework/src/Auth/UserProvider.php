@@ -25,10 +25,12 @@ class UserProvider
     /**
      * Retrieve a user by their unique identifier.
      *
-     * @param  mixed  $identifier 
+     * @param  mixed  $id 
+     * @return \TurFramework\Database\Model|mixed
      */
     public function retrieveById($id)
     {
+        return $this->newModelQuery()->find($id);
     }
     /**
      * Create a new instance of the model.

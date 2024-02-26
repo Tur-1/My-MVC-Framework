@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
 
 class RedirectIfAuthenticated implements Middleware
@@ -11,5 +12,8 @@ class RedirectIfAuthenticated implements Middleware
      */
     public function handle(Request $request)
     {
+        if (Auth::check()) {
+            return redirect()->to('/');
+        }
     }
 }

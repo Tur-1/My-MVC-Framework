@@ -20,6 +20,19 @@ if (!function_exists('app')) {
     }
 }
 
+if (!function_exists('auth')) {
+    /**
+     * Get the available auth instance.
+     *
+     * @param  string|null  $guard
+     * @return \TurFramework\Auth\Authentication
+     */
+    function auth($guard = null)
+    {
+
+        return app('auth');
+    }
+}
 if (!function_exists('class_basename')) {
     /**
      * Get the class "basename" of the given object / class.
