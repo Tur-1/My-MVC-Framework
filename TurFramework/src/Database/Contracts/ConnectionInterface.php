@@ -76,4 +76,11 @@ interface ConnectionInterface
      * @param  array  $bindings
      */
     public function exstis($query, $bindings = []);
+
+    /**
+     * get Pdo instance
+     *
+     * @return \PDO
+     */
+    public function getPdo(): \PDO;
 }

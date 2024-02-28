@@ -3,16 +3,15 @@
 namespace TurFramework\Auth;
 
 use TurFramework\Session\Store;
-use TurFramework\Auth\UserProvider;
 
 class Authentication
 {
     /**
      * The user provider implementation.
      *
-     * @var \TurFramework\Auth\UserProvider
+     * @var \TurFramework\Auth\AuthProvider $provider
      */
-    protected $userProvider;
+    protected $provider;
     /**
      * The session used by the guard.
      *
@@ -40,14 +39,14 @@ class Authentication
      * Create a new authentication guard.
      * @param  string  $name
      * @param \TurFramework\Session\Store $session
-     * @param  \TurFramework\Auth\UserProvider $provider
+     * @param  \TurFramework\Auth\AuthProvider $provider
      * @return void
      */
-    public function __construct($name, Store $session, UserProvider $userProvider)
+    public function __construct($name, Store $session, AuthProvider $provider)
     {
         $this->name = $name;
         $this->session = $session;
-        $this->userProvider = $userProvider;
+        $this->provider = $provider;
     }
 
     /**
@@ -59,7 +58,7 @@ class Authentication
      */
     public function attempt(array $credentials = [])
     {
-        $user = $this->userProvider->retrieveByCredentials($credentials);
+        $user = $this->provider->getByCredentials($credentials);
 
         if ($this->hasValidCredentials($user, $credentials)) {
             $this->login($user);
@@ -114,7 +113,7 @@ class Authentication
 
 
         if (!is_null($userID)) {
-            $this->user = $this->userProvider->retrieveById($userID);
+            $this->user = $this->provider->retrieveById($userID);
         }
 
 
@@ -153,7 +152,7 @@ class Authentication
      */
     protected function hasValidCredentials($user, $credentials)
     {
-        $validated = !empty($user) ? $this->userProvider->verifyPassword($user?->password, $credentials['password']) : false;
+        $validated = !empty($user) ? $this->provider->verifyPassword($user?->password, $credentials['password']) : false;
 
 
         return $validated;

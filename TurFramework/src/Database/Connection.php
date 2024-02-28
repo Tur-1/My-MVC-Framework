@@ -73,7 +73,7 @@ class Connection implements ConnectionInterface
         $statement = $this->getPdo()->prepare($query);
 
         $this->bindValues($statement, $bindings);
-        return $statement->execute();
+        return  $statement->execute();
     }
 
     /**
@@ -135,7 +135,7 @@ class Connection implements ConnectionInterface
         return  $this->affectingStatement($query, $bindings);
     }
 
-    protected function getPdo(): \PDO
+    public function getPdo(): \PDO
     {
         return $this->pdo;
     }
@@ -148,7 +148,6 @@ class Connection implements ConnectionInterface
      */
     public function bindValues($statement, $bindings)
     {
-
         foreach ($bindings as $key => $value) {
             $statement->bindValue(
                 is_string($key) ? $key : $key + 1,

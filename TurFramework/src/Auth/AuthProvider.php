@@ -3,10 +3,8 @@
 namespace TurFramework\Auth;
 
 use TurFramework\Support\Hash;
-use TurFramework\Database\Model;
-use TurFramework\Database\Contracts\ConnectionInterface;
 
-class UserProvider
+class AuthProvider
 {
     /**
      * The active database connection.
@@ -62,9 +60,27 @@ class UserProvider
      *
      * @param  array  $credentials 
      */
-    public function retrieveByCredentials(array $credentials)
+    public function getByCredentials(array $credentials)
     {
-        return $this->newModelQuery()->where('email', $credentials['email'])->first();
+        $credentials = array_filter(
+            $credentials,
+            fn ($key) => !str_contains($key, 'password'),
+            ARRAY_FILTER_USE_KEY
+        );
+
+        if (empty($credentials)) {
+            return;
+        }
+
+
+        $query = $this->newModelQuery();
+
+
+        foreach ($credentials as $key => $value) {
+            $query->where($key, $value);
+        }
+
+        return $query->first();
     }
 
 

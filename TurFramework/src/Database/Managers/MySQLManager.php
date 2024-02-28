@@ -30,7 +30,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->connection = $connection;
     }
 
- /**
+    /**
      * Insert new records into the database.
      *
      * @param  array  $attributes
@@ -42,7 +42,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
         return $model->save();
     }
-  /**
+    /**
      * Update records in the database.
      *
      * @param  array  $attributes
@@ -60,7 +60,9 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     }
     public function performInsert(array $attributes)
     {
-        return $this->connection->insert($this->insertQuery($attributes), $this->getBindings());
+        $this->connection->insert($this->insertQuery($attributes), $this->getBindings());
+
+        return $this->connection->getPdo()->lastInsertId();
     }
     public function delete($id = null)
     {

@@ -2,6 +2,8 @@
 
 namespace TurFramework\Auth;
 
+use TurFramework\Auth\AuthProvider;
+
 class AuthManager
 {
 
@@ -28,9 +30,9 @@ class AuthManager
     {
         $config = $this->getConfig($name);
 
-        $prodfiver = new UserProvider($config);
+        $authProvider = new AuthProvider($config);
 
-        $garud = new Authentication($name, $this->app->make('session'), $prodfiver);
+        $garud = new Authentication($name, $this->app->make('session'), $authProvider);
 
         return $garud;
     }

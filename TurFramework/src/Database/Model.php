@@ -24,7 +24,18 @@ abstract class Model
      * @var string
      */
     protected $table;
-
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = true;
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
     /**
      * Indicates if the model exists.
      *
@@ -85,13 +96,49 @@ abstract class Model
         $query = $this->newQuery();
 
         if ($this->exists) {
-            $saved =  $query->performUpdate($this->getAttributes());
+            $saved = $query->performUpdate($this->getAttributes());
         } else {
-            $saved =  $query->performInsert($this->getAttributes());
+            $saved = $this->performInsert($query);
         }
 
-
         return $saved;
+    }
+
+    private function performInsert($query)
+    {
+        $attributes = $this->getAttributes();
+
+        $id = $query->performInsert($attributes);
+
+        $keyName = $this->getKeyName();
+
+        $this->setAttribute($keyName, $id);
+
+        $this->exists = true;
+
+        return $this;
+    }
+    /**
+     * Get the value indicating whether the IDs are incrementing.
+     *
+     * @return bool
+     */
+    public function getIncrementing()
+    {
+        return $this->incrementing;
+    }
+
+    /**
+     * Set whether IDs are incrementing.
+     *
+     * @param  bool  $value
+     * @return $this
+     */
+    public function setIncrementing($value)
+    {
+        $this->incrementing = $value;
+
+        return $this;
     }
     /**
      * Set the table associated with the model.
@@ -186,6 +233,30 @@ abstract class Model
     {
         static::$manager = $manager;
     }
+
+    /**
+     * Get the primary key for the model.
+     *
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return $this->primaryKey;
+    }
+
+    /**
+     * Set the primary key for the model.
+     *
+     * @param  string  $key
+     * @return $this
+     */
+    public function setKeyName($key)
+    {
+        $this->primaryKey = $key;
+
+        return $this;
+    }
+
     /**
      * Handle dynamic method calls into the model.
      *
