@@ -30,14 +30,24 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         $this->connection = $connection;
     }
 
-
+ /**
+     * Insert new records into the database.
+     *
+     * @param  array  $attributes
+     * @return bool
+     */
     public function create(array $attributes)
     {
         $model = $this->newModelInstance($attributes);
 
         return $model->save();
     }
-
+  /**
+     * Update records in the database.
+     *
+     * @param  array  $attributes
+     * @return int
+     */
     public function update(array $attributes)
     {
         $model = $this->newModelInstance($attributes, true);
@@ -46,11 +56,11 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     }
     public function performUpdate(array $attributes)
     {
-        return $this->connection->update($this->updateQuery($attributes), $this->bindings);
+        return $this->connection->update($this->updateQuery($attributes), $this->getBindings());
     }
     public function performInsert(array $attributes)
     {
-        return $this->connection->insert($this->insertQuery($attributes), $this->bindings);
+        return $this->connection->insert($this->insertQuery($attributes), $this->getBindings());
     }
     public function delete($id = null)
     {
@@ -58,17 +68,28 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
             $this->where('id', '=', $id);
         }
 
-        return $this->connection->delete($this->deleteQuery(), $this->bindings);
+        return $this->connection->delete($this->deleteQuery(), $this->getBindings());
     }
     public function get()
     {
-        $models = $this->connection->select($this->selectQuery(), $this->bindings);
+        $models = $this->connection->select($this->selectQuery(), $this->getBindings());
         foreach ($models as $key => &$model) {
             $model->exists = true;
         }
         return $models;
     }
+    /**
+     * get bindings.
+     *
+     * @return array
+     */
+    public function getBindings()
+    {
+        $bindings = $this->bindings;
 
+        $this->bindings = [];
+        return $bindings;
+    }
     /**
      * @return \TurFramework\Database\Model
      */
@@ -94,7 +115,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
             $this->where('id', $id);
         }
 
-        return $this->connection->exstis($this->existsQuery(), $this->bindings);
+        return $this->connection->exstis($this->existsQuery(), $this->getBindings());
     }
     public function select($columns = ['*']): self
     {

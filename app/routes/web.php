@@ -10,7 +10,7 @@ use App\Http\Controllers\DashboardController;
 
 Route::get('/', [HomeController::class, 'index'])->name('homePage');
 
-Route::get('/about', function () {
+Route::get('/about', function (Request $request) {
 
     return view('pages.aboutPage');
 })->name('aboutPage');

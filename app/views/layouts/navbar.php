@@ -22,7 +22,7 @@
                 <?php if (auth()->check()) : ?>
                     <li class="nav-item dropdown">
                         <a role="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dashboard
+                            <?= auth()->user()->name ?>
                         </a>
                         <ul class="dropdown-menu ">
                             <li class="nav-item">

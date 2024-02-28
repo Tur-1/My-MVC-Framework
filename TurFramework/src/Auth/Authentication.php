@@ -75,7 +75,7 @@ class Authentication
      */
     public function check()
     {
-        return $this->session->get($this->getAuthSessionName());
+        return !is_null($this->user());
     }
 
     /**
@@ -85,9 +85,8 @@ class Authentication
      */
     public function guest()
     {
-        return !$this->session->get($this->getAuthSessionName());
+        return !$this->check();
     }
-
     public function login($user)
     {
         $this->updateSession($user->id);
