@@ -32,10 +32,7 @@ class User extends Model
     {
         $this->attributes['password'] = Hash::isHashed($value) ? $value : Hash::password($value);
     }
-    protected function getPasswordAttribute($value)
-    {
-        return $this->attributes['password'];
-    }
+
     /**
      * Get the user's name.
      *

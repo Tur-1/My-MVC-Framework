@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
-use App\Models\Color;
 use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
 
@@ -31,6 +30,6 @@ class RegisterController
 
         Auth::login($user);
 
-        return redirect()->to(route('dashboard'))->with('success');
+        return redirect()->to(route('dashboard'))->with('success', "You're logged in!");
     }
 }

@@ -18,6 +18,7 @@
 - [Models](#section-15)
 - [Inserting and Updating Models](#section-21)
 - [Model Accessors & Mutators](#section-20)
+- [Authentication](#section-22)
 - [Form Request Validation](#section-16) 
 - [Displaying the Validation Errors](#section-18) 
 - [Validation Rules](#section-17) 
@@ -816,14 +817,119 @@ class User extends Model
      * @param  string  $value
      * @return void
      */
-    public function setPasswordAttribute($value)
+    protected function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::password($value);
+        $this->attributes['password'] = Hash::isHashed($value) ? $value : Hash::password($value);
     }
 }
 ```
 
+<a name="section-22"></a>
 
+## Authentication
+To handle user authentication, use the `attempt` method:
+ 
+```php
+use TurFramework\Facades\Auth;
+
+class AuthenticatedController
+{
+  
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (!Auth::attempt($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => 'These credentials do not match our records.'
+            ]);
+        }
+
+        return redirect()->to(route('dashboard'))->with('success', "You're logged in!");
+    }
+}
+```
+#### Authenticate a User Instance
+to set an existing user instance as the currently authenticated user,
+ you may pass the user instance to the Auth facade's login method
+```php
+
+use TurFramework\Facades\Auth;
+
+class RegisterController
+{
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => ['required'],
+            'email' => ['required', 'email', 'unique:' . User::class],
+            'password' => ['required', 'confirmed'],
+        ]);
+
+        $user = User::query()->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+
+
+        Auth::login($user);
+
+        return redirect()->to(route('dashboard'))->with('success', "You're logged in!");
+    }
+}
+
+```
+#### Logging Out
+
+To manually log users out of your application you can use the `logout` method
+
+```php
+
+use TurFramework\Facades\Auth;
+
+class AuthenticatedController
+{
+    public function logout(Request $request)
+    { 
+        Auth::logout();
+
+        return redirect()->to('/');
+    }
+}
+ 
+```
+
+
+#### Determining if the Current User is Authenticated
+```php
+use Illuminate\Support\Facades\Auth;
+ 
+if (Auth::check()) {
+    // The user is logged in...
+}
+```
+
+#### Retrieving the Authenticated User
+```php
+use Illuminate\Support\Facades\Auth;
+
+// Retrieve the currently authenticated user...
+$user = Auth::user();
+```
+
+#### Protecting Routes
+
+Only authenticated users may access this route...
+```php
+
+Route::post('/logout', [AuthenticatedController::class, 'logout'])
+     ->middleware('auth');
+```
+ 
 <a name="section-16"></a>
 
 ## Form Request Validation
@@ -1041,7 +1147,7 @@ view($viewPath, array $data = [])
 ```
 Generate HTML input with CSRF token.
  ```php
-csrf_token()
+csrf_field()
 ```
 Render a view with optional data.
  ```php
@@ -1076,4 +1182,11 @@ request($key = null)
 Retrieve a route by name and parameters
  ```php
 route($routeName, $parameters = [])
+```
+
+
+The auth function returns an authenticator instance. You may use it as an alternative to the Auth facade:
+
+```php
+auth()
 ```
