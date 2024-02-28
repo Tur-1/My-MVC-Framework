@@ -13,7 +13,6 @@ use TurFramework\Exceptions\HttpException;
 use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
 use TurFramework\Router\RoutingServiceProvider;
-use \TurFramework\Database\Managers\MySQLManager;
 use TurFramework\Database\DatabaseServiceProvider;
 
 class Application extends Container
@@ -49,16 +48,6 @@ class Application extends Container
     }
 
 
-
-    /**
-     * run.
-     */
-    public function run(): void
-    {
-
-        // Resolve incoming HTTP request
-        Route::resolve(new Request);
-    }
     /**
      * Register all of the base service providers.
      *
@@ -176,6 +165,7 @@ class Application extends Container
             'session' => \TurFramework\Session\Store::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
+
 
         ];
     }

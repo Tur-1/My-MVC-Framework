@@ -2,7 +2,9 @@
 
 namespace App\Http;
 
-class Kernel
+use TurFramework\Http\HttpKernel;
+
+class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.
@@ -12,6 +14,7 @@ class Kernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
+        \TurFramework\Session\Middleware\StartSession::class,
         \App\Http\Middleware\VerifyCsrfToken::class,
     ];
 

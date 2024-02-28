@@ -2,42 +2,43 @@
 
 namespace TurFramework\Router;
 
-use App\Http\Kernel;
 use TurFramework\Router\Exceptions\RouteException;
 
-class MiddlewareResolver extends Kernel
+class MiddlewareResolver
 {
 
-    public static function handle($routeMiddleware, $request)
+    public static function handle($globalMiddleware, $routeMiddleware, $route, $request)
     {
         $instance = new self();
 
-        $instance->resolveGlobalMiddleware($request);
 
-        if (!is_null($routeMiddleware)) {
-            $instance->resolveRouteMiddleware($routeMiddleware, $request);
+        $instance->resolveGlobalMiddleware($globalMiddleware, $request);
+
+        if (!is_null($route['middleware'])) {
+
+            $instance->resolveRouteMiddleware($route, $routeMiddleware, $request);
         }
     }
-    private function resolveRouteMiddleware($routeMiddleware, $request)
+    private function resolveRouteMiddleware($route, $routeMiddleware, $request)
     {
 
 
-        foreach ($routeMiddleware as $key => $value) {
-            if (!isset($this->routeMiddleware[$value])) {
+        foreach ($route['middleware'] as $key => $value) {
+            if (!isset($routeMiddleware[$value])) {
                 throw RouteException::targetClassDoesNotExist($value);
             }
 
-            $middlewareClass = new $this->routeMiddleware[$value]();
+            $middlewareClass = new $routeMiddleware[$value]();
 
             if (!method_exists($middlewareClass, 'handle')) {
-                throw RouteException::methodDoesNotExist($this->routeMiddleware[$value], 'handle');
+                throw RouteException::methodDoesNotExist($routeMiddleware[$value], 'handle');
             }
             $middlewareClass->handle($request);
         }
     }
-    private function resolveGlobalMiddleware($request)
+    private function resolveGlobalMiddleware($globalMiddleware, $request)
     {
-        foreach ($this->middleware as $value) {
+        foreach ($globalMiddleware as $value) {
             $middlewareClass = new $value();
             if (!method_exists($middlewareClass, 'handle')) {
                 throw RouteException::methodDoesNotExist($value, 'handle');

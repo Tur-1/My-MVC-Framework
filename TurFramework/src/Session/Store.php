@@ -4,10 +4,23 @@ namespace TurFramework\Session;
 
 use TurFramework\Support\Arr;
 use TurFramework\Validation\MessageBag;
-use SessionHandlerInterface;
 
 class Store
 {
+
+    /**
+     * The session ID.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
+     * The session name.
+     *
+     * @var string
+     */
+    protected $name;
 
     /**
      * The session attributes.
@@ -15,24 +28,8 @@ class Store
      * @var array
      */
     protected $attributes = [];
-    /**
-     * The session handler implementation.
-     *
-     * @var \SessionHandlerInterface
-     */
-    protected $handler;
-    /**
-     * Session store started status.
-     *
-     * @var bool
-     */
-    protected $started = false;
 
 
-    public function __construct()
-    {
-        $this->start();
-    }
 
     /**
      * Start the session, reading the data from a handler.
@@ -46,8 +43,37 @@ class Store
         if (!$this->has('_token')) {
             $this->regenerateToken();
         }
+    }
+    /**
+     * Get the name of the session.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-        return $this->started = true;
+    /**
+     * Set the name of the session.
+     *
+     * @param  string  $name
+     * @return void
+     */
+    public function setName($name)
+    {
+        session_name($name);
+        $this->name = $name;
+    }
+
+    /**
+     * Get the current session ID.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -62,6 +88,19 @@ class Store
         $this->loadErrosMessages();
     }
 
+    /**
+     * Flush the session data and regenerate the ID.
+     *
+     * @return bool
+     */
+    public function invalidate()
+    {
+        $this->flush();
+
+        $this->generateSessionId();
+
+        $this->regenerateToken();
+    }
 
     /**
      * Remove all of the items from the session.
@@ -99,7 +138,7 @@ class Store
         }
 
         foreach ($key as $arrayKey => $arrayValue) {
-            Arr::set($_SESSION, $arrayKey, $arrayValue);
+            Arr::set($this->attributes, $arrayKey, $arrayValue);
         }
     }
     /**
@@ -109,7 +148,7 @@ class Store
      */
     public function all()
     {
-        return  $_SESSION;
+        return $this->attributes;
     }
 
     /**
@@ -122,26 +161,26 @@ class Store
     public function get($key, $default = null)
     {
         if ($this->flashHas($key)) {
-            $value = Arr::get($_SESSION['_flash'], $key, $default);
-            unset($_SESSION['_flash'][$key]);
+            $value = Arr::get($this->attributes['_flash'], $key, $default);
+            unset($this->attributes['_flash'][$key]);
             return $value;
         }
 
-        return Arr::get($_SESSION, $key, $default);
+        return Arr::get($this->attributes, $key, $default);
     }
 
     public function getOldValue($key, $default = null)
     {
         if ($this->flashHas('old')) {
-            $value = Arr::get($_SESSION['_flash']['old'], $key, $default);
-            unset($_SESSION['_flash']['old'][$key]);
+            $value = Arr::get($this->attributes['_flash']['old'], $key, $default);
+            unset($this->attributes['_flash']['old'][$key]);
             return $value;
         }
     }
 
     public function flashHas($key)
     {
-        return isset($_SESSION['_flash'][$key]);
+        return isset($this->attributes['_flash'][$key]);
     }
     /**
      * Check if a key exists in the session.
@@ -154,7 +193,7 @@ class Store
         if ($this->flashHas($key)) {
             return true;
         }
-        return Arr::exists($_SESSION, $key);
+        return Arr::exists($this->attributes, $key);
     }
 
     /**
@@ -165,7 +204,7 @@ class Store
      */
     public function forget(array $keys)
     {
-        Arr::forget($_SESSION, $keys);
+        Arr::forget($this->attributes, $keys);
     }
 
 
@@ -179,7 +218,7 @@ class Store
     public function remove(string $key)
     {
 
-        Arr::forget($_SESSION, $key);
+        Arr::forget($this->attributes, $key);
     }
 
 
@@ -200,11 +239,31 @@ class Store
      */
     public function regenerateToken()
     {
-
-        session_regenerate_id(true);
-
         $this->put('_token', bin2hex(random_bytes(32)));
     }
+    /**
+     * Generate a new session ID for the session.
+     *
+     * @param  bool  $destroy
+     * @return bool
+     */
+    public function generateSessionId()
+    {
+        session_regenerate_id(true);
+    }
+    /**
+     * Generate a new session identifier.
+     *
+     * @param  bool  $destroy
+     * @return bool
+     */
+    public function regenerate()
+    {
+        $this->generateSessionId();
+
+        $this->regenerateToken();
+    }
+
     /**
      * Make the value available for the next request.
      * (Flash message)
@@ -220,5 +279,11 @@ class Store
             $key = [$key => $value];
         }
         $this->put('_flash', $key);
+    }
+
+    public function __destruct()
+    {
+
+        $_SESSION = $this->attributes;
     }
 }

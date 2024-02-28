@@ -21,8 +21,6 @@ class Route
     {
         $self = new self();
 
-        MiddlewareResolver::handle($route['middleware'], $request);
-
 
         return $self->runRoute($route);
     }

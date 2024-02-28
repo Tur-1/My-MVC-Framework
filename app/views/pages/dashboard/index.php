@@ -5,7 +5,7 @@
 <div>
     <?php import('components.success_message') ?>
 
-    <h1>Dashboard </h1>
+    <h4>welcome back, <?= auth()->user()->name ?> </h4>
 </div>
 
 

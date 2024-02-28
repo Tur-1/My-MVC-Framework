@@ -1,10 +1,8 @@
 <?php
 
-session_name('TurFramework_session');
-//Starting the session will be the first we do.
-session_start();
 
 use Dotenv\Dotenv;
+use TurFramework\Http\Request;
 
 $dotenv = Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
@@ -17,5 +15,6 @@ $dotenv->load();
 */
 $app = new \TurFramework\Application\Application();
 
+$kernel = $app->make(\App\Http\Kernel::class);
 
-$app->run();
+$kernel->handle(new Request);

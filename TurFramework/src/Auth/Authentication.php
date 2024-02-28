@@ -4,7 +4,6 @@ namespace TurFramework\Auth;
 
 use TurFramework\Session\Store;
 use TurFramework\Auth\UserProvider;
-use TurFramework\Validation\ValidationMessages;
 
 class Authentication
 {
@@ -17,7 +16,7 @@ class Authentication
     /**
      * The session used by the guard.
      *
-     * @var \TurFramework\Session\Store;
+     * @var \TurFramework\Session\Store $session
      */
     protected $session;
     /**
@@ -40,7 +39,7 @@ class Authentication
     /**
      * Create a new authentication guard.
      * @param  string  $name
-     * @param  \TurFramework\Session\Store $session
+     * @param \TurFramework\Session\Store $session
      * @param  \TurFramework\Auth\UserProvider $provider
      * @return void
      */
@@ -78,13 +77,7 @@ class Authentication
     {
         return $this->session->get($this->getAuthSessionName());
     }
-    public function login($user)
-    {
-        $this->updateSession($user->id);
 
-
-        $this->setUser($user);
-    }
     /**
      * Determine if the current user is a guest.
      *
@@ -95,25 +88,34 @@ class Authentication
         return !$this->session->get($this->getAuthSessionName());
     }
 
+    public function login($user)
+    {
+        $this->updateSession($user->id);
+
+        $this->setUser($user);
+    }
+
+
     /**
      * Get the currently authenticated user.
      *
      */
     public function user()
     {
+        if ($this->loggedOut) {
+            return;
+        }
         // If we've already retrieved the user for the current request we can just
         // return it back immediately. 
-        if (!is_null($this->user) || !empty($this->user)) {
+        if (!is_null($this->user)) {
             return $this->user;
         }
 
         $userID = $this->session->get($this->getAuthSessionName()) ?? null;
 
 
-        $this->user = $userID  ? $this->userProvider->retrieveById($userID) : null;
-
-        if (!is_null($this->user)) {
-            // $this->updateSession($this->user->id);
+        if (!is_null($userID)) {
+            $this->user = $this->userProvider->retrieveById($userID);
         }
 
 
@@ -171,6 +173,12 @@ class Authentication
     public function logout()
     {
         $this->session->remove($this->getAuthSessionName());
+
+        $this->session->invalidate();
+
+        $this->user = null;
+
+        $this->loggedOut = true;
     }
 
     /**
@@ -181,6 +189,9 @@ class Authentication
      */
     protected function updateSession($id)
     {
+
+        $this->session->regenerate();
+
         $this->session->put($this->getAuthSessionName(), $id);
     }
 }

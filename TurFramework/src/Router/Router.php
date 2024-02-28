@@ -6,6 +6,7 @@ use Closure;
 use App\Http\Kernel;
 use TurFramework\Router\Route;
 use TurFramework\Router\RouteCollection;
+use TurFramework\Router\MiddlewareResolver;
 use TurFramework\Router\RouteFileRegistrar;
 
 class Router
@@ -15,6 +16,24 @@ class Router
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
     public const METHOD_DELETE = 'DELETE';
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
+     *
+     * @var array<int, class-string|string>
+     */
+    protected $middleware = [];
+
+    /**
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $routeMiddleware = [];
+
 
     /**
      * The route collection instance.
@@ -47,12 +66,31 @@ class Router
     }
 
     /**
+     * Register a short-hand name for a middleware.
+     *
+     * @param  string  $name
+     * @param  string  $class
+     * @return $this
+     */
+    public function setRouteMiddleware($name, $class)
+    {
+        $this->routeMiddleware[$name] = $class;
+    }
+    public function setGlobalMiddleware($middleware)
+    {
+        $this->middleware = $middleware;
+    }
+
+
+    /**
      * Resolve the current request to find and handle the appropriate route.
      * 
      */
     public function resolve($request)
     {
         $route = $this->routes->match($request->getPath(), $request->getMethod());
+
+        MiddlewareResolver::handle($this->middleware, $this->routeMiddleware, $route, $request);
 
         Route::resolve($request, $route);
     }

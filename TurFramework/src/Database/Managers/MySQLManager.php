@@ -74,7 +74,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
      */
     public function first()
     {
-        return Arr::first($this->limit(1)->get(), default: []);
+        return Arr::first($this->limit(1)->get());
     }
 
     public function all()

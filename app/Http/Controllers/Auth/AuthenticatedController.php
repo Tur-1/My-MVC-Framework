@@ -18,8 +18,6 @@ class AuthenticatedController
     {
         $request->authenticate();
 
-        $request->session()->regenerateToken();
-
         return redirect()->to(route('dashboard'))->with('success', "You're logged in!");
     }
 
@@ -27,10 +25,6 @@ class AuthenticatedController
     {
 
         Auth::logout();
-
-        $request->session()->flush();
-
-        $request->session()->regenerateToken();
 
         return redirect()->to('/');
     }

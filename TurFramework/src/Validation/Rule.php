@@ -38,14 +38,15 @@ class Rule
         $cloumn = $this->resolveCloumn($field, $cloumn);
 
         if (class_exists($table)) {
+
             $model = new $table;
             if ($model instanceof Model) {
+
                 $exstis = $model->connection($connection)->where($cloumn, $this->data[$field])->exstis();
             }
         }
 
         if (!str_contains($table, '\\') || !class_exists($table)) {
-
             $exstis = app('db')
                 ->makeConnection($connection)
                 ->table($table)
@@ -54,7 +55,7 @@ class Rule
         }
 
         if ($exstis) {
-            return false;
+            return  false;
         }
 
         return true;

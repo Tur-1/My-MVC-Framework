@@ -16,8 +16,6 @@ namespace TurFramework\Facades;
  */
 class Route extends Facade
 {
-
-
     protected static function getFacadeAccessor()
     {
         return 'router';
