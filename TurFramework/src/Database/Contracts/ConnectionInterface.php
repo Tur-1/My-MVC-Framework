@@ -75,7 +75,7 @@ interface ConnectionInterface
      * @param  string  $query
      * @param  array  $bindings
      */
-    public function exstis($query, $bindings = []);
+    public function exists($query, $bindings = []);
 
     /**
      * get Pdo instance

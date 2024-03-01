@@ -41,7 +41,7 @@ interface DatabaseManagerInterface
      */
     public function find($id);
 
-    public function exstis($id = null);
+    public function exists($id = null);
 
     public function select($columns = ['*']): self;
 

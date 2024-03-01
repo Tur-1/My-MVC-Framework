@@ -82,7 +82,7 @@ class Connection implements ConnectionInterface
      * @param  string  $query
      * @param  array  $bindings 
      */
-    public function exstis($query, $bindings = [])
+    public function exists($query, $bindings = [])
     {
         $statement = $this->getPdo()->prepare($query);
 

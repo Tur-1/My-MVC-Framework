@@ -29,37 +29,35 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     {
         $this->connection = $connection;
     }
-
-    /**
-     * Insert new records into the database.
-     *
-     * @param  array  $attributes
-     * @return bool
-     */
     public function create(array $attributes)
     {
         $model = $this->newModelInstance($attributes);
 
         return $model->save();
     }
-    /**
-     * Update records in the database.
-     *
-     * @param  array  $attributes
-     * @return int
-     */
     public function update(array $attributes)
     {
         $model = $this->newModelInstance($attributes, true);
 
         return $model->save();
     }
+
     public function performUpdate(array $attributes)
     {
-        return $this->connection->update($this->updateQuery($attributes), $this->getBindings());
+        return $this->connection->update(
+            $this->updateQuery($attributes),
+            $this->prepareBindingsForUpdate($this->bindings, $attributes)
+        );
+    }
+    public function prepareBindingsForUpdate($bindings, array $values)
+    {
+        return array_values(
+            array_merge($values, Arr::flatten($bindings['where']))
+        );
     }
     public function performInsert(array $attributes)
     {
+
         $this->connection->insert($this->insertQuery($attributes), $this->getBindings());
 
         return $this->connection->getPdo()->lastInsertId();
@@ -74,66 +72,95 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     }
     public function get()
     {
+
         $models = $this->connection->select($this->selectQuery(), $this->getBindings());
+
         foreach ($models as $key => &$model) {
             $model->exists = true;
-        }
+        };
+
         return $models;
     }
-    /**
-     * get bindings.
-     *
-     * @return array
-     */
-    public function getBindings()
-    {
-        $bindings = $this->bindings;
-
-        $this->bindings = [];
-        return $bindings;
-    }
-    /**
-     * @return \TurFramework\Database\Model
-     */
-    public function first()
-    {
-        return Arr::first($this->limit(1)->get());
-    }
-
-    public function all()
-    {
-        return $this->get();
-    }
-
-
-
     public function find($id)
     {
         return $this->where('id', '=', $id)->first();
     }
-    public function exstis($id = null)
+    public function first()
+    {
+        return  Arr::first($this->limit(1)->get());
+    }
+    public function exists($id = null)
     {
         if (!is_null($id)) {
             $this->where('id', $id);
         }
+        return $this->connection->exists($this->existsQuery(), $this->getBindings());
+    }
+    protected function getBindings()
+    {
+        $bindings = [];
 
-        return $this->connection->exstis($this->existsQuery(), $this->getBindings());
+        foreach ($this->bindings as $key => $value) {
+            if (!empty($value)) {
+                $bindings[$key] = $value;
+            }
+        }
+        $this->clearBindings();
+
+        return Arr::flatten($bindings);
+    }
+    protected function clearBindings()
+    {
+        $this->bindings = [];
+        $this->wheres = [];
     }
     public function select($columns = ['*']): self
     {
         $columns = is_array($columns) ? $columns : func_get_args();
 
-        $this->setColumns($columns);
+        $this->addComponent('select', 'SELECT ' .  implode(',', $columns));
 
         return $this;
     }
+
+
     public function where($column, $operator = null, $value = null, $type = 'AND'): self
     {
-        $this->addWhere(...func_get_args());
+        if (is_array($column)) {
+            $this->addArrayOfWheres($column, $type);
+            $this->addComponent('where', 'WHERE ' . $this->compileWhere());
+            return $this;
+        }
+
+        [$value, $operator] = $this->prepareValueAndOperator(
+            $value,
+            $operator,
+            func_num_args() === 2 && is_null($value)
+        );
+
+
+        $this->wheres[] = [
+            'type' => $type,
+            'column' => $column,
+            'operator' => $operator,
+            'value' => $value
+        ];
+
+
+        $this->addComponent('where', 'WHERE ' . $this->compileWhere());
+
+
         return $this;
     }
+
     public function orWhere($column, $operator = null, $value = null): self
     {
+        if (is_array($column)) {
+
+            $this->where($column, $operator, $value);
+            return $this;
+        }
+
         [$value, $operator] = $this->prepareValueAndOperator(
             $value,
             $operator,
@@ -141,7 +168,6 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         );
 
         $this->where($column, $operator, $value, 'OR');
-
         return $this;
     }
     public function whereIn($column, $values = []): self
@@ -158,59 +184,58 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
     public function whereNull($column): self
     {
-        $this->where($column, 'IS NULL', 'null');
+        $this->where($column, 'IS NULL', null, 'AND');
         return $this;
     }
     public function orWhereNull($column): self
     {
-        $this->where($column, 'IS NULL', 'null', 'OR');
+        $this->where($column, 'IS NULL', null, 'OR');
         return $this;
     }
 
     public function whereNotNull($column): self
     {
 
-        $this->where($column, 'IS NOT NULL', 'null');
+        $this->where($column, 'IS NOT NULL', null);
         return $this;
     }
     public function orWhereNotNull($column): self
     {
-        $this->where($column, 'IS NOT NULL', 'null', 'OR');
+        $this->where($column, 'IS NOT NULL', null, 'OR');
         return $this;
     }
-
     public function limit(int $number): self
     {
-        $this->setQueryLimit($number);
-        return $this;
-    }
 
-    public function orderBy($column, $direction = 'ASC'): self
-    {
-        $this->setOrderBy($column, $direction);
+        $this->addComponent('limit', 'LIMIT ' .  $number);
         return $this;
     }
 
     public function table($table)
     {
+        $this->addComponent('from', 'FROM ' . $table);
+
         $this->table = $table;
         return $this;
     }
     public function groupBy($column): self
     {
-        $this->setGroupBy($column);
+        $this->addComponent('groupBy', 'GROUP BY ' . $column);
         return $this;
     }
-    /**
-     * Set a model instance for the model being queried.
-     * 
-     * @param \TurFramework\Database\Model
-     * @return $this
-     */
+    public function orderBy($column, $direction = 'ASC'): self
+    {
+
+        $this->addComponent('orderBy', 'ORDER BY ' . $column . ' ' . $direction);
+        return $this;
+    }
+
+
     public function setModel(Model $model)
     {
         $this->model = $model;
 
+        $this->addComponent('from', 'FROM ' . $this->model->getTable());
         $this->table = $this->model->getTable();
 
         $this->connection->setFetchMode(get_class($this->model));
@@ -218,14 +243,13 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         return $this;
     }
 
-    public function getModel()
+    protected function getModel()
     {
         return  $this->model;
     }
 
-
-    public function newModelInstance($attributes = [], $exists = false)
+    protected function newModelInstance($attributes = [], $exists = false)
     {
-        return $this->model->newInstance($attributes, $exists);
+        return $this->getModel()->newInstance($attributes, $exists);
     }
 }

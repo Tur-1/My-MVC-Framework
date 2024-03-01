@@ -86,24 +86,57 @@ abstract class Model
         return $model;
     }
 
-
     public function update(array $attributes)
     {
         return $this->fill($attributes)->save();
     }
+    public function delete()
+    {
+        if (is_null($this->getKeyName())) {
+            throw new \LogicException('No primary key defined on model.');
+        }
+        if (!$this->exists) {
+            return;
+        }
+
+        $this->setKeysForSaveQuery($this->newQuery())->delete();
+
+        $this->exists = false;
+    }
+    protected function setKeysForSaveQuery($query)
+    {
+        $query->where($this->getKeyName(), '=', $this->getKey());
+
+        return $query;
+    }
+
     public function save()
     {
         $query = $this->newQuery();
 
         if ($this->exists) {
-            $saved = $query->performUpdate($this->getAttributes());
+            $saved = $this->performUpdate($query);
         } else {
             $saved = $this->performInsert($query);
         }
 
         return $saved;
     }
+    private function performUpdate($query)
+    {
+        $saved = $this->setKeysForSaveQuery($query)->performUpdate($this->getAttributes());
 
+        return  $saved;
+    }
+    /**
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
+     */
+    protected function getKey()
+    {
+        return $this->getAttribute($this->getKeyName());
+    }
     private function performInsert($query)
     {
         $attributes = $this->getAttributes();
@@ -239,7 +272,7 @@ abstract class Model
      *
      * @return string
      */
-    public function getKeyName()
+    protected function getKeyName()
     {
         return $this->primaryKey;
     }

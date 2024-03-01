@@ -30,6 +30,12 @@ class UserController extends Controller
         $validatedRequest = $request->validated();
 
         User::query()->create($validatedRequest);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $request->password;
+
+        $user->save();
 
         return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');
@@ -57,8 +63,9 @@ class UserController extends Controller
 
     public function delete($id)
     {
+        $user = User::query()->where('id', $id)->first();
 
-        User::query()->delete($id);
+        $user->delete();
 
         return redirect()->back()
             ->with('success', 'User was deleted successfully.');

@@ -2,136 +2,169 @@
 
 namespace TurFramework\Database\Grammars;
 
+use TurFramework\Support\Arr;
+
 
 class MySQLGrammar
 {
-    protected $columns = '*';
-    protected $table;
-    protected $wheres;
-    protected $wheresValues;
-    protected $limit;
-    protected $orderByColumn;
-    protected $groupByColumn;
-    protected $orderDirection;
     /**
      * The current query value bindings.
      *
      * @var array
      */
-    protected $bindings = [];
-
-
-    /**
-     * All of the available clause operators.
-     *
-     * @var string[]
-     */
-    public $operators = [
-        '=', '<', '>', '<=', '>=', '<>', '!=', '<=>',
-        'like', 'like binary', 'not like', 'ilike',
-        '&', '|', '^', '<<', '>>', '&~', 'is', 'is not',
-        'rlike', 'not rlike', 'regexp', 'not regexp',
-        '~', '~*', '!~', '!~*', 'similar to',
-        'not similar to', 'not ilike', '~~*', '!~~*',
+    protected $bindings = [
+        'columns_values' => [],
+        'where' => [],
     ];
-    /**
-     * Compile an insert statement into SQL.
-     *
-     * @return string
-     */
-    protected function insertQuery($fields)
-    {
-        $columns = implode(', ', array_keys($fields));
+    protected $wheres;
+    protected $table;
 
-        $values = trim(str_repeat('?,', count(array_keys($fields))), ',');
 
-        $this->bindings = array_values($fields);
+    protected $queryComponents = [
+        'select' => 'SELECT *',
+        'from' => [],
+        'join' => [],
+        'where' => [],
+        'groupBy' => [],
+        'having' => [],
+        'orderBy' => [],
+        'limit' => [],
+    ];
 
-        return 'INSERT INTO ' . $this->table . ' (' . $columns . ') VALUES(' . $values . ')';
-    }
     protected function deleteQuery()
     {
-        return 'DELETE FROM ' . $this->table . $this->whereStatement();
+        $table = $this->queryComponents['from'];
+
+
+        return "DELETE $table " . $this->getWhereStatment();
+    }
+    protected function getWhereStatment()
+    {
+
+        if (!empty($this->queryComponents['where'])) {
+            return  $this->queryComponents['where'];
+        }
+
+        return '';
+    }
+    protected function insertQuery($fields)
+    {
+
+        $columns =  implode(', ', array_keys($fields));
+        $parameters =  trim(str_repeat('?,', count(array_keys($fields))), ',');
+
+        $this->bindings['columns_values'] = array_values($fields);
+
+        return "insert into $this->table ($columns) values ($parameters)";
     }
     protected function updateQuery($fields)
     {
 
         foreach ($fields as $column => $value) {
-            $columns[] = "$column = ?";
+            $columns[] = "$column = ? ";
         }
 
-        $query = implode(', ', $columns);
-        $this->bindings = array_values($fields);
+        $columns = implode(', ', $columns);
 
-        return 'UPDATE ' . $this->table . ' SET ' . $query . $this->whereStatement();
+        $this->bindings['columns_values'] = array_values($fields);
+
+        return "UPDATE $this->table SET $columns" . $this->getWhereStatment();
     }
 
-    protected function existsQuery()
+    public function existsQuery()
     {
-        $existsSql = $this->getExistsSql();
+        $select = $this->selectQuery();
 
-        return "SELECT $existsSql AS record_exists";
+        return "select exists({$select}) as record_exists";
     }
 
-    private function getExistsSql()
-    {
-        $table = $this->table;
-        $whereClause = $this->whereStatement();
-
-        return  'EXISTS(SELECT 1 FROM ' . $table . $whereClause . ')';
-    }
     protected function selectQuery()
     {
-        $statement = 'SELECT ' . $this->columns .
-            ' FROM ' .
-            $this->table .
-            $this->whereStatement()
-            . $this->groupByColumn
-            . $this->getOrderBy()
-            .   $this->limit();
+        $sqlQuery = $this->concatenate($this->compileComponents());
 
-        return $statement;
+        return $sqlQuery;
     }
-
-    private function limit()
+    /**
+     * Compile the components necessary for a select clause.
+     *
+     * @return array
+     */
+    protected function compileComponents()
     {
-        if ($this->limit) {
-            return ' LIMIT ' .  $this->limit;
-        }
-    }
+        $sql = [];
 
-    protected function setQueryLimit($limit)
-    {
-        $this->limit = $limit;
-    }
-    protected function setColumns($columns = ['*'])
-    {
-        $this->columns = implode(',', $columns);
-    }
-
-    protected function whereStatement()
-    {
-        if (!empty($this->wheres)) {
-            return $this->buildWhereClause();
-        }
-    }
-
-
-
-    private function buildWhereClause()
-    {
-
-
-        $statement = ' WHERE ';
-        foreach ($this->wheres as $key => $where) {
-            // if where is a more than one condition ? add type --> AND , OR etc..
-            $statement .= $this->getWhereType($key, $where['type']);
-
-            // build statement for example: WHERE column operator :column
-            $statement .= $this->buildWhereStatement($where);
+        foreach ($this->queryComponents as $key => $value) {
+            if (!empty($value)) {
+                $sql[$key] = '' . $value;
+            }
         }
 
-        return $statement;
+        return $sql;
+    }
+    /**
+     * Concatenate an array of segments, removing empties.
+     *
+     * @param  array  $segments
+     * @return string
+     */
+    protected function concatenate($segments)
+    {
+        return implode(' ', array_filter($segments, function ($value) {
+            return (string) $value !== '';
+        }));
+    }
+
+    protected function addComponent($key, $value)
+    {
+        $this->queryComponents[$key] = $value;
+    }
+    protected function addArrayOfWheres($column, $type)
+    {
+        $wheres = [];
+
+        foreach ($column as $key => $value) {
+            $wheres[] = [
+                'type' => $type,
+                'column' => $key,
+                'operator' => '=',
+                'value' => $value
+            ];
+        }
+
+        $this->wheres[] = $wheres;
+    }
+    protected function compileWhere()
+    {
+        $statement = '';
+        $bindings = [];
+
+        foreach ($this->wheres as $key => $group) {
+            $groupStatement = '';
+            if (isset($group[0]) && count($group[0]) > 0) {
+                foreach ($group as $where) {
+                    $condition = $this->buildWhereStatement($where);
+
+                    $groupStatement .= ($groupStatement ? " {$where['type']} " : '') . $condition;
+
+                    $bindings[] = $where['value'] ?? [];
+                }
+
+                $groupStatement = "($groupStatement)";
+
+                $statement .= ($statement ? ' OR ' : '') . $groupStatement;
+            } else {
+
+                $statement .= $this->getWhereType($key, $group['type']);
+                $statement .=  $this->buildWhereStatement($group);
+
+
+                $bindings[] = $group['value'] ?? [];
+            }
+        }
+
+        $this->bindings['where'] = Arr::flatten($bindings);
+
+        return  $statement;
     }
 
     private function buildWhereStatement($where)
@@ -143,7 +176,7 @@ class MySQLGrammar
         if ($this->isWhereIn($where['operator'])) {
             return $this->buildWhereInStatement($where);
         }
-        $this->bindings[] = $where['value'];
+
         return $where['column'] . ' ' . $where['operator'] . ' ?';
     }
     private function isNullOrNotNull($operator)
@@ -162,10 +195,7 @@ class MySQLGrammar
     {
         foreach ($where['value'] as $index => $value) {
             $valuess[] = '?';
-            $this->bindings[] = $value;
         }
-
-
 
         return $where['column'] . ' IN (' . implode(', ', $valuess) . ')';
     }
@@ -175,41 +205,6 @@ class MySQLGrammar
             return ' ' . $type . ' ';
         }
     }
-    /**
-     * bindValues
-     *
-     * @param mixed statement
-     * @param array fields
-     *
-     * @return void
-     */
-    protected function bindValues($statement, $bindings)
-    {
-        foreach ($bindings as $key => $value) {
-            $statement->bindValue($key + 1, $value);
-        }
-    }
-
-    protected function addWhere($column, $operator = null, $value = null, $type = 'AND')
-    {
-        // Here we will make some assumptions about the operator. If only 2 values are
-        // passed to the method, we will assume that the operator is an equals sign
-        // and keep going. Otherwise, we'll require the operator to be passed in.
-
-        [$value, $operator] = $this->prepareValueAndOperator(
-            $value,
-            $operator,
-            func_num_args() === 2 && is_null($value)
-        );
-        $this->wheres[] = [
-            'type' => $type,
-            'column' => $column,
-            'operator' => $operator,
-            'value' => $value
-        ];
-    }
-
-
     /**
      * Prepare the value and operator for a where clause.
      *
@@ -224,39 +219,7 @@ class MySQLGrammar
     {
         if ($useDefault) {
             return [$operator, '='];
-        } elseif ($this->invalidOperatorAndValue($operator, $value)) {
-            throw new \InvalidArgumentException('Illegal operator and value combination.');
         }
-
         return [$value, $operator];
-    }
-    /**
-     * Determine if the given operator and value combination is legal.
-     *
-     * Prevents using Null values with invalid operators.
-     *
-     * @param  string  $operator
-     * @param  mixed  $value
-     * @return bool
-     */
-    protected function invalidOperatorAndValue($operator, $value)
-    {
-        return is_null($value) && in_array($operator, $this->operators) && !in_array($operator, ['=', '<>', '!=']);
-    }
-
-
-    protected function setOrderBy($column, $direction)
-    {
-        $this->orderByColumn = $column;
-        $this->orderDirection = $direction;
-    }
-
-    protected function setGroupBy($column)
-    {
-        $this->groupByColumn = ' GROUP BY ' . $column;
-    }
-    protected function getOrderBy()
-    {
-        return $this->orderByColumn ? ' ORDER BY ' . $this->orderByColumn . ' ' . $this->orderDirection : '';
     }
 }

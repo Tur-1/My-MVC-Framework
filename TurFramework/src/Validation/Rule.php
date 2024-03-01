@@ -42,7 +42,7 @@ class Rule
             $model = new $table;
             if ($model instanceof Model) {
 
-                $exstis = $model->connection($connection)->where($cloumn, $this->data[$field])->exstis();
+                $exstis = $model->connection($connection)->where($cloumn, $this->data[$field])->exists();
             }
         }
 
@@ -51,7 +51,7 @@ class Rule
                 ->makeConnection($connection)
                 ->table($table)
                 ->where($cloumn, $this->data[$field])
-                ->exstis();
+                ->exists();
         }
 
         if ($exstis) {

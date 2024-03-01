@@ -4,6 +4,7 @@ namespace TurFramework\Support;
 
 use ArgumentCountError;
 use ArrayAccess;
+use ArrayObject;
 use InvalidArgumentException;
 
 class Arr
@@ -35,7 +36,33 @@ class Arr
 
         return $array;
     }
+    /**
+     * Flatten a multi-dimensional array into a single level.
+     *
+     * @param  iterable  $array
+     * @param  int  $depth
+     * @return array
+     */
+    public static function flatten($array, $depth = INF)
+    {
+        $result = [];
 
+        foreach ($array as $item) {
+            if (!is_array($item)) {
+                $result[] = $item;
+            } else {
+                $values = $depth === 1
+                    ? array_values($item)
+                    : static::flatten($item, $depth - 1);
+
+                foreach ($values as $value) {
+                    $result[] = $value;
+                }
+            }
+        }
+
+        return $result;
+    }
     /**
      * Cross join the given arrays, returning all possible permutations.
      *
