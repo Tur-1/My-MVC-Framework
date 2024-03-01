@@ -193,11 +193,9 @@ class MySQLGrammar
     }
     private function buildWhereInStatement($where)
     {
-        foreach ($where['value'] as $index => $value) {
-            $valuess[] = '?';
-        }
+        $values = trim(str_repeat('?,', count($where['value'])), ',');
 
-        return $where['column'] . ' IN (' . implode(', ', $valuess) . ')';
+        return $where['column'] . ' IN (' .  $values . ')';
     }
     private function getWhereType($key, $type)
     {

@@ -72,7 +72,6 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     }
     public function get()
     {
-
         $models = $this->connection->select($this->selectQuery(), $this->getBindings());
 
         foreach ($models as $key => &$model) {
