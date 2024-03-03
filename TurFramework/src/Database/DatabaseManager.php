@@ -27,7 +27,7 @@ class DatabaseManager
         $config = $this->getConfiguration($name);
 
         if (!isset(self::$connections[$name])) {
-            self::$connections[$name] = $this->createSingleConnection($config);
+            self::$connections[$name] = $this->createSingleConnection($config, $name);
         }
 
 
@@ -36,12 +36,11 @@ class DatabaseManager
 
 
 
-    protected function createSingleConnection($config)
+    protected function createSingleConnection($config, $name)
     {
         $pdo = $this->createPdoResolver($config);
 
-
-        return $this->getDatabaseManager($pdo, $config);
+        return $this->getDatabaseManager($pdo, $config, $name);
     }
 
 
@@ -107,12 +106,13 @@ class DatabaseManager
      *
      * @throws \InvalidArgumentException
      */
-    protected function getDatabaseManager($connection, array $config = [])
+    protected function getDatabaseManager($connection, $config, $name)
     {
+
         $driver = $config['driver'];
 
         return match ($driver) {
-            'mysql' => new MySQLManager(new Connection($connection), $config),
+            'mysql' => new MySQLManager(new Connection($connection, $config), $config, $name),
             default => throw new InvalidArgumentException("Unsupported driver [{$driver}]."),
         };
     }

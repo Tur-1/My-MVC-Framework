@@ -14,7 +14,6 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-
             <table class="table">
                 <thead>
                     <tr>
@@ -52,7 +51,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
 <?php import('layouts.Footer'); ?>

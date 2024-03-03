@@ -29,6 +29,7 @@ class MySQLGrammar
         'having' => [],
         'orderBy' => [],
         'limit' => [],
+        'offset' => [],
     ];
 
     protected function deleteQuery()

@@ -61,6 +61,20 @@ trait ModelAttributes
 
         return $this;
     }
+
+    /**
+     * Set the array of model attributes
+     *
+     * @param  array  $attributes
+     * @param  bool  $sync
+     * @return $this
+     */
+    public function setRawAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
     /**
      * Get the fillable attributes of a given array.
      *

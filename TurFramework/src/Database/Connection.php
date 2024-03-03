@@ -9,12 +9,11 @@ use TurFramework\Database\Contracts\ConnectionInterface;
 class Connection implements ConnectionInterface
 {
     /**
-     * The query grammar implementation.
+     * The database connection configuration options.
      *
-     * @var $queryGrammar
+     * @var array
      */
-    protected $grammar;
-    protected $model;
+    protected $config = [];
 
     /**
      * @var mixed \PDO pdo
@@ -25,11 +24,12 @@ class Connection implements ConnectionInterface
      *
      * @var int
      */
-    protected $fetchMode = PDO::FETCH_CLASS;
+    protected $fetchMode = PDO::FETCH_OBJ;
 
-    public function __construct($pdo)
+    public function __construct($pdo, array $config = [])
     {
         $this->pdo = $pdo;
+        $this->config = $config;
     }
 
 
@@ -40,16 +40,12 @@ class Connection implements ConnectionInterface
 
         $this->bindValues($statement, $bindings);
 
-        $statement->setFetchMode($this->fetchMode, $this->model);
+        $statement->setFetchMode($this->fetchMode);
         $statement->execute();
 
         return $statement->fetchAll();
     }
 
-    public function setFetchMode($model)
-    {
-        $this->model = $model;
-    }
     /**
      * Run an insert statement against the database.
      *

@@ -64,6 +64,32 @@ abstract class Model
         return $model->newQuery();
     }
 
+    public function newCollection($models, $connection)
+    {
+        foreach ($models as $key => &$model) {
+            $model = $this->newFromBuilder((array) $model, $connection);
+        }
+
+        return $models;
+    }
+    /**
+     * Create a new model instance that is existing.
+     *
+     * @param  array  $attributes
+     * @param  string|null  $connection
+     * @return static
+     */
+    public function newFromBuilder($attributes = [], $connection = null)
+    {
+
+        $model = $this->newInstance([], true);
+
+        $model->setRawAttributes($attributes);
+
+        $model->setConnection($connection);
+
+        return $model;
+    }
     /**
      * Create a new instance of the given model.
      *
@@ -75,6 +101,7 @@ abstract class Model
     {
 
         $model = new static;
+
         $model->exists = $exists;
 
         $model->setConnection($this->getConnectionName());
@@ -86,6 +113,9 @@ abstract class Model
         return $model;
     }
 
+    public function fillModelAttributes()
+    {
+    }
     public function update(array $attributes)
     {
         return $this->fill($attributes)->save();

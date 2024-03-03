@@ -24,10 +24,16 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
      */
     protected $connection;
 
+    protected $connectionName;
 
-    public function __construct(ConnectionInterface $connection, $config)
+    protected $config;
+
+
+    public function __construct(ConnectionInterface $connection, $config, $name)
     {
         $this->connection = $connection;
+        $this->config = $config;
+        $this->connectionName = $name;
     }
     public function create(array $attributes)
     {
@@ -49,6 +55,7 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
             $this->prepareBindingsForUpdate($this->bindings, $attributes)
         );
     }
+
     public function prepareBindingsForUpdate($bindings, array $values)
     {
         return array_values(
@@ -74,12 +81,9 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
     {
         $models = $this->connection->select($this->selectQuery(), $this->getBindings());
 
-        foreach ($models as $key => &$model) {
-            $model->exists = true;
-        };
-
-        return $models;
+        return $this->getModel()->newCollection($models, $this->connectionName);
     }
+
     public function find($id)
     {
         return $this->where('id', '=', $id)->first();
@@ -236,8 +240,6 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
         $this->addComponent('from', 'FROM ' . $this->model->getTable());
         $this->table = $this->model->getTable();
-
-        $this->connection->setFetchMode(get_class($this->model));
 
         return $this;
     }

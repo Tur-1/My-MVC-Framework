@@ -61,15 +61,6 @@ interface ConnectionInterface
     public function affectingStatement($query, $bindings = []);
 
     /**
-     * setFetchMode
-     *
-     * @param mixed model
-     *
-     * @return void
-     */
-    public function setFetchMode($model);
-
-    /**
      * Execute an SQL statement and return the boolean result.
      *
      * @param  string  $query
