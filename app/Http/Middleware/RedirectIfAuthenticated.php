@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
 
-class RedirectIfAuthenticated implements Middleware
+class RedirectIfAuthenticated implements MiddlewareInterface
 {
     /**
      * Handle an incoming request.

@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use TurFramework\Http\Request;
 
-interface Middleware
+interface MiddlewareInterface
 {
     /**
      * Handle an incoming request.

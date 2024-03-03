@@ -109,7 +109,7 @@ class Authentication
             return $this->user;
         }
 
-        $userID = $this->session->get($this->getAuthSessionName()) ?? null;
+        $userID = $this->session->get($this->getAuthIdentifierName()) ?? null;
 
 
         if (!is_null($userID)) {
@@ -163,14 +163,14 @@ class Authentication
      *
      * @return string
      */
-    public function getAuthSessionName()
+    public function getAuthIdentifierName()
     {
         return 'login_' . $this->name . '_' . sha1(static::class);
     }
 
     public function logout()
     {
-        $this->session->remove($this->getAuthSessionName());
+        $this->session->remove($this->getAuthIdentifierName());
 
         $this->session->invalidate();
 
@@ -190,6 +190,6 @@ class Authentication
 
         $this->session->regenerate();
 
-        $this->session->put($this->getAuthSessionName(), $id);
+        $this->session->put($this->getAuthIdentifierName(), $id);
     }
 }
