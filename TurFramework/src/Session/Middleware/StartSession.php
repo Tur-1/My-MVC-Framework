@@ -3,28 +3,28 @@
 namespace TurFramework\Session\Middleware;
 
 use TurFramework\Http\Request;
+use TurFramework\Session\SessionManager;
 
 class StartSession
 {
+    /**
+     * The session manager.
+     *
+     * @var \TurFramework\Session\SessionManager
+     */
+    protected $manager;
 
+
+    public function __construct()
+    {
+        $this->manager = app('session.manager');
+    }
     /**
      * Handle an incoming request.
      */
     public function handle(Request $request)
     {
 
-        $session = app('session');
-
-        $session->setName('TurFramework_session');
-
-        $this->start($session);
-    }
-
-
-    public function start($session)
-    {
-        session_start();
-
-        $session->start();
+        $this->manager->start();
     }
 }

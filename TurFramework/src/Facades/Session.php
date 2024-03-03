@@ -13,7 +13,7 @@ namespace TurFramework\Facades;
  * @method static void put(string $key, $value)
  * @method static mixed get(string $key, $default = null)
  * 
- * @see \TurFramework\Session\Store
+ * @see \TurFramework\Session\Session
  */
 class Session extends Facade
 {

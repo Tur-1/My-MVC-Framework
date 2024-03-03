@@ -2,7 +2,7 @@
 
 namespace TurFramework\Auth;
 
-use TurFramework\Session\Store;
+use TurFramework\Session\Session;
 
 class Authentication
 {
@@ -15,7 +15,7 @@ class Authentication
     /**
      * The session used by the guard.
      *
-     * @var \TurFramework\Session\Store $session
+     * @var \TurFramework\Session\Session $session
      */
     protected $session;
     /**
@@ -38,11 +38,11 @@ class Authentication
     /**
      * Create a new authentication guard.
      * @param  string  $name
-     * @param \TurFramework\Session\Store $session
+     * @param \TurFramework\Session\Session $session
      * @param  \TurFramework\Auth\AuthProvider $provider
      * @return void
      */
-    public function __construct($name, Store $session, AuthProvider $provider)
+    public function __construct($name, Session $session, AuthProvider $provider)
     {
         $this->name = $name;
         $this->session = $session;

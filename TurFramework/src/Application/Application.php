@@ -4,9 +4,6 @@
 namespace TurFramework\Application;
 
 
-
-use TurFramework\Http\Request;
-use TurFramework\Facades\Route;
 use TurFramework\Container\Container;
 use TurFramework\Auth\AuthServiceProvider;
 use TurFramework\Exceptions\HttpException;
@@ -14,6 +11,7 @@ use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
 use TurFramework\Router\RoutingServiceProvider;
 use TurFramework\Database\DatabaseServiceProvider;
+use TurFramework\Session\SessionServiceProvider;
 
 class Application extends Container
 {
@@ -58,6 +56,7 @@ class Application extends Container
         $this->register(new DatabaseServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
         $this->register(new AuthServiceProvider($this));
+        $this->register(new SessionServiceProvider($this));
     }
     /**
      * Register a service provider with the application.
@@ -159,10 +158,10 @@ class Application extends Container
     protected function getCoreContainerAliases(): array
     {
         return [
+            'session' => \TurFramework\Session\Session::class,
             'router' =>  \TurFramework\Router\Router::class,
             'cache' => \TurFramework\Cache\Cache::class,
             'view' => \TurFramework\Views\View::class,
-            'session' => \TurFramework\Session\Store::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
 

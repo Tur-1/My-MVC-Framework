@@ -274,11 +274,9 @@ if (!function_exists('session')) {
     /**
      * Get / set the specified session value.
      *
-     * If an array is passed as the key, we will assume you want to set an array of values.
-     *
      * @param  array|string|null  $key
      * @param  mixed  $default
-     * @return mixed|\TurFramework\Session\Store
+     * @return mixed|\TurFramework\Session\Session
      */
     function session($key = null, $default = null)
     {

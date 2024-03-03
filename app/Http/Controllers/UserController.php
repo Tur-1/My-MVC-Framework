@@ -30,12 +30,6 @@ class UserController extends Controller
         $validatedRequest = $request->validated();
 
         User::query()->create($validatedRequest);
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->password;
-
-        $user->save();
 
         return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');

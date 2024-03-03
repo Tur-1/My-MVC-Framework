@@ -5,7 +5,7 @@ namespace TurFramework\Session;
 use TurFramework\Support\Arr;
 use TurFramework\Validation\MessageBag;
 
-class Store
+class Session
 {
 
     /**
@@ -28,7 +28,6 @@ class Store
      * @var array
      */
     protected $attributes = [];
-
 
 
     /**
@@ -62,7 +61,7 @@ class Store
      */
     public function setName($name)
     {
-        session_name($name);
+
         $this->name = $name;
     }
 
@@ -97,7 +96,7 @@ class Store
     {
         $this->flush();
 
-        $this->generateSessionId();
+        app('session.manager')->regenerateSessionId();
 
         $this->regenerateToken();
     }
@@ -241,16 +240,7 @@ class Store
     {
         $this->put('_token', bin2hex(random_bytes(32)));
     }
-    /**
-     * Generate a new session ID for the session.
-     *
-     * @param  bool  $destroy
-     * @return bool
-     */
-    public function generateSessionId()
-    {
-        session_regenerate_id(true);
-    }
+
     /**
      * Generate a new session identifier.
      *
@@ -259,7 +249,7 @@ class Store
      */
     public function regenerate()
     {
-        $this->generateSessionId();
+        app('session.manager')->regenerateSessionId();
 
         $this->regenerateToken();
     }
