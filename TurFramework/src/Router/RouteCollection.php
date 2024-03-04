@@ -10,6 +10,7 @@ use TurFramework\Router\Exceptions\RouteNotFoundException;
 class RouteCollection
 {
 
+    protected $parameters = [];
     /**
      * An array containing registered routes.
      *
@@ -197,11 +198,28 @@ class RouteCollection
 
                 // Store route parameters and their values
                 $routeDetails['parameters'] = array_intersect_key($matches, array_flip($routeDetails['parameters']));
+                $this->parameters = $routeDetails['parameters'];
                 $route = $routeDetails;
                 break;
             }
         }
         return $route;
+    }
+    /**
+     * Get a given parameter from the route.
+     *
+     * @param  string  $name
+     * @param  string|object|null  $default
+     * @return string|object|null
+     */
+    public function parameter($name, $default = null)
+    {
+        return Arr::get($this->parameters(), $name, $default);
+    }
+
+    public function parameters()
+    {
+        return $this->parameters;
     }
     private function isRequestMethodNotAllowed($route, $requestMethod)
     {

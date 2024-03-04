@@ -35,6 +35,7 @@ class Rule
     public function unique($field, $table, $cloumn = null)
     {
         [$connection, $table] = $this->resolveTable($table);
+
         $cloumn = $this->resolveCloumn($field, $cloumn);
 
         if (class_exists($table)) {

@@ -20,6 +20,11 @@ class HttpKernel
      */
     protected $middleware = [];
 
+    private $coreMiddleware = [
+        \TurFramework\Session\Middleware\StartSession::class,
+        \TurFramework\Http\Middleware\VerifyCsrfToken::class
+    ];
+
     /**
      * The application's route middleware.
      *
@@ -60,8 +65,8 @@ class HttpKernel
      */
     protected function syncMiddlewareToRouter()
     {
+        $this->router->setGlobalMiddleware(array_merge($this->coreMiddleware, $this->middleware));
 
-        $this->router->setGlobalMiddleware($this->middleware);
         foreach ($this->routeMiddleware as $key => $middleware) {
             $this->router->setRouteMiddleware($key, $middleware);
         }

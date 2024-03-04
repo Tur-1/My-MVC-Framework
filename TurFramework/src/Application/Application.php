@@ -24,7 +24,7 @@ class Application extends Container
     public const VERSION = '1.0';
 
 
-    public function __construct()
+    protected function __construct()
     {
 
         static::setInstance($this);
@@ -45,6 +45,17 @@ class Application extends Container
         $this->registerBaseServiceProviders();
     }
 
+    public static function create()
+    {
+        return static::getInstance();
+    }
+
+    public function dispatch($request)
+    {
+        $kernel = $this->make(\App\Http\Kernel::class);
+
+        $kernel->handle($request);
+    }
 
     /**
      * Register all of the base service providers.
@@ -158,6 +169,7 @@ class Application extends Container
     protected function getCoreContainerAliases(): array
     {
         return [
+            'router' =>  \TurFramework\Router\Router::class,
             'session' => \TurFramework\Session\Session::class,
             'router' =>  \TurFramework\Router\Router::class,
             'cache' => \TurFramework\Cache\Cache::class,

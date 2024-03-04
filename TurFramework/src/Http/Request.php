@@ -2,6 +2,7 @@
 
 namespace TurFramework\Http;
 
+use TurFramework\Facades\Route;
 use TurFramework\Support\Arr;
 use TurFramework\Validation\ValidationException;
 use TurFramework\Validation\ValidationHandlerTrait;
@@ -360,7 +361,16 @@ class Request
 
         return $default;
     }
-
+    /**
+     * Retrieve a specific input parameter
+     *
+     * @param string $key
+     * @return mixed|null
+     */
+    public function input(string $key, $default = null)
+    {
+        return $this->get($key, $default);
+    }
     /**
      * Check if a input parameter exists
      *
@@ -406,6 +416,10 @@ class Request
     }
 
 
+    public function gerRouteParameter($key = null)
+    {
+        return Route::getRouteCollection()->parameter($key);
+    }
     /**
      * Get an input element from the request.
      *
@@ -414,6 +428,6 @@ class Request
      */
     public function __get($key)
     {
-        return Arr::get($this->all(), $key);
+        return Arr::get($this->all(), $key, fn () => $this->gerRouteParameter($key));
     }
 }

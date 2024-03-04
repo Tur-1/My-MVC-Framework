@@ -302,7 +302,7 @@ abstract class Model
      *
      * @return string
      */
-    protected function getKeyName()
+    public function getKeyName()
     {
         return $this->primaryKey;
     }

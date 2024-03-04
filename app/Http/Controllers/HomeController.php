@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use TurFramework\Http\Request;
 use App\Services\ExampleServiceInterface;
-use TurFramework\Facades\Auth;
 
 class HomeController extends Controller
 {

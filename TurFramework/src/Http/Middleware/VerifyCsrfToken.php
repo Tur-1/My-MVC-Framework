@@ -11,12 +11,12 @@ class VerifyCsrfToken
      */
     public function handle(Request $request)
     {
+
         if ($request->isPost() && $this->requestTokenDoesNotMatchSessionToken($request)) {
 
             abort(419);
         }
     }
-
 
     /**
      * Determine if the session and input CSRF tokens match.
@@ -28,11 +28,11 @@ class VerifyCsrfToken
     {
         $token = $this->getTokenFromRequest($request);
 
-        return is_string($token) && $token !== session()->token();
+        return $token !== session()->token();
     }
 
     protected function getTokenFromRequest($request)
     {
-        return $request->has('_token') ? $request->get('_token') : false;
+        return $request->has('_token') ? $request->get('_token') : null;
     }
 }

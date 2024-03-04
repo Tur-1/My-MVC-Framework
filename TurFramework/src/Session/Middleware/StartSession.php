@@ -3,7 +3,6 @@
 namespace TurFramework\Session\Middleware;
 
 use TurFramework\Http\Request;
-use TurFramework\Session\SessionManager;
 
 class StartSession
 {

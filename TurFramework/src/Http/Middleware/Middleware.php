@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace TurFramework\Http\Middleware;
 
 use TurFramework\Http\Request;
 
-interface MiddlewareInterface
+interface Middleware
 {
     /**
      * Handle an incoming request.

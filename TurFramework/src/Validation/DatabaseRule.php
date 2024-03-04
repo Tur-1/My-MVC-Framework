@@ -10,7 +10,7 @@ trait DatabaseRule
     public function resolveTable($table)
     {
 
-        if (str_contains('.', $table)) {
+        if (str_contains($table, '.')) {
             $exploded = explode('.', $table);
             $connection = $exploded[0];
             $table = end($exploded);

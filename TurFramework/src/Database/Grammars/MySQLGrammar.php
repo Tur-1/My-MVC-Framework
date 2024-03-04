@@ -124,12 +124,21 @@ class MySQLGrammar
         $wheres = [];
 
         foreach ($column as $key => $value) {
-            $wheres[] = [
-                'type' => $type,
-                'column' => $key,
-                'operator' => '=',
-                'value' => $value
-            ];
+            if (is_array($value)) {
+                $wheres[] = [
+                    'type' => $type,
+                    'column' => $value[0],
+                    'operator' => $value[1],
+                    'value' => $value[2],
+                ];
+            } else {
+                $wheres[] = [
+                    'type' => $type,
+                    'column' => $key,
+                    'operator' => '=',
+                    'value' => $value
+                ];
+            }
         }
 
         $this->wheres[] = $wheres;

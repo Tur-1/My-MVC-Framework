@@ -13,10 +13,7 @@ class Kernel extends HttpKernel
      *
      * @var array<int, class-string|string>
      */
-    protected $middleware = [
-        \TurFramework\Session\Middleware\StartSession::class,
-        \App\Http\Middleware\VerifyCsrfToken::class,
-    ];
+    protected $middleware = [];
 
     /**
      * The application's route middleware.

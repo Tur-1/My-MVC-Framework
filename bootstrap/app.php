@@ -13,8 +13,6 @@ $dotenv->load();
 | start The Application
 |--------------------------------------------------------------------------
 */
-$app = new \TurFramework\Application\Application();
 
-$kernel = $app->make(\App\Http\Kernel::class);
 
-$kernel->handle(new Request);
+\TurFramework\Application\Application::create()->dispatch(new Request);

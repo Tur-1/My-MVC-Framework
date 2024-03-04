@@ -32,10 +32,10 @@
                                 <td><?php echo $user->email ?></td>
                                 <td>
 
-                                    <form action="<?php echo route('users.delete', ['id' => $user->id]) ?>" method="post">
+                                    <form action="<?= route('users.delete', ['id' => $user->id]) ?>" method="post">
                                         <?= csrf_field() ?>
 
-                                        <a href="<?php echo route('users.edit', ['id' => $user->id]) ?>" class="btn btn-secondary btn-sm"> Edit</a>
+                                        <a href="<?= route('users.edit', ['id' => $user->id]) ?>" class="btn btn-secondary btn-sm"> Edit</a>
 
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete this user ?');">Delete</button>
                                     </form>

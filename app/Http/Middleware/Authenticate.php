@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
+use TurFramework\Http\Middleware\Middleware;
 
-class Authenticate implements MiddlewareInterface
+class Authenticate implements Middleware
 {
     /**
      * Handle an incoming request.

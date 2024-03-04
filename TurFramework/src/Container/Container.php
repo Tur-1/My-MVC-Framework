@@ -65,6 +65,7 @@ class Container
         if (is_null($concrete)) {
             $concrete = $abstract;
         }
+
         // If the factory is not a Closure or string, throw TypeError
         if (!$concrete instanceof Closure && !is_string($concrete)) {
             throw new \TypeError(self::class . '::bind(): Argument #2 ($concrete) must be of type Closure|string|null');
@@ -73,29 +74,7 @@ class Container
 
         $this->bindings[$abstract] = $this->build($concrete);
     }
-    /**
-     * Register a singleton binding with the container.
-     *
-     * @param  string  $abstract
-     * @param  \Closure|string|null  $concrete
-     * @return void
-     *
-     * @throws \TypeError
-     */
-    public function singleton($abstract, $concrete = null)
-    {
-        if (is_null($concrete)) {
-            $concrete = $abstract;
-        }
 
-        if (!$concrete instanceof Closure && !is_string($concrete)) {
-            throw new \TypeError(self::class . '::singleton(): Argument #2 ($concrete) must be of type Closure|string|null');
-        }
-
-        $this->bindings[$abstract] = $this->share(function ($container) use ($concrete) {
-            return $container->build($concrete);
-        });
-    }
 
     /**
      * Share the Closure across the application.
@@ -212,7 +191,7 @@ class Container
             $type = $dependency->getType();
 
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                $results[] = $this->resolve($type->getName());
+                $results[] = $this->make($type->getName());
             }
         }
         return $results;
