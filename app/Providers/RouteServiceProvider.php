@@ -11,15 +11,13 @@ class RouteServiceProvider extends ServiceProvider
     public function register()
     {
 
-
         /**
-         * Use the Route::load() method to load route files.
+         * Use the Route::load([]) method to load route files.
          */
 
-
         Route::load([
-            base_path('app/routes/web.php'),
-            base_path('app/routes/auth.php')
+            base_path('app/Routes/web.php'),
+            base_path('app/Routes/auth.php')
         ]);
     }
 }

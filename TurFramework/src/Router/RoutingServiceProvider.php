@@ -10,8 +10,10 @@ class RoutingServiceProvider extends ServiceProvider
 {
     public function register()
     {
+
         $this->registerUrlGenerator();
     }
+
     /**
      * Register the URL generator service.
      *

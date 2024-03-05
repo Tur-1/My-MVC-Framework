@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use TurFramework\Facades\Auth;
+use TurFramework\Facades\Route;
 use TurFramework\Http\Request;
 
 class RegisterController
 {
     public function index()
     {
+
         return view('auth.register');
     }
 
@@ -26,6 +28,7 @@ class RegisterController
             'email' => $request->email,
             'password' => $request->password,
         ]);
+
 
 
         Auth::login($user);

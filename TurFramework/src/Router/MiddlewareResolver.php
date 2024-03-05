@@ -22,7 +22,6 @@ class MiddlewareResolver
     private function resolveRouteMiddleware($route, $routeMiddleware, $request)
     {
 
-
         foreach ($route['middleware'] as $key => $value) {
             if (!isset($routeMiddleware[$value])) {
                 throw RouteException::targetClassDoesNotExist($value);

@@ -6,7 +6,7 @@ use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
 use TurFramework\Http\Middleware\Middleware;
 
-class RedirectIfAuthenticated implements Middleware
+class Guest implements Middleware
 {
     /**
      * Handle an incoming request.

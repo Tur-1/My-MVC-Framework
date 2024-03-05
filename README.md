@@ -347,11 +347,7 @@ class CustomServiceProvider extends ServiceProvider
 
 ## Route Service Provider
 
-The `RouteServiceProvider` is responsible for loading route files into the application.
-
-### `app/Providers/RouteServiceProvider.php`
-
-In this service provider, you can use the `Route::group()` method to load route files. Here's an example:
+The `RouteServiceProvider` is responsible for loading route files
 
 ```php
 
@@ -362,21 +358,24 @@ use TurFramework\Application\ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     */
+     
     public function register()
     {
-        /**
-         * Use the Route::group() method to load route files.
-         */
 
-        // Load web routes from the 'app/routes/web.php' file.
-        Route::group(base_path('app/routes/web.php'));
+        //  Load specific route files using the Route::load() method.
+        
+        Route::load([
+            // Load web routes from the 'app/routes/web.php' file.
+            base_path('app/Routes/web.php'),
 
-        // Load API routes from the 'app/routes/api.php' file.
-        Route::group(base_path('app/routes/api.php'));
+            // Load Auth Routes from the 'app/Routes/api.php' file.
+            base_path('app/Routes/auth.php')
+        ]);
+
+        
+        // or you can use  Route::loadAllRoutes() to Loads all routes from Routes directory.
+
+        Route::loadAllRoutes();
     }
 }
 ```

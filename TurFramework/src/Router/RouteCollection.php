@@ -41,9 +41,15 @@ class RouteCollection
      */
     public function addRoute($method, $path, $action, $name = null, $middleware = null)
     {
+        $this->route = $path;
         $this->routes[$path] = $this->createNewRoute($method, $path, $this->getAction($action), $name, $middleware);
     }
 
+    public function getRoutesFromCache($routes)
+    {
+        $this->routes = $routes;
+        $this->refreshNameList();
+    }
 
     /**
      * Creates a new route array based on the provided method, route, and callable.
@@ -142,7 +148,7 @@ class RouteCollection
     /**
      * Loads routes by their names into a separate list.
      */
-    public function refreshNameNameList()
+    public function refreshNameList()
     {
         foreach ($this->getRoutes() as $route => $routeDetails) {
             if (isset($routeDetails['name']) && !is_null($routeDetails['name'])) {
@@ -232,12 +238,12 @@ class RouteCollection
 
         $routeMiddleware = is_string($middleware) ? [$middleware] : $middleware;
 
-        $this->routes[array_key_last($this->routes)]['middleware'] = $routeMiddleware;
+        $this->routes[$this->route]['middleware'] = $routeMiddleware;
     }
 
 
     public function setRouteName($routeName)
     {
-        $this->routes[array_key_last($this->routes)]['name'] = $routeName;
+        $this->routes[$this->route]['name'] = $routeName;
     }
 }

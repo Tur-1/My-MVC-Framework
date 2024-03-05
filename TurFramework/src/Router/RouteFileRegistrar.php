@@ -3,7 +3,6 @@
 namespace TurFramework\Router;
 
 use TurFramework\Facades\Cache;
-use TurFramework\Router\Exceptions\RouteException;
 
 class RouteFileRegistrar
 {
@@ -19,7 +18,6 @@ class RouteFileRegistrar
     {
         $this->router = $router;
     }
-
     /**
      * Require the given routes file.
      *
@@ -31,29 +29,41 @@ class RouteFileRegistrar
         require $routes;
     }
 
-    public function load($routes)
+
+    public function load(array $routes)
     {
-
-        if ($this->routesAreCached()) {
-            return  $this->loadCachedRoutes();
-        } else {
-
-            $this->loadRoutes($routes);
-
-            // Cache::store($this->getCachedRoutesPath(), $this->router->getRouteCollection()->getRoutes());
-        }
+        $this->loadRoutes($routes);
     }
 
-    private function loadRoutes($routes)
+    public function loadAllRoutes($routesPath)
+    {
+        $this->loadRoutes($this->getRoutesFiles($routesPath));
+    }
+
+
+    private function registerRoutes($routes)
     {
         foreach ($routes as $key => $routeFile) {
             $this->register($routeFile);
         }
     }
 
+    private function loadRoutes($routes)
+    {
+
+        if ($this->routesAreCached()) {
+            $this->router->getRouteCollection()
+                ->getRoutesFromCache($this->loadCachedRoutes());
+        } else {
+
+            $this->registerRoutes($routes);
+
+            // Cache::store($this->getCachedRoutesPath(), $this->router->getRouteCollection()->getRoutes());
+        }
+    }
     protected function getCachedRoutesPath()
     {
-        return 'bootstrap/cache/routes.php';
+        return 'cache/routes.php';
     }
 
     /**
@@ -76,10 +86,8 @@ class RouteFileRegistrar
         return Cache::loadFile($this->getCachedRoutesPath());
     }
 
-
-
-    protected function getRoutesFiles()
+    protected function getRoutesFiles($routesPath)
     {
-        return get_files_in_directory('app/routes');
+        return get_files_in_directory($routesPath);
     }
 }

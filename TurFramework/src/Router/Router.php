@@ -3,7 +3,6 @@
 namespace TurFramework\Router;
 
 use Closure;
-use App\Http\Kernel;
 use TurFramework\Router\Route;
 use TurFramework\Router\RouteCollection;
 use TurFramework\Router\MiddlewareResolver;
@@ -81,9 +80,37 @@ class Router
         $this->middleware = $middleware;
     }
 
+    /**
+     * Loads specific route files provided in the array.
+     *
+     * @param array $routes
+     * @return void
+     */
+    public function load(array $routes)
+    {
+        $routeFiles = new RouteFileRegistrar($this);
+
+        $routeFiles->load($routes);
+
+
+        $this->routes->refreshNameList();
+    }
 
     /**
-     * Resolve the current request to find and handle the appropriate route.
+     * Loads all routes from Routes directory.
+     *
+     * @return void
+     */
+    public function loadAllRoutes()
+    {
+        $routeFiles = new RouteFileRegistrar($this);
+
+        $routeFiles->loadAllRoutes(app_path('Routes'));
+
+        $this->routes->refreshNameList();
+    }
+    /**
+     * Resolve the current request to find and handle route.
      * 
      */
     public function resolve($request)
@@ -98,11 +125,10 @@ class Router
     /**
      * Create a route group 
      *
-     * @param Closure|string $routes Closure function or routes path to load routes
-     *
+     * @param Closure $routes
      * @return $this
      */
-    public  function group($routes)
+    public  function group(Closure $routes)
     {
 
         $routes();
@@ -110,14 +136,6 @@ class Router
         return $this;
     }
 
-    public function load($routes)
-    {
-        $routeFiles = new RouteFileRegistrar($this);
-
-        $routeFiles->load($routes);
-
-        $this->routes->refreshNameNameList();
-    }
     /**
      * Set the controller for the route.
      *
@@ -131,7 +149,7 @@ class Router
     }
 
     /**
-     * Register a GET route with the specified route and associated callback.
+     * Register a GET route
      *
      * @param string $route 
      * @param string|array|Closure $action 
@@ -144,7 +162,7 @@ class Router
     }
 
     /**
-     * Register a POST route with the specified route and associated callback.
+     * Register a POST route
      *
      * @param string  $route 
      * @param string|array|Closure $action
@@ -158,7 +176,7 @@ class Router
     }
 
     /**
-     * Register a Delete route with the specified route and associated callback.
+     * Register a Delete route
      *
      * @param string  $route
      * @param string|array|Closure $action
@@ -169,23 +187,7 @@ class Router
     {
         return $this->addRoute(self::METHOD_POST, $route, $action);
     }
-    /**
-     * Add a route to the internal routes collection.
-     *
-     * @param string $method 
-     * @param string $path  
-     * @param string|array|Closure $action 
-     * @param string|null $name 
-     * @return  $this;
-     */
-    private function addRoute($method, $path, $action, $name = null)
-    {
 
-        $this->action[0] = $action;
-
-        $this->routes->addRoute($method, $path, $this->action, $name);
-        return $this;
-    }
     /**
      * Add or change the route name.
      *
@@ -202,10 +204,30 @@ class Router
     {
         return $this->routes;
     }
+
+
     public function middleware($middleware)
     {
         $this->routes->setMiddleware($middleware);
 
+        return $this;
+    }
+
+    /**
+     * Add a route to the internal routes collection.
+     *
+     * @param string $method 
+     * @param string $path  
+     * @param string|array|Closure $action 
+     * @param string|null $name 
+     * @return  $this;
+     */
+    private function addRoute($method, $path, $action, $name = null)
+    {
+
+        $this->action[0] = $action;
+
+        $this->routes->addRoute($method, $path, $this->action, $name);
         return $this;
     }
 }
