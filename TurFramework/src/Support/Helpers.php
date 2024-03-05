@@ -198,7 +198,7 @@ if (!function_exists('view')) {
      *
      * @param  string  $viewPath 
      * @param  array   $data
-     * @return \TurFramework\Views\ViewFactory
+     * @return \TurFramework\Views\View
      */
     function view($viewPath, array $data = [])
     {

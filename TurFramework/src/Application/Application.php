@@ -173,7 +173,7 @@ class Application extends Container
             'session' => \TurFramework\Session\Session::class,
             'router' =>  \TurFramework\Router\Router::class,
             'cache' => \TurFramework\Cache\Cache::class,
-            'view' => \TurFramework\Views\View::class,
+            'view' => \TurFramework\Views\ViewFactory::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
 

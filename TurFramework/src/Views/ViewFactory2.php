@@ -2,7 +2,7 @@
 
 namespace TurFramework\Views;
 
-class View
+class ViewFactory
 {
 
     private $data = [];
@@ -14,13 +14,6 @@ class View
         $this->viewPath = $viewPath;
     }
 
-    /**
-     * Add a piece of data to the view.
-     *
-     * @param  string|array  $key
-     * @param  mixed  $value
-     * @return $this
-     */
     public function with($key, $value = null)
     {
         // Merge data if an array is provided
