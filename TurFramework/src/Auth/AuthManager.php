@@ -23,7 +23,11 @@ class AuthManager
     {
         $name = $name ?: $this->getDefaultDriver();
 
-        return  $this->guards[$name] = $this->resolve($name);
+        if (!isset($this->guards[$name])) {
+            $this->guards[$name] = $this->resolve($name);
+        }
+
+        return $this->guards[$name];
     }
 
     public function resolve($name)
@@ -35,6 +39,9 @@ class AuthManager
         $garud = new Authentication($name, $this->app->make('session'), $authProvider);
 
         return $garud;
+    }
+    private function storeGaurd()
+    {
     }
     /**
      * Dynamically call the default driver instance.

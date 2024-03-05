@@ -48,8 +48,8 @@ class Connector
      */
     protected function createPdoConnection($dsn, $username, $password, $options): \PDO
     {
-        $prdo = new PDO($dsn, $username, $password, $options);
+        $pdo = new PDO($dsn, $username, $password, $options);
 
-        return $prdo;
+        return $pdo;
     }
 }
