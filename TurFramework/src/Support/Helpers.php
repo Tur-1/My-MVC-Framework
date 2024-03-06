@@ -12,6 +12,7 @@ if (!function_exists('app')) {
 
     function app($abstract = null)
     {
+
         if (is_null($abstract)) {
             return Container::getInstance();
         }
@@ -142,7 +143,18 @@ if (!function_exists('get_files_in_directory')) {
         return $files;
     }
 }
-
+if (!function_exists('asset')) {
+    /**
+     * Gets the path to the application directory.
+     *
+     * @param string $path
+     * @return string
+     */
+    function asset($path = '')
+    {
+        return app('url')->asset($path);
+    }
+}
 if (!function_exists('app_path')) {
     /**
      * Gets the path to the application directory.

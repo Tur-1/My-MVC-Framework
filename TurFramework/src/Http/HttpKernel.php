@@ -54,6 +54,7 @@ class HttpKernel
 
     public function sendRequestThroughRouter($request)
     {
+
         $this->router->resolve($request);
     }
 

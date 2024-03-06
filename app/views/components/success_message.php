@@ -1,11 +1,11 @@
 <?php if (session()->has('success')) : ?>
-    <div class="alert alert-success" role="alert">
+    <div id="alert_success" class="alert alert-success" role="alert">
         <?= session('success') ?>
     </div>
-<?php endif ?>
-
-<script>
+    <script >
     setTimeout(() => {
-        document.querySelector('.alert-success').style.display = 'none';
+        document.getElementById('alert_success').style.display = 'none';
     }, 1500);
 </script>
+<?php endif ?>
+

@@ -7,14 +7,6 @@ use TurFramework\Validation\MessageBag;
 
 class Session
 {
-
-    /**
-     * The session ID.
-     *
-     * @var string
-     */
-    protected $id;
-
     /**
      * The session name.
      *
@@ -28,6 +20,7 @@ class Session
      * @var array
      */
     protected $attributes = [];
+
 
 
     /**
@@ -65,15 +58,7 @@ class Session
         $this->name = $name;
     }
 
-    /**
-     * Get the current session ID.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+
 
     /**
      * Load the session data from the handler.
@@ -96,7 +81,7 @@ class Session
     {
         $this->flush();
 
-        app('session.manager')->regenerateSessionId();
+        $this->regenerateSessionId();
 
         $this->regenerateToken();
     }
@@ -249,11 +234,19 @@ class Session
      */
     public function regenerate()
     {
-        app('session.manager')->regenerateSessionId();
+        $this->regenerateSessionId();
 
         $this->regenerateToken();
     }
-
+    /**
+     * Get a new, random session ID.
+     *
+     * @return string
+     */
+    protected function regenerateSessionId()
+    {
+        return  session_regenerate_id(true);
+    }
     /**
      * Make the value available for the next request.
      * (Flash message)

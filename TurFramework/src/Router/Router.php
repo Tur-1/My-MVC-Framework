@@ -115,6 +115,7 @@ class Router
      */
     public function resolve($request)
     {
+
         $route = $this->routes->match($request->getPath(), $request->getMethod());
 
         MiddlewareResolver::handle($this->middleware, $this->routeMiddleware, $route, $request);

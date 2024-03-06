@@ -34,6 +34,7 @@ class Container
             static::$instance = new static;
         }
 
+
         return static::$instance;
     }
 

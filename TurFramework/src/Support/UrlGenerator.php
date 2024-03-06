@@ -36,6 +36,26 @@ class UrlGenerator
 
         $this->request = $request;
     }
+
+    public function asset($path)
+    {
+        return $path;
+    }
+    /**
+     * Determine if the given path is a valid URL.
+     *
+     * @param  string  $path
+     * @return bool
+     */
+    public function isValidUrl($path)
+    {
+        if (!preg_match('~^(#|//|https?://|(mailto|tel|sms):)~', $path)) {
+            return filter_var($path, FILTER_VALIDATE_URL) !== false;
+        }
+
+        return true;
+    }
+
     /**
      * Get the full URL for the current request.
      *

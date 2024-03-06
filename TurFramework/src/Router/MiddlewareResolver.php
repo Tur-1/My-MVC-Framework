@@ -15,7 +15,6 @@ class MiddlewareResolver
         $instance->resolveGlobalMiddleware($globalMiddleware, $request);
 
         if (!is_null($route['middleware'])) {
-
             $instance->resolveRouteMiddleware($route, $routeMiddleware, $request);
         }
     }
@@ -38,6 +37,7 @@ class MiddlewareResolver
     private function resolveGlobalMiddleware($globalMiddleware, $request)
     {
         foreach ($globalMiddleware as $value) {
+
             $middlewareClass = new $value();
             if (!method_exists($middlewareClass, 'handle')) {
                 throw RouteException::methodDoesNotExist($value, 'handle');

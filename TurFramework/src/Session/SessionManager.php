@@ -15,11 +15,14 @@ class SessionManager
 
     public function start()
     {
+
+
         ini_set('session.use_only_cookies', 1);
 
         $this->setCookieParams();
 
         $this->setSessionName();
+
 
         session_start();
 
@@ -39,21 +42,11 @@ class SessionManager
 
         session_set_cookie_params(
             [
+                'lifetime' =>   60 * 60 * 24 * 365 * 3,
                 'secure' =>  $this->config['secure'] ?? true,
                 'httponly' =>  $this->config['http_only'] ?? true,
                 'samesite' => $this->config['samesite'] ?? 'lax'
             ]
         );
-    }
-
-    /**
-     * Generate a new session ID for the session.
-     *
-     * @param  bool  $destroy
-     * @return bool
-     */
-    public function regenerateSessionId()
-    {
-        session_regenerate_id(true);
     }
 }

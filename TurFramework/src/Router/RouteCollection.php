@@ -187,6 +187,7 @@ class RouteCollection
     private function getRoute($path)
     {
         $route = null;
+
         foreach ($this->routes as $key => $routeDetails) {
 
             // Replace route parameters with regex patterns to match dynamic values

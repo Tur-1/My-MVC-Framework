@@ -33,6 +33,7 @@ class Request
      */
     public function getUri(): string
     {
+
         $uri = urldecode(
             parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH)
         );

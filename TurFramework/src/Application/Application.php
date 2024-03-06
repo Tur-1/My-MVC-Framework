@@ -24,7 +24,7 @@ class Application extends Container
     public const VERSION = '1.0';
 
 
-    protected function __construct()
+    public function __construct()
     {
 
         static::setInstance($this);
@@ -45,10 +45,6 @@ class Application extends Container
         $this->registerBaseServiceProviders();
     }
 
-    public static function create()
-    {
-        return static::getInstance();
-    }
 
     public function dispatch($request)
     {
