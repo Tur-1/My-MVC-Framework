@@ -37,11 +37,12 @@ In this framework you will get all the basic features of a web application needs
 
 We can easily setup and install this application with some few steps. Before using this application, minimum PHP 8.2 version is needed.
 
-- Step 1: git clone https://github.com/Tur-1/Tur-Framework.git or download this application
-- Step 2: Go to project directory with this command cd Tur-Framework and run composer update
-- Step 3: Copy .env.example to .env
-- Step 4: cd public
-- Step 5: Start the development server by running this command php -S localhost:8000
+- Step 1: git clone https://github.com/Tur-1/Tur-Framework.git 
+- Step 2: cd Tur-Framework
+- Step 3: run this command `composer install`
+- Step 4: Copy `.env.example` to `.env`
+- Step 5: cd public
+- Step 6: run this command `php -S localhost:8000`
 
 <a name="section-3"></a>
 
