@@ -16,9 +16,6 @@ class SessionManager
     public function start()
     {
 
-
-        ini_set('session.use_only_cookies', 1);
-
         $this->setCookieParams();
 
         $this->setSessionName();
@@ -42,11 +39,27 @@ class SessionManager
 
         session_set_cookie_params(
             [
-                'lifetime' =>   60 * 60 * 24 * 365 * 3,
+                'lifetime' =>  $this->getSessionLifeTime(),
+                'path' =>  $this->config['path'] ?? '/',
+                'domain' =>  $this->config['domain'],
                 'secure' =>  $this->config['secure'] ?? true,
                 'httponly' =>  $this->config['http_only'] ?? true,
                 'samesite' => $this->config['samesite'] ?? 'lax'
             ]
         );
+    }
+
+    private function getSessionLifeTime()
+    {
+
+        if ($this->config['expire_on_close']) {
+            return 0;
+        }
+
+        if ($this->config['expire_on_close'] == false && !$this->config['lifetime']) {
+            return 60 * 60 * 24 * 365 * 2;
+        }
+
+        return $this->config['lifetime'];
     }
 }
