@@ -34,32 +34,35 @@ class Rule
 
     public function unique($field, $table, $cloumn = null)
     {
-        [$connection, $table] = $this->resolveTable($table);
+        if ($this->required($field)) {
 
-        $cloumn = $this->resolveCloumn($field, $cloumn);
+            [$connection, $table] = $this->resolveTable($table);
 
-        if (class_exists($table)) {
+            $cloumn = $this->resolveCloumn($field, $cloumn);
 
-            $model = new $table;
-            if ($model instanceof Model) {
+            if (class_exists($table)) {
 
-                $exstis = $model->connection($connection)->where($cloumn, $this->data[$field])->exists();
+                $model = new $table;
+                if ($model instanceof Model) {
+
+                    $exstis = $model->connection($connection)->where($cloumn, $this->data[$field])->exists();
+                }
             }
-        }
 
-        if (!str_contains($table, '\\') || !class_exists($table)) {
-            $exstis = app('db')
-                ->makeConnection($connection)
-                ->table($table)
-                ->where($cloumn, $this->data[$field])
-                ->exists();
-        }
+            if (!str_contains($table, '\\') || !class_exists($table)) {
+                $exstis = app('db')
+                    ->makeConnection($connection)
+                    ->table($table)
+                    ->where($cloumn, $this->data[$field])
+                    ->exists();
+            }
 
-        if ($exstis) {
-            return  false;
-        }
+            if ($exstis) {
+                return  false;
+            }
 
-        return true;
+            return true;
+        }
     }
 
     public function confirmed($field)

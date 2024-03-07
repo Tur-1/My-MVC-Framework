@@ -212,6 +212,20 @@ class RouteCollection
         }
         return $route;
     }
+
+
+    /**
+     * Get the optional parameter names for the route.
+     *
+     * @return array
+     */
+    protected function getOptionalParameterNames($path)
+    {
+        preg_match_all('/\{(\w+?)\?\}/',  $path, $matches);
+
+        return isset($matches[1]) ? array_fill_keys($matches[1], null) : [];
+    }
+
     /**
      * Get a given parameter from the route.
      *

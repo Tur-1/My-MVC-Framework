@@ -5,7 +5,7 @@ namespace TurFramework\Exceptions;
 class HttpException extends \Exception
 {
     protected $message;
-    protected $code;
+    protected $code = 404;
 
 
     public function getMessageForStatusCode($statusCode)

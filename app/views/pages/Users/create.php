@@ -7,7 +7,7 @@
 </div>
 <div class="card shadow-sm">
     <div class="card-body">
-        <form class="row g-3" action="<?php echo route('users.store') ?>" method="post">
+        <form class="row g-3" action="<?php echo route('users.store') ?>" method="post" enctype="multipart/form-data">
             <?= csrf_field() ?>
             <div class="mb-2">
                 <label for="FormControlInput1" class="form-label">Name</label>
@@ -39,6 +39,7 @@
                     <?= errors()->first('password_confirmation') ?>
                 </div>
             </div>
+
             <div class="col-12">
                 <button class="btn btn-md btn-dark" type="submit">create</button>
             </div>
