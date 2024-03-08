@@ -6,7 +6,7 @@ namespace TurFramework\Application;
 
 use TurFramework\Container\Container;
 use TurFramework\Auth\AuthServiceProvider;
-use TurFramework\Exceptions\HttpException;
+use TurFramework\Http\HttpException;
 use TurFramework\Configurations\ConfigLoader;
 use TurFramework\Exceptions\ExceptionHandler;
 use TurFramework\Router\RoutingServiceProvider;
@@ -29,11 +29,12 @@ class Application extends Container
 
         static::setInstance($this);
 
+
+        // Register exceptions
+        ExceptionHandler::registerExceptions();
+
         // 1- laod Configuration and bind config into the Container 
         $this->loadConfiguration();
-
-        // Register exceptions with the ExceptionHandler
-        ExceptionHandler::registerExceptions();
 
         // 2- register Core Container Aliases
         $this->registerCoreContainerAliases();
@@ -172,7 +173,6 @@ class Application extends Container
             'view' => \TurFramework\Views\ViewFactory::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
-
 
         ];
     }

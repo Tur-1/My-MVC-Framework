@@ -327,7 +327,7 @@ if (!function_exists('abort_if')) {
      * @param string $message
      * @return void
      *
-     * @throws \TurFramework\Exceptions\HttpException
+     * @throws \TurFramework\Http\HttpException
      */
     function abort_if($condition, $code = 404, $message = '')
     {

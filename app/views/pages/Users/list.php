@@ -11,7 +11,6 @@
     </div>
 </div>
 <div class="row">
-
     <div class="card shadow-sm">
         <div class="card-body">
             <table class="table">

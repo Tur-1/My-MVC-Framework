@@ -2,6 +2,8 @@
 
 namespace TurFramework\Http;
 
+use TurFramework\Exceptions\ExceptionHandler;
+
 class HttpKernel
 {
 

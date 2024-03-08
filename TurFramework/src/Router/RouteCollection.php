@@ -45,10 +45,9 @@ class RouteCollection
         $this->routes[$path] = $this->createNewRoute($method, $path, $this->getAction($action), $name, $middleware);
     }
 
-    public function getRoutesFromCache($routes)
+    public function setCacheRoutes($routes)
     {
         $this->routes = $routes;
-        $this->refreshNameList();
     }
 
     /**

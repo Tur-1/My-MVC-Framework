@@ -2,51 +2,34 @@
 
 namespace TurFramework\Exceptions;
 
-use Error;
-use DateError;
-use Exception;
-use Throwable;
-use TypeError;
-use ParseError;
-use CompileError;
 use ErrorException;
-use RuntimeException;
-use TurFramework\Exceptions\HttpException;
+use TurFramework\Http\HttpException;
 use TurFramework\Validation\ValidationException;
 
 class ExceptionHandler
 {
-    private static $Exceptions = [
-        DateError::class,
-        CompileError::class,
-        Exception::class,
-        Error::class,
-        ErrorException::class,
-        Throwable::class,
-        ParseError::class,
-        TypeError::class,
-        RuntimeException::class,
-
-    ];
 
 
     public static function registerExceptions()
     {
-
-
-        if (config('app.debug') == 'true') {
-            set_error_handler([self::class,  'errorHandler']);
-            set_exception_handler([self::class,  'customExceptionHandler']);
-            register_shutdown_function([self::class, 'handleShutdown']);
-        } else {
-
-            try {
-                throw new HttpException(code: 500);
-            } catch (HttpException $ex) {
-                self::handleHttpException($ex);
-            }
+        if (env('APP_DEBUG') == 'false') {
+            self::customExceptionHandler(new HttpException());
         }
+
+        set_error_handler([self::class,  'errorHandler']);
+        set_exception_handler([self::class,  'customExceptionHandler']);
+        register_shutdown_function([self::class, 'handleShutdown']);
     }
+    public static function customExceptionHandler($exception)
+    {
+
+        return  match (true) {
+            $exception instanceof HttpException => self::handleHttpException($exception),
+            $exception instanceof ValidationException => self::handleValidationExceptionResponse($exception),
+            default => self::getDefaultExceptionHandler($exception)
+        };
+    }
+
     /**
      * Handle the PHP shutdown event.
      *
@@ -57,12 +40,7 @@ class ExceptionHandler
 
         if (!is_null($error = error_get_last()) && static::isFatal($error['type'])) {
 
-            try {
-                throw new ErrorException($error['message'], 0, $error['type'], $error['file'],  $error['line']);
-            } catch (\ErrorException $exception) {
-
-                self::getDefaultExceptionHandler($exception);
-            }
+            throw new ErrorException($error['message'], 0, $error['type'], $error['file'],  $error['line']);
         }
     }
 
@@ -83,20 +61,6 @@ class ExceptionHandler
             throw new ErrorException($message, 0, $severity, $file, $line);
         }
     }
-    public static function customExceptionHandler($exception)
-    {
-
-
-        if ($exception instanceof HttpException) {
-            return  self::handleHttpException($exception);
-        }
-
-        if ($exception instanceof ValidationException) {
-            return self::handleValidationExceptionResponse($exception);
-        }
-
-        self::getDefaultExceptionHandler($exception);
-    }
 
 
     private static function handleValidationExceptionResponse($exception)
@@ -108,28 +72,24 @@ class ExceptionHandler
     }
     private static function getDefaultExceptionHandler($exception)
     {
-        foreach (self::$Exceptions as $key => $class) {
-            if ($exception instanceof $class) {
-                [
-                    $errorData,
-                    $primary_message,
-                    $secondary_message,
-                    $multipleMessages,
-                    $className
-                ] = DefaultExceptionHandler::handle($exception);
 
-                break;
-            }
-        }
+        [
+            $errorData,
+            $primary_message,
+            $secondary_message,
+            $multipleMessages,
+            $className
+        ] = DefaultExceptionHandler::handle($exception);
+
+
 
         ob_end_clean();
 
         ob_start();
-        include 'views/ExceptionView.php';
+        require 'views/ReportExceptionView.php';
         $errorPageContent = ob_get_clean();
 
         echo $errorPageContent;
-
 
         exit();
     }
@@ -143,7 +103,7 @@ class ExceptionHandler
         http_response_code($code);
 
         ob_start();
-        include 'views/HttpResponseExceptionView.php';
+        require 'views/HttpResponseExceptionView.php';
         $output = ob_get_clean();
         echo $output;
         exit();

@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use TurFramework\Exceptions\HttpException;
+use TurFramework\Http\HttpException;
 
 class UserExeption extends HttpException
 {

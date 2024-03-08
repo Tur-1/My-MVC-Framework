@@ -2,7 +2,7 @@
 
 namespace TurFramework\Router\Exceptions;
 
-use TurFramework\Exceptions\HttpException;
+use TurFramework\Http\HttpException;
 
 class RouteNotFoundException extends HttpException
 {

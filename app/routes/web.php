@@ -1,6 +1,5 @@
 <?php
 
-use TurFramework\Http\Request;
 use TurFramework\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;

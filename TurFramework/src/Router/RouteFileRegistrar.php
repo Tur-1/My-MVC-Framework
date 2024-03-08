@@ -53,12 +53,10 @@ class RouteFileRegistrar
 
         if ($this->routesAreCached()) {
             $this->router->getRouteCollection()
-                ->getRoutesFromCache($this->loadCachedRoutes());
+                ->setCacheRoutes($this->loadCachedRoutes());
         } else {
-
             $this->registerRoutes($routes);
-
-            // Cache::store($this->getCachedRoutesPath(), $this->router->getRouteCollection()->getRoutes());
+            $this->router->getRouteCollection()->refreshNameList();
         }
     }
     protected function getCachedRoutesPath()
@@ -82,8 +80,7 @@ class RouteFileRegistrar
      */
     protected function loadCachedRoutes()
     {
-
-        return Cache::loadFile($this->getCachedRoutesPath());
+        return require base_path($this->getCachedRoutesPath());
     }
 
     protected function getRoutesFiles($routesPath)
