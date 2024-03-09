@@ -63,7 +63,7 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $user = User::query()->where('id', 534534)->first();
+        $user = User::query()->where('id', $id)->first();
 
         if (is_null($user)) return;
 
