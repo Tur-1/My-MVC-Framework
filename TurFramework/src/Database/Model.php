@@ -3,10 +3,11 @@
 namespace TurFramework\Database;
 
 use TurFramework\Database\Concerns\ModelAttributes;
+use TurFramework\Database\Concerns\ModelTimestamps;
 
 abstract class Model
 {
-    use ModelAttributes;
+    use ModelAttributes, ModelTimestamps;
 
     /**
      * @var mixed manager
@@ -30,6 +31,14 @@ abstract class Model
      * @var bool
      */
     public $incrementing = true;
+
+    /**
+     * Indicates if the model was inserted during the object's lifecycle.
+     *
+     * @var bool
+     */
+    public $wasRecentlyCreated = false;
+
     /**
      * The primary key for the model.
      *
@@ -79,14 +88,12 @@ abstract class Model
      * @param  string|null  $connection
      * @return static
      */
-    public function newFromBuilder($attributes = [], $connection = null)
+    protected function newFromBuilder($attributes = [], $connection = null)
     {
 
-        $model = $this->newInstance([], true);
+        $model = $this->newInstance([], $connection, true);
 
         $model->setRawAttributes($attributes);
-
-        $model->setConnection($connection);
 
         return $model;
     }
@@ -97,14 +104,14 @@ abstract class Model
      * @param  bool  $exists
      * @return static
      */
-    public function newInstance($attributes = [], $exists = false)
+    public function newInstance($attributes = [], $connection = null, $exists = false)
     {
 
         $model = new static;
 
         $model->exists = $exists;
 
-        $model->setConnection($this->getConnectionName());
+        $model->setConnection($connection ?? $this->getConnectionName());
 
         $model->setTable($this->getTable());
 
@@ -113,29 +120,31 @@ abstract class Model
         return $model;
     }
 
-    public function fillModelAttributes()
-    {
-    }
     public function update(array $attributes)
     {
         return $this->fill($attributes)->save();
     }
     public function delete()
     {
-        if (is_null($this->getKeyName())) {
+        if (is_null($this->getPrimaryKeyName())) {
             throw new \LogicException('No primary key defined on model.');
         }
+
         if (!$this->exists) {
             return;
         }
 
-        $this->setKeysForSaveQuery($this->newQuery())->delete();
+        $query = $this->newQuery();
+
+        $this->setKeysForSaveQuery($query)->delete();
 
         $this->exists = false;
+
+        return true;
     }
     protected function setKeysForSaveQuery($query)
     {
-        $query->where($this->getKeyName(), '=', $this->getKey());
+        $query->where($this->getPrimaryKeyName(), '=', $this->getAttribute($this->getPrimaryKeyName()));
 
         return $query;
     }
@@ -145,48 +154,64 @@ abstract class Model
         $query = $this->newQuery();
 
         if ($this->exists) {
-            $saved = $this->performUpdate($query);
+            $savedModel = $this->performUpdate($query);
         } else {
-            $saved = $this->performInsert($query);
+            $savedModel = $this->performInsert($query);
         }
 
-        return $saved;
+        return $savedModel;
     }
     private function performUpdate($query)
     {
-        $saved = $this->setKeysForSaveQuery($query)->performUpdate($this->getAttributes());
+        if ($this->usesTimestamps()) {
+            $this->updateTimestamps();
+        }
 
-        return  $saved;
+        $saved = $this->setKeysForSaveQuery($query)
+            ->performUpdate($this->getAttributes());
+
+        return $saved;
     }
-    /**
-     * Get the value of the model's primary key.
-     *
-     * @return mixed
-     */
-    protected function getKey()
-    {
-        return $this->getAttribute($this->getKeyName());
-    }
+
     private function performInsert($query)
     {
+
+        if ($this->usesTimestamps()) {
+            $this->updateTimestamps();
+        }
         $attributes = $this->getAttributes();
 
-        $id = $query->performInsert($attributes);
-
-        $keyName = $this->getKeyName();
-
-        $this->setAttribute($keyName, $id);
+        if ($this->isAutoIncrement()) {
+            $this->insertAndSetId($query, $attributes);
+        } else {
+            $query->insert($attributes);
+        }
 
         $this->exists = true;
 
+        $this->wasRecentlyCreated = true;
+
         return $this;
+    }
+    /**
+     * Insert the given attributes and set the ID on the model.
+     *
+     * @param  $query
+     * @param  array  $attributes
+     * @return void
+     */
+    protected function insertAndSetId($query, $attributes)
+    {
+        $id = $query->insertAndGetId($attributes);
+
+        $this->setAttribute($this->getPrimaryKeyName(), $id);
     }
     /**
      * Get the value indicating whether the IDs are incrementing.
      *
      * @return bool
      */
-    public function getIncrementing()
+    public function isAutoIncrement()
     {
         return $this->incrementing;
     }
@@ -302,7 +327,7 @@ abstract class Model
      *
      * @return string
      */
-    public function getKeyName()
+    public function getPrimaryKeyName()
     {
         return $this->primaryKey;
     }
@@ -318,29 +343,5 @@ abstract class Model
         $this->primaryKey = $key;
 
         return $this;
-    }
-
-    /**
-     * Handle dynamic method calls into the model.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        return $this->$method(...$parameters);
-    }
-
-    /**
-     * Handle dynamic static method calls into the model.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        return (new static)->$method(...$parameters);
     }
 }

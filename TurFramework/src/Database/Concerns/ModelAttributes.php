@@ -26,28 +26,44 @@ trait ModelAttributes
     protected function setAttribute($key, $value)
     {
 
-        $method = 'set' . ucfirst($key) . 'Attribute';
-        if (method_exists($this, $method)) {
+        if ($this->hasMutator($key)) {
+            $method = $this->getMethodNameForAttribute($key);
             return $this->$method($value);
         }
 
         $this->attributes[$key] = $value;
 
-
         return $this;
+    }
+
+    /**
+     * Determine if a get|set mutator exists for an attribute.
+     *
+     * @param  string  $key
+     * @param  string  $method
+     * @return bool
+     */
+    private function hasMutator($key, $method = 'set')
+    {
+        return method_exists($this, $method . ucfirst($key) . 'Attribute');
+    }
+
+    private function getMethodNameForAttribute($key, $method = 'set')
+    {
+        return  $method . ucfirst($key) . 'Attribute';
     }
 
     protected function getAttribute($key)
     {
+        if (array_key_exists($key, $this->attributes) && $this->hasMutator($key, 'get')) {
+            $method = $this->getMethodNameForAttribute($key, 'get');
 
-        if (array_key_exists($key, $this->attributes)) {
-            $method = 'get' . ucfirst($key) . 'Attribute';
             $value = $this->attributes[$key];
-            if (method_exists($this, $method)) {
-                return $this->$method($value);
-            }
-            return  $value;
+
+            return $this->$method($value);
         }
+
+        return $this->attributes[$key];
     }
 
     protected function fill($attributes)
@@ -89,6 +105,8 @@ trait ModelAttributes
 
         return $attributes;
     }
+
+
     /**
      * Get all of the current attributes on the model.
      *

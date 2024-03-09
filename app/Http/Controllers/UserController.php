@@ -7,7 +7,6 @@ use App\Models\User;
 use TurFramework\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use TurFramework\Http\HttpException;
 
 class UserController extends Controller
 {
@@ -15,7 +14,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $users = User::query()->get();
+        $users = User::query()->select()->get();
 
         return view('pages.Users.list')->with('users', $users);
     }
@@ -33,7 +32,7 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        User::query()->create($validatedRequest);
+        $user = User::query()->create($validatedRequest);
 
         return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');
@@ -64,9 +63,14 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $user = User::query()->where('id', $id)->first();
+        $user = User::query()->where('id', 534534)->first();
+
+        if (is_null($user)) return;
 
         $user->delete();
+
+        if (!$user->exists) {
+        }
 
         return redirect()->back()
             ->with('success', 'User was deleted successfully.');
