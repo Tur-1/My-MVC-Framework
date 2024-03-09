@@ -15,7 +15,6 @@ class DatabaseManager
      * @var array $connections
      */
     protected static $connections = [];
-
     /**
      * make database connection
      * @return \TurFramework\Database\Contracts\DatabaseManagerInterface

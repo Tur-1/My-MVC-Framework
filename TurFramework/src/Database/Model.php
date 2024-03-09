@@ -249,11 +249,12 @@ abstract class Model
     {
         return $this->table ?? pluralStudly(class_basename($this));
     }
+
     /**
      * Create a new query for the model.
      * @return \TurFramework\Database\Contracts\DatabaseManagerInterface
      */
-    private function newQuery()
+    public function newQuery()
     {
         return $this->getManager()->setModel($this);
     }

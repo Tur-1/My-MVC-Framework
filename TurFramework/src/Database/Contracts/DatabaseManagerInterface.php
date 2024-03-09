@@ -195,7 +195,6 @@ interface DatabaseManagerInterface
      */
     public function orderBy($column, $direction = 'ASC'): self;
 
-
     /**
      * Sets the model instance for the query.
      *

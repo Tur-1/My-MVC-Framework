@@ -7,6 +7,7 @@ use App\Models\User;
 use TurFramework\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use TurFramework\Facades\DB;
 
 class UserController extends Controller
 {
@@ -14,8 +15,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $users = User::query()->select()->get();
-
+        $users = User::query()->get();
         return view('pages.Users.list')->with('users', $users);
     }
 
