@@ -21,8 +21,6 @@ class Admin extends Model
     ];
 
 
-
-
     /**
      * Set the user's Password
      *
@@ -31,7 +29,7 @@ class Admin extends Model
      */
     protected function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::password($value);
+        $this->attributes['password'] = Hash::isHashed($value) ? $value : Hash::password($value);
     }
 
     /**

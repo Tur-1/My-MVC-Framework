@@ -2,6 +2,8 @@
 
 namespace TurFramework\Views;
 
+use TurFramework\Exceptions\ExceptionHandler;
+
 class View
 {
 
@@ -73,12 +75,19 @@ class View
         }
 
         ob_start();
-
-        extract($this->data, EXTR_SKIP);
-
-        include $view;
-
-        return (string) ob_get_flush();
+    
+        try {
+            extract($this->data, EXTR_SKIP);
+    
+            include $view;
+    
+            $content = ob_get_clean();
+            echo $content; 
+        } catch (\Exception $e) {
+        
+            ExceptionHandler::customExceptionHandler($e);
+        }
+        
     }
 
 

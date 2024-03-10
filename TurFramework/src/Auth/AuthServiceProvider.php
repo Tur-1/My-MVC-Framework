@@ -22,6 +22,5 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->app->bind('auth', fn ($app) => new AuthManager($app));
 
-        $this->app->bind('auth.guard', fn ($app) =>  $this->app->make('auth')->guard());
     }
 }

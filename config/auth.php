@@ -3,7 +3,7 @@
 return [
 
 
-    'defaults' => [
+    'default' => [
         'guard' => 'users',
     ],
 

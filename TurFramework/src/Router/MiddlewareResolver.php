@@ -21,16 +21,18 @@ class MiddlewareResolver
     private function resolveRouteMiddleware($route, $routeMiddleware, $request)
     {
 
-        foreach ($route['middleware'] as $key => $value) {
-            if (!isset($routeMiddleware[$value])) {
-                throw RouteException::targetClassDoesNotExist($value);
+        foreach ($route['middleware'] as  $middleware) {
+
+            if (!isset($routeMiddleware[$middleware])) {
+                throw RouteException::targetClassDoesNotExist($middleware);
             }
 
-            $middlewareClass = new $routeMiddleware[$value]();
+            $middlewareClass = new $routeMiddleware[$middleware]();
 
             if (!method_exists($middlewareClass, 'handle')) {
-                throw RouteException::methodDoesNotExist($routeMiddleware[$value], 'handle');
+                throw RouteException::methodDoesNotExist($routeMiddleware[$middleware], 'handle');
             }
+
             $middlewareClass->handle($request);
         }
     }

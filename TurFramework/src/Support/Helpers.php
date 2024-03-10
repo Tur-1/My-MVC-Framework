@@ -30,7 +30,10 @@ if (!function_exists('auth')) {
      */
     function auth($guard = null)
     {
-
+        if(!is_null($guard)){
+            return app('auth')->guard($guard);
+        }
+        
         return app('auth');
     }
 }

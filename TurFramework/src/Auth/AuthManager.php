@@ -35,14 +35,12 @@ class AuthManager
         $config = $this->getConfig($name);
 
         $authProvider = new AuthProvider($config);
-
+ 
         $garud = new Authentication($name, $this->app->make('session'), $authProvider);
 
         return $garud;
     }
-    private function storeGaurd()
-    {
-    }
+  
     /**
      * Dynamically call the default driver instance.
      *
@@ -66,6 +64,6 @@ class AuthManager
      */
     public function getDefaultDriver()
     {
-        return config('auth.defaults.guard');
+        return config('auth.default.guard');
     }
 }

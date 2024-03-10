@@ -16,6 +16,11 @@
                 <li class="nav-item">
                     <a href="<?= route('users.list') ?>" class="nav-link <?= request()->is(route('users.list') . '*') ? 'active ' : '' ?>">Users</a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?= route('admin.dashboard') ?>" class="nav-link">
+                        Admin Dashboard
+                    </a>
+                </li>
             </ul>
 
             <ul class="navbar-nav">

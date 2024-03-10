@@ -8,6 +8,7 @@ Route::get('/login', [AuthenticatedController::class, 'index'])
     ->middleware('guest')
     ->name('login');
 
+
 Route::post('/login/store', [AuthenticatedController::class, 'store'])
     ->middleware('guest')
     ->name('login.store');
