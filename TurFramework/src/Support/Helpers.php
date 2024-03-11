@@ -30,10 +30,10 @@ if (!function_exists('auth')) {
      */
     function auth($guard = null)
     {
-        if(!is_null($guard)){
+        if (!is_null($guard)) {
             return app('auth')->guard($guard);
         }
-        
+
         return app('auth');
     }
 }
@@ -168,6 +168,20 @@ if (!function_exists('app_path')) {
     function app_path($path = '')
     {
         return base_path('app/' . $path);
+    }
+}
+
+if (!function_exists('storage_path')) {
+    /**
+     * Gets the storage path of the application.
+     *
+     * @param string $path
+     * @return string
+     */
+    function storage_path($path = '')
+    {
+
+        return base_path('storage/' . $path);
     }
 }
 if (!function_exists('base_path')) {

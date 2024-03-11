@@ -95,7 +95,7 @@ class Request
     /**
      * Get the session associated with the request.
      *
-     * @return \TurFramework\Session\Store 
+     * @return \TurFramework\Session\Session 
      */
     public function session()
     {
@@ -104,7 +104,7 @@ class Request
     /**
      * Set the session instance on the request.
      *
-     * @param  \TurFramework\Session\Store $session
+     * @param  \TurFramework\Session\Session $session
      * @return void
      */
     public function setSession($session)

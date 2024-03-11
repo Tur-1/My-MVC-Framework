@@ -16,10 +16,12 @@ class SessionManager
     public function start()
     {
 
-        $this->setCookieParams();
 
         $this->setSessionName();
 
+        $this->setCookieParams();
+
+        $this->storeSessionFile();
 
         session_start();
 
@@ -29,13 +31,18 @@ class SessionManager
     public function setSessionName()
     {
 
-        session_name($this->config['session_name']);
+        session_name($this->config['name']);
 
-        $this->session->setName($this->config['session_name']);
+        $this->session->setName($this->config['name']);
     }
 
+    private function storeSessionFile()
+    {
+        session_save_path($this->config['files']);
+    }
     public function setCookieParams()
     {
+
 
         session_set_cookie_params(
             [

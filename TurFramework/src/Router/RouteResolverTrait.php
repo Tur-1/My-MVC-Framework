@@ -35,12 +35,15 @@ trait RouteResolverTrait
 
         $reflectorController = new \ReflectionClass($controller);
 
-        $parameters = $reflectorController->getMethod($method)?->getParameters() ?? [];
+        $controllerMethod = $reflectorController->getMethod($method);
 
         // Check if the method exists in the controller
         if (!$reflectorController->hasMethod($method)) {
             throw RouteException::methodDoesNotExist($reflectorController->getShortName(),  $method);
         }
+
+        $parameters = $controllerMethod->getParameters() ?? [];
+
 
         $resolvedDependencies = $this->resolveMethodDependencies($parameters);
 

@@ -6,9 +6,11 @@ return [
 
     'expire_on_close' => false,
 
-    'session_name' => strtolower(str_replace('', '_', env('APP_NAME', 'TurFramework') . '_session')),
+    'name' => strtolower(str_replace('', '_', env('APP_NAME', 'TurFramework') . '_session')),
 
     'path' => '/',
+
+    'files' => storage_path('framework/sessions'),
 
     'domain' => env('SESSION_DOMAIN', 'localhost'),
 
