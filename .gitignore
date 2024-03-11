@@ -1,4 +1,4 @@
 /.vscode
 /vendor
-/storage/*
+/storage/*.key
 .env
