@@ -33,6 +33,6 @@ class RegisterController
 
         Auth::login($user);
 
-        return redirect()->to(route('dashboard'))->with('success', "You're logged in!");
+        return redirect()->to(route('user.profile'))->with('success', "You're logged in!");
     }
 }

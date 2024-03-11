@@ -11,13 +11,13 @@ class AdminController extends Controller
 
     public function dashboard(Request $request)
     {
-        
+
         return view('pages.Admin.dashboard');
     }
 
     public function login()
     {
-        
+
         return view('pages.Admin.login');
     }
 

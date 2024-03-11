@@ -13,7 +13,7 @@
 - [Route Service Provider](#section-10)
 - [Global Middleware](#section-11)
 - [Route Middleware](#section-12)
-- [Views](#section-13)
+- [views](#section-13)
 - [Multiple Database Connections](#section-14)
 - [Models](#section-15)
 - [Inserting and Updating Models](#section-21)
@@ -469,7 +469,7 @@ Route::get('/about', [AboutController::class, 'index'])
 
 <a name="section-13"></a>
 
-## Views
+## views
  
 To render views ,use the global view helper like so
 
@@ -489,7 +489,7 @@ class HomeController extends Controller
 }
  ```
 
-Views may also be returned using the View facade:
+views may also be returned using the View facade:
 
  ```php
  

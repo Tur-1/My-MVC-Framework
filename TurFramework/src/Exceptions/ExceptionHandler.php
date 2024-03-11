@@ -72,8 +72,9 @@ class ExceptionHandler
     }
     private static function getDefaultExceptionHandler($exception)
     {
-    
-        ob_end_clean();
+
+
+        ob_clean();
         [
             $errorData,
             $primary_message,
@@ -82,17 +83,8 @@ class ExceptionHandler
             $className
         ] = DefaultExceptionHandler::handle($exception);
 
-        ob_clean();
-
-        
-        ob_start();
-
         include 'views/ReportExceptionView.php';
 
-        $errorPageContent = ob_get_clean();
-     
-        echo $errorPageContent;
-       
         exit();
     }
 

@@ -1,4 +1,4 @@
-<?php import('layouts.Header', [
+<?php import('layouts.frontend.Header', [
     'title' => 'about'
 ]); ?>
 
@@ -8,4 +8,4 @@
 
 
 
-<?php import('layouts.Footer'); ?>
+<?php import('layouts.frontend.Footer'); ?>

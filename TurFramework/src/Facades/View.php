@@ -5,10 +5,10 @@ namespace TurFramework\Facades;
 
 /**
 
- * @method static \TurFramework\Views\ViewFactory make($view, array $data = [])
- * @method \TurFramework\Views\View with($key, $value = null) 
+ * @method static \TurFramework\views\ViewFactory make($view, array $data = [])
+ * @method \TurFramework\views\View with($key, $value = null) 
  * 
- * @see \TurFramework\Views\ViewFactory
+ * @see \TurFramework\views\ViewFactory
  */
 class View extends Facade
 {

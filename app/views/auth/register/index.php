@@ -1,4 +1,4 @@
-<?php import('layouts.Header', ['title' => 'Register']); ?>
+<?php import('layouts.frontend.Header', ['title' => 'Register']); ?>
 
 <div class="row mb-3">
     <div class="d-flex align-items-center justify-content-between">
@@ -48,4 +48,4 @@
     </div>
 </div>
 
-<?php import('layouts.Footer'); ?>
+<?php import('layouts.frontend.Footer'); ?>

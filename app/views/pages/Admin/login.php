@@ -1,4 +1,4 @@
-<?php import('layouts.admin.Header', ['title' => 'Login']); ?> 
+<?php import('layouts.admin.Header', ['title' => 'Login']); ?>
 <div class="row mb-3">
     <div class="d-flex align-items-center justify-content-between">
         <h1>Login</h1>

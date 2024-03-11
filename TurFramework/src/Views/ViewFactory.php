@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\Views;
+namespace TurFramework\views;
 
 class ViewFactory
 {
@@ -12,11 +12,11 @@ class ViewFactory
      * @param array $data  
      * @throws ViewNotFoundException If the specified view file doesn't exist.
      * 
-     * @return \TurFramework\Views\View
+     * @return \TurFramework\views\View
      */
-    public function make($view, array $data = [])
+    public static function make($view, array $data = [])
     {
-        // Return a new instance of View
+
         return new View($view,  $data);
     }
 }

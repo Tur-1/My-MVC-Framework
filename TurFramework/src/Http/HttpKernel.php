@@ -2,6 +2,7 @@
 
 namespace TurFramework\Http;
 
+use Exception;
 use TurFramework\Exceptions\ExceptionHandler;
 
 class HttpKernel
@@ -56,8 +57,7 @@ class HttpKernel
 
     public function sendRequestThroughRouter($request)
     {
-
-        $this->router->resolve($request);
+        return  $this->router->resolve($request);
     }
 
 

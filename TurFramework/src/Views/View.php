@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\Views;
+namespace TurFramework\views;
 
 use TurFramework\Exceptions\ExceptionHandler;
 
@@ -69,25 +69,13 @@ class View
     {
         $view = $this->getViewPath($this->viewPath);
 
-        // Check if the view file exists
         if (!file_exists($view)) {
             throw ViewException::notFound($this->viewPath);
         }
 
-        ob_start();
-    
-        try {
-            extract($this->data, EXTR_SKIP);
-    
-            include $view;
-    
-            $content = ob_get_clean();
-            echo $content; 
-        } catch (\Exception $e) {
-        
-            ExceptionHandler::customExceptionHandler($e);
-        }
-        
+        extract($this->data, EXTR_SKIP);
+
+        include $view;
     }
 
 

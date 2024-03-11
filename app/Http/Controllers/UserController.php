@@ -7,7 +7,6 @@ use App\Models\User;
 use TurFramework\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use TurFramework\Facades\DB;
 
 class UserController extends Controller
 {
@@ -18,7 +17,11 @@ class UserController extends Controller
         $users = User::query()->get();
         return view('pages.Users.list')->with('users', $users);
     }
+    public function profile()
+    {
 
+        return view('pages.Users.profile');
+    }
     public function create()
     {
 
@@ -69,8 +72,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        if (!$user->exists) {
-        }
+
 
         return redirect()->back()
             ->with('success', 'User was deleted successfully.');

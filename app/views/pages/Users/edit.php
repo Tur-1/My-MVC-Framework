@@ -1,4 +1,4 @@
-<?php import('layouts.Header', ['title' => 'update']); ?>
+<?php import('layouts.frontend.Header', ['title' => 'update']); ?>
 
 <?php import('components.success_message') ?>
 

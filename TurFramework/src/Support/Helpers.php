@@ -192,7 +192,7 @@ if (!function_exists('view_path')) {
      */
     function view_path($path)
     {
-        return base_path('app/views/' . $path);
+        return base_path('app/Views/' . $path);
     }
 }
 if (!function_exists('config_path')) {
@@ -213,7 +213,7 @@ if (!function_exists('view')) {
      *
      * @param  string  $viewPath 
      * @param  array   $data
-     * @return \TurFramework\Views\View
+     * @return \TurFramework\views\View
      */
     function view($viewPath, array $data = [])
     {
@@ -263,7 +263,7 @@ if (!function_exists('import')) {
      *
      * @param  string  $viewPath  The path to the view to be rendered
      * @param  array   $data      Optional data to be passed to the view
-     * @return \TurFramework\Views\ViewFactory
+     * @return \TurFramework\views\ViewFactory
      */
     function import($viewPath, array $data = [])
     {

@@ -12,8 +12,7 @@ Route::get('/', [HomeController::class, 'index'])->name('homePage');
 
 Route::get('/about', [AboutController::class, 'index'])->name('aboutPage');
 
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
+ 
 
 Route::controller(UserController::class)->group(function () {
 
@@ -28,6 +27,8 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/users/update/{id}',  'update')->name('users.update');
 
     Route::delete('/users/{id}/delete',  'delete')->name('users.delete');
+
+    Route::get('/profile', 'profile')->middleware('auth')->name('user.profile');
 });
 
 

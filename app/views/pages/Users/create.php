@@ -1,4 +1,4 @@
-<?php import('layouts.Header', ['title' => 'create']); ?>
+<?php import('layouts.frontend.Header', ['title' => 'create']); ?>
 
 <div class="row mb-3">
     <div class="d-flex align-items-center justify-content-between">
@@ -47,4 +47,4 @@
     </div>
 </div>
 
-<?php import('layouts.Footer'); ?>
+<?php import('layouts.frontend.Footer'); ?>

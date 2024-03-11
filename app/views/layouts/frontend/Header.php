@@ -36,6 +36,6 @@
 </style>
 
 <body>
-    <?php import('layouts.navbar'); ?>
+    <?php import('layouts.frontend.navbar'); ?>
 
     <main class="container">

@@ -1,6 +1,6 @@
 <?php
 
-namespace TurFramework\Views;
+namespace TurFramework\views;
 
 use Exception;
 

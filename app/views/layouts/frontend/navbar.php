@@ -18,7 +18,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="<?= route('admin.dashboard') ?>" class="nav-link">
-                        Admin Dashboard
+                        Dashboard
                     </a>
                 </li>
             </ul>
@@ -31,7 +31,7 @@
                         </a>
                         <ul class="dropdown-menu ">
                             <li class="nav-item">
-                                <a class="dropdown-item" href="<?= route('dashboard') ?>">Dashboard</a>
+                                <a class="dropdown-item" href="<?= route('user.profile') ?>">Profile</a>
                             </li>
 
                             <li class="nav-item">

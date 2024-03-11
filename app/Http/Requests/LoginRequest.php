@@ -27,6 +27,7 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'email'],
             'password' => 'required',
         ];
+ 
     }
 
     public function authenticate()

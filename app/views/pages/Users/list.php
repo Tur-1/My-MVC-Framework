@@ -1,4 +1,4 @@
-<?php import('layouts.Header', ['title' => 'users']); ?>
+<?php import('layouts.frontend.Header', ['title' => 'users']); ?>
 
 
 <?php import('components.success_message') ?>
@@ -52,4 +52,4 @@
         </div>
     </div>
 </div>
-<?php import('layouts.Footer'); ?>
+<?php import('layouts.frontend.Footer'); ?>
