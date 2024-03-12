@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use TurFramework\Facades\Auth;
 use TurFramework\Http\Request;
 use TurFramework\Validation\ValidationException;
@@ -19,6 +20,11 @@ class AdminController extends Controller
     {
 
         return view('pages.Admin.login');
+    }
+    public function register()
+    {
+
+        return view('pages.Admin.register');
     }
 
     public function store(Request $request)
@@ -38,6 +44,27 @@ class AdminController extends Controller
             );
         }
 
+
+        return redirect()->to(route('admin.dashboard'))->with('success', "You're logged in!");
+    }
+
+    public function registerAdmin(Request $request)
+    {
+        $request->validate([
+            'name' => ['required'],
+            'email' => ['required', 'email', 'unique:' . Admin::class],
+            'password' => ['required', 'confirmed'],
+        ]);
+
+        $admin = Admin::query()->create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+
+
+
+        Auth::guard('admins')->login($admin);
 
         return redirect()->to(route('admin.dashboard'))->with('success', "You're logged in!");
     }

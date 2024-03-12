@@ -52,7 +52,12 @@ class HttpKernel
      */
     public function handle($request)
     {
-        $this->sendRequestThroughRouter($request);
+        try {
+            $this->sendRequestThroughRouter($request);
+            //code...
+        } catch (\Throwable $th) {
+            ExceptionHandler::customExceptionHandler($th);
+        }
     }
 
     public function sendRequestThroughRouter($request)
