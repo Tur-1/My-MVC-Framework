@@ -3,6 +3,7 @@
 namespace TurFramework\Router;
 
 use Closure;
+use TurFramework\Http\Request;
 use TurFramework\Router\Route;
 use TurFramework\Router\RouteCollection;
 use TurFramework\Router\MiddlewareResolver;
@@ -111,9 +112,9 @@ class Router
     }
     /**
      * Resolve the current request to find and handle route.
-     * 
+     * @param \TurFramework\Http\Request
      */
-    public function resolve($request)
+    public function resolve(Request $request)
     {
 
         $route = $this->routes->match($request->getPath(), $request->getMethod());
@@ -123,6 +124,10 @@ class Router
         Route::resolve($request, $route);
     }
 
+    public function domain(string $subdomain)
+    {
+        return $this->addRoute(self::METHOD_GET, $subdomain, $this->action);
+    }
     /**
      * Create a route group 
      *
@@ -223,12 +228,12 @@ class Router
      * @param string|null $name 
      * @return  $this;
      */
-    private function addRoute($method, $path, $action, $name = null)
+    private function addRoute($method, $path, $action)
     {
 
         $this->action[0] = $action;
 
-        $this->routes->addRoute($method, $path, $this->action, $name);
+        $this->routes->addRoute($method, $path, $this->action);
         return $this;
     }
 }

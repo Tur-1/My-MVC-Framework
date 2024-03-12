@@ -39,10 +39,10 @@ class RouteCollection
      * Add a route to the internal routes collection 
      *
      */
-    public function addRoute($method, $path, $action, $name = null, $middleware = null)
+    public function addRoute($method, $path, $action)
     {
         $this->route = $path;
-        $this->routes[$path] = $this->createNewRoute($method, $path, $this->getAction($action), $name, $middleware);
+        $this->routes[$path] = $this->createNewRoute($method, $path, $this->getAction($action));
     }
 
     public function setCacheRoutes($routes)
@@ -59,7 +59,7 @@ class RouteCollection
      *
      * @return array Returns an array representing the new route.
      */
-    public  function createNewRoute($method, $path, $action, $name = null, $middleware = null)
+    public  function createNewRoute($method, $path, $action)
     {
 
         return  [
@@ -68,8 +68,8 @@ class RouteCollection
             'controller' => $action['controller'],
             'action' =>  $action['action'],
             'parameters' => $this->extractRouteParameters($path),
-            'name' => $name,
-            'middleware' => $middleware,
+            'name' => null,
+            'middleware' => null,
         ];
     }
 

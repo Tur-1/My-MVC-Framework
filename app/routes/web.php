@@ -12,7 +12,7 @@ Route::get('/', [HomeController::class, 'index'])->name('homePage');
 
 Route::get('/about', [AboutController::class, 'index'])->name('aboutPage');
 
- 
+
 
 Route::controller(UserController::class)->group(function () {
 
