@@ -26,8 +26,7 @@ class MiddlewareResolver
             if (!isset($routeMiddleware[$middleware])) {
                 throw RouteException::targetClassDoesNotExist($middleware);
             }
-
-            $middlewareClass = new $routeMiddleware[$middleware]();
+            $middlewareClass = app()->make($routeMiddleware[$middleware]);
 
             if (!method_exists($middlewareClass, 'handle')) {
                 throw RouteException::methodDoesNotExist($routeMiddleware[$middleware], 'handle');
@@ -40,7 +39,7 @@ class MiddlewareResolver
     {
         foreach ($globalMiddleware as $value) {
 
-            $middlewareClass = new $value();
+            $middlewareClass = app()->make($value);
             if (!method_exists($middlewareClass, 'handle')) {
                 throw RouteException::methodDoesNotExist($value, 'handle');
             }

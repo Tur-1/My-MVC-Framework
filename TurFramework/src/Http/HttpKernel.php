@@ -3,6 +3,7 @@
 namespace TurFramework\Http;
 
 use Exception;
+use TurFramework\Router\Router;
 use TurFramework\Exceptions\ExceptionHandler;
 
 class HttpKernel
@@ -38,10 +39,9 @@ class HttpKernel
     protected $routeMiddleware = [];
 
 
-    public function __construct()
+    public function __construct(Router $router)
     {
-
-        $this->router = app('router');
+        $this->router = $router;
 
         $this->syncMiddlewareToRouter();
     }

@@ -2,20 +2,29 @@
 
 namespace TurFramework\Session;
 
+use TurFramework\Configurations\Repository;
+
 class SessionManager
 {
 
     protected $config;
     protected $session;
-    public function __construct($config, $session)
+    public function __construct(Repository $config, Session $session)
     {
+
         $this->config = $config['session'];
         $this->session = $session;
     }
 
     public function start()
     {
+        session_start();
 
+        $this->session->start();
+    }
+
+    public function setSessionConfig()
+    {
 
         $this->setSessionName();
 
@@ -23,12 +32,9 @@ class SessionManager
 
         $this->storeSessionFile();
 
-        session_start();
-
-        $this->session->start();
+        return $this;
     }
-
-    public function setSessionName()
+    private function setSessionName()
     {
 
         session_name($this->config['name']);
@@ -40,7 +46,7 @@ class SessionManager
     {
         session_save_path($this->config['files']);
     }
-    public function setCookieParams()
+    private function setCookieParams()
     {
 
 

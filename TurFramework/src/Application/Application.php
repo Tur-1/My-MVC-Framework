@@ -168,12 +168,10 @@ class Application extends Container
         return [
             'router' =>  \TurFramework\Router\Router::class,
             'session' => \TurFramework\Session\Session::class,
-            'router' =>  \TurFramework\Router\Router::class,
             'cache' => \TurFramework\Cache\Cache::class,
             'view' => \TurFramework\views\ViewFactory::class,
             'redirect' => \TurFramework\Router\Redirector::class,
             'request' => \TurFramework\Http\Request::class,
-
         ];
     }
 

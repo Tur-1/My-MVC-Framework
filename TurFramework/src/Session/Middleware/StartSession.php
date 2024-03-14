@@ -3,6 +3,7 @@
 namespace TurFramework\Session\Middleware;
 
 use TurFramework\Http\Request;
+use TurFramework\Session\SessionManager;
 
 class StartSession
 {
@@ -14,9 +15,9 @@ class StartSession
     protected $manager;
 
 
-    public function __construct()
+    public function __construct(SessionManager $sessionManager)
     {
-        $this->manager = app('session.manager');
+        $this->manager = $sessionManager;
     }
     /**
      * Handle an incoming request.
@@ -24,6 +25,6 @@ class StartSession
     public function handle(Request $request)
     {
 
-        $this->manager->start();
+        $this->manager->setSessionConfig()->start();
     }
 }

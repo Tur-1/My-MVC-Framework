@@ -10,9 +10,7 @@ class DatabaseServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->app->bind('database.manager', function () {
-            return new DatabaseManager();
-        });
+        $this->app->bind('database.manager', fn () => new DatabaseManager());
 
         Model::setDatabaseManager($this->app->make('database.manager'));
     }

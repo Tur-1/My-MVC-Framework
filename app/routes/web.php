@@ -5,7 +5,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('homePage');
@@ -34,15 +33,21 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(AdminController::class)->group(function () {
 
-    Route::get('/admin/dashboard',  'dashboard')->middleware('auth:admins')->name('admin.dashboard');
+    Route::get('/admin/dashboard',  'dashboard')
+        ->middleware('auth:admins')->name('admin.dashboard');
 
-    Route::post('/admin/logout', 'logout')->middleware('auth:admins')->name('admin.logout');
+    Route::post('/admin/logout', 'logout')
+        ->middleware('auth:admins')->name('admin.logout');
 
-    Route::get('/admin/login', 'login')->middleware('guest:admins')->name('admin.login');
+    Route::get('/admin/login', 'login')
+        ->middleware('guest:admins')->name('admin.login');
 
-    Route::get('/admin/register', 'register')->middleware('guest:admins')->name('admin.register');
+    Route::get('/admin/register', 'register')
+        ->middleware('guest:admins')->name('admin.register');
 
-    Route::post('/admin/register/store', 'registerAdmin')->middleware('guest:admins')->name('admin.register.store');
+    Route::post('/admin/register/store', 'registerAdmin')
+        ->middleware('guest:admins')->name('admin.register.store');
 
-    Route::post('/admin/login/store', 'store')->middleware('guest:admins')->name('admin.login.store');
+    Route::post('/admin/login/store', 'store')
+        ->middleware('guest:admins')->name('admin.login.store');
 });

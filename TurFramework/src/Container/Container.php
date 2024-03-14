@@ -143,6 +143,8 @@ class Container
     protected function build($concrete)
     {
 
+
+
         if ($concrete instanceof Closure) {
             return $concrete($this);
         }
@@ -190,7 +192,7 @@ class Container
             $type = $dependency->getType();
 
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                $results[] = $this->make($type->getName());
+                $results[] = $this->bindings[$dependency->getName()] ?? $this->make($type->getName());
             }
         }
         return $results;

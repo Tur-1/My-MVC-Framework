@@ -22,7 +22,6 @@ class Session
     protected $attributes = [];
 
 
-
     /**
      * Start the session, reading the data from a handler.
      *
