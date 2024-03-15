@@ -47,4 +47,4 @@
         </form>
     </div>
 </div>
-<?php import('layouts.Footer'); ?>
+<?php import('layouts.frontend.Footer'); ?>

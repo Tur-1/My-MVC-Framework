@@ -95,15 +95,20 @@ class ExceptionHandler
     private static function handleHttpException($exception)
     {
 
+        ob_get_clean();
+
         $code = $exception->getCode();
         $message = $exception->getMessageForStatusCode($code);
 
         http_response_code($code);
 
-        ob_start();
-        require 'views/HttpResponseExceptionView.php';
-        $output = ob_get_clean();
-        echo $output;
+        if (ob_get_length()) {
+            ob_clean();
+        }
+
+
+        ViewFactory::makeView(dirname(__DIR__) . '/Exceptions/views/HttpResponseExceptionView.php')->with(get_defined_vars());
+
         exit();
     }
 }

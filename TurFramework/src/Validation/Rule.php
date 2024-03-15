@@ -50,7 +50,7 @@ class Rule
             }
 
             if (!str_contains($table, '\\') || !class_exists($table)) {
-                $exstis = app('db')
+                $exstis = app('database.manager')
                     ->makeConnection($connection)
                     ->table($table)
                     ->where($cloumn, $this->data[$field])
