@@ -937,14 +937,13 @@ if (Auth::guard('admin')->attempt($credentials)) {
 #### Protecting Routes 
 Only authenticated admins may access this route...
 ```php
-  Route::get('/admin/login', [AdminController::class'login'])->middleware('guest:admin');
+   Route::post('/admin/logout', 'logout')->middleware('auth:admins')
 ```
 Only authenticated users may access this route...
 
 ```php
 
-Route::post('/logout', [AuthenticatedController::class, 'logout'])
-     ->middleware('auth');
+Route::post('/logout', [AuthenticatedController::class, 'logout'])->middleware('auth');
 ```
 
 <a name="section-16"></a>
