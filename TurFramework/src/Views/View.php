@@ -37,50 +37,27 @@ class View
     }
 
     /**
-     * Get the path of the view file.
-     *
-     * @return string
-     */
-    private function getViewPath($view)
-    {
-        $viewPath = view_path($view);
-
-        // replace dot with slash, if view path contains dot
-        if (str_contains($view, '.')) {
-            $viewPath = view_path(str_replace('.', '/', $view));
-        }
-
-        // Check if the view path is a directory
-        if (is_dir($viewPath)) {
-            // Define the path to index.php within the directory
-            $viewPath .= '/index';
-        }
-
-        // Add .php extension to view path (e.g., index.php)
-        $viewPath .= '.php';
-
-
-        return $viewPath;
-    }
-    /**
      * Render the view file.
      */
     private function render()
     {
-        $view = $this->getViewPath($this->viewPath);
 
-        if (!file_exists($view)) {
+        if (!file_exists($this->viewPath)) {
             throw ViewException::notFound($this->viewPath);
         }
 
         extract($this->data, EXTR_SKIP);
 
-        include $view;
+        ob_start();
+        include $this->viewPath;
+        $renderedView = ob_get_clean();
+
+        echo $renderedView;
     }
 
 
     public function __destruct()
     {
-        return $this->render();
+        $this->render();
     }
 }

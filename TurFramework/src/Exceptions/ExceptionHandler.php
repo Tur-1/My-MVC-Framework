@@ -5,6 +5,7 @@ namespace TurFramework\Exceptions;
 use ErrorException;
 use TurFramework\Http\HttpException;
 use TurFramework\Validation\ValidationException;
+use TurFramework\views\ViewFactory;
 
 class ExceptionHandler
 {
@@ -72,9 +73,7 @@ class ExceptionHandler
     }
     private static function getDefaultExceptionHandler($exception)
     {
-
-
-        ob_clean();
+        ob_get_clean();
         [
             $errorData,
             $primary_message,
@@ -83,7 +82,12 @@ class ExceptionHandler
             $className
         ] = DefaultExceptionHandler::handle($exception);
 
-        include 'views/ReportExceptionView.php';
+
+        if (ob_get_length()) {
+            ob_clean();
+        }
+
+        ViewFactory::makeView(dirname(__DIR__) . '/Exceptions/views/ReportExceptionView.php')->with(get_defined_vars());
 
         exit();
     }
