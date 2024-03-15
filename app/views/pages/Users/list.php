@@ -4,7 +4,7 @@
 <?php import('components.success_message') ?>
 <div class="row mb-3">
     <div class="d-flex align-items-center justify-content-between">
-        <h4>users </h4>
+        <h2>Users</h2>
         <a href="<?php echo route('users.create') ?>" class="btn btn-dark">
             new user
         </a>

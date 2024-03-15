@@ -17,6 +17,7 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::load([
             base_path('app/Routes/web.php'),
+            base_path('app/Routes/dashboard.php'),
             base_path('app/Routes/auth.php')
         ]);
     }
