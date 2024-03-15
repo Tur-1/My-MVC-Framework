@@ -20,19 +20,26 @@ class MiddlewareResolver
     }
     private function resolveRouteMiddleware($route, $routeMiddleware, $request)
     {
+        $params = [];
 
         foreach ($route['middleware'] as  $middleware) {
+
+            if (str_contains($middleware, ':')) {
+                [$middleware, $params] = explode(':', $middleware);
+            }
 
             if (!isset($routeMiddleware[$middleware])) {
                 throw RouteException::targetClassDoesNotExist($middleware);
             }
+
+
             $middlewareClass = app()->make($routeMiddleware[$middleware]);
 
             if (!method_exists($middlewareClass, 'handle')) {
                 throw RouteException::methodDoesNotExist($routeMiddleware[$middleware], 'handle');
             }
 
-            $middlewareClass->handle($request);
+            $middlewareClass->handle($request, $params);
         }
     }
     private function resolveGlobalMiddleware($globalMiddleware, $request)
@@ -43,6 +50,7 @@ class MiddlewareResolver
             if (!method_exists($middlewareClass, 'handle')) {
                 throw RouteException::methodDoesNotExist($value, 'handle');
             }
+
             $middlewareClass->handle($request);
         }
     }

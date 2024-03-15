@@ -19,6 +19,7 @@
 - [Inserting and Updating Models](#section-21)
 - [Model Accessors & Mutators](#section-20)
 - [Authentication](#section-22)
+- [multiple authentication guards](#section-26)
 - [Form Request Validation](#section-16) 
 - [Displaying the Validation Errors](#section-18) 
 - [Validation Rules](#section-17) 
@@ -921,16 +922,31 @@ use Illuminate\Support\Facades\Auth;
 // Retrieve the currently authenticated user...
 $user = Auth::user();
 ```
+ 
+<a name="section-26"></a>
 
-#### Protecting Routes
+### multiple authentication guards
+Accessing Specific Guard Instances
+```php
 
+if (Auth::guard('admin')->attempt($credentials)) {
+   
+}
+
+```
+#### Protecting Routes 
+Only authenticated admins may access this route...
+```php
+  Route::get('/admin/login', [AdminController::class'login'])->middleware('guest:admin');
+```
 Only authenticated users may access this route...
+
 ```php
 
 Route::post('/logout', [AuthenticatedController::class, 'logout'])
      ->middleware('auth');
 ```
- 
+
 <a name="section-16"></a>
 
 ## Form Request Validation
