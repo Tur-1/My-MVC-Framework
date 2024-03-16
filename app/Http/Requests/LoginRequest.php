@@ -27,7 +27,6 @@ class LoginRequest extends FormRequest
             'email' => ['required', 'email'],
             'password' => 'required',
         ];
- 
     }
 
     public function authenticate()
@@ -36,7 +35,6 @@ class LoginRequest extends FormRequest
 
         if (!Auth::attempt($this->only('email', 'password'))) {
             throw ValidationException::withMessages(
-                $this->only('email', 'password'),
                 [
                     'email' => 'These credentials do not match our records.'
                 ]

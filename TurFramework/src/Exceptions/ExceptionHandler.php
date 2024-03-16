@@ -4,13 +4,24 @@ namespace TurFramework\Exceptions;
 
 use ErrorException;
 use TurFramework\Http\HttpException;
+use TurFramework\Http\Request;
+use TurFramework\Support\Arr;
 use TurFramework\Validation\ValidationException;
 use TurFramework\views\ViewFactory;
 
 class ExceptionHandler
 {
 
-
+    /**
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array<int, string>
+     */
+    protected $dontFlash = [
+        'current_password',
+        'password',
+        'password_confirmation',
+    ];
     public static function registerExceptions()
     {
         if (env('APP_DEBUG') == 'false') {
@@ -21,12 +32,12 @@ class ExceptionHandler
         set_exception_handler([self::class,  'customExceptionHandler']);
         register_shutdown_function([self::class, 'handleShutdown']);
     }
-    public static function customExceptionHandler($exception)
+    public static function customExceptionHandler($exception, $request = null)
     {
 
         return  match (true) {
             $exception instanceof HttpException => self::handleHttpException($exception),
-            $exception instanceof ValidationException => self::handleValidationExceptionResponse($exception),
+            $exception instanceof ValidationException => (new self)->handleValidationExceptionResponse($exception, $request),
             default => self::getDefaultExceptionHandler($exception)
         };
     }
@@ -64,11 +75,11 @@ class ExceptionHandler
     }
 
 
-    private static function handleValidationExceptionResponse($exception)
+    private function handleValidationExceptionResponse($exception, $request)
     {
         return redirect()
-            ->to($exception->redirectTo ?? request()->previousUrl())
-            ->withOldValues($exception->getOldValues())
+            ->to($exception->redirectTo ?? $request->previousUrl())
+            ->withOldValues(Arr::except($request->all(), $this->dontFlash))
             ->withErrors($exception->errors());
     }
     private static function getDefaultExceptionHandler($exception)

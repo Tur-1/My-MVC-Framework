@@ -36,7 +36,8 @@ In this framework you will get all the basic features of a web application needs
 
 ## How to Install
 
-We can easily setup and install this application with some few steps. Before using this application, minimum PHP 8.2 version is needed.
+We can easily setup and install this application with some few steps.
+Before using this application, minimum PHP 8.2 version is needed.
 
 - Step 1: git clone https://github.com/Tur-1/Tur-Framework.git 
 - Step 2: cd Tur-Framework

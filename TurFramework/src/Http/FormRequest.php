@@ -31,7 +31,7 @@ class FormRequest extends Request
      *
      * @return array
      */
-    public function attributes()
+    protected function attributes()
     {
         return [];
     }

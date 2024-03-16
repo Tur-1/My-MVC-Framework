@@ -56,7 +56,7 @@ class HttpKernel
             $this->sendRequestThroughRouter($request);
             //code...
         } catch (\Throwable $th) {
-            ExceptionHandler::customExceptionHandler($th);
+            ExceptionHandler::customExceptionHandler($th, $request);
         }
     }
 

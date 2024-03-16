@@ -42,7 +42,6 @@ class Validator
 
     public function getData()
     {
-
         return $this->data;
     }
     public function validated()

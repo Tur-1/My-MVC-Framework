@@ -29,17 +29,16 @@ class ValidationException extends Exception
 
         $this->validator = $validator;
     }
-    public static function withMessages(array $data, array $messages)
-    {
-        $static = new static(ValidatorFactory::make($data, [], $messages));
 
+    public static function withMessages(array $messages)
+    {
+        $static = new static(ValidatorFactory::make([], [], $messages));
         foreach ($messages as $key => $value) {
             $static->validator->errorsBag()->add($key, $value);
         };
 
         return $static;
     }
-
     /**
      * Get all of the validation error messages.
      *
@@ -48,10 +47,6 @@ class ValidationException extends Exception
     public function errors()
     {
         return $this->validator->errorsBag()->all();
-    }
-    public function getOldValues()
-    {
-        return $this->validator->getData();
     }
     /**
      * Set the URL to redirect to on a validation error.

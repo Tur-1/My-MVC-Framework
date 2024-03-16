@@ -7,6 +7,7 @@ use App\Models\User;
 use TurFramework\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use TurFramework\Validation\ValidationException;
 
 class UserController extends Controller
 {

@@ -37,7 +37,6 @@ class AdminController extends Controller
 
         if (!Auth::guard('admins')->attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages(
-                $request->only('email', 'password'),
                 [
                     'email' => 'These credentials do not match our records.'
                 ]
