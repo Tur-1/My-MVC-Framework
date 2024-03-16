@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use TurFramework\Facades\Auth;
-use TurFramework\Facades\Route;
 use TurFramework\Http\Request;
 
 class RegisterController

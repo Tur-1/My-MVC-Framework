@@ -14,7 +14,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $users = User::query()->get();
+        $users = User::get();
+
         return view('pages.Users.list')->with('users', $users);
     }
     public function profile()
@@ -34,7 +35,7 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        $user = User::query()->create($validatedRequest);
+        $user = User::create($validatedRequest);
 
         return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');
@@ -55,7 +56,7 @@ class UserController extends Controller
 
         $validatedRequest = $request->validated();
 
-        $user = User::query()->where('id', $id)->first();
+        $user = User::where('id', $id)->first();
 
         $user->update($validatedRequest);
 
@@ -65,7 +66,7 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        $user = User::query()->where('id', $id)->first();
+        $user = User::where('id', $id)->first();
 
         if (is_null($user)) return;
 

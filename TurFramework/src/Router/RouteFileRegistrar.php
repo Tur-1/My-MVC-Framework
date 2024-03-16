@@ -61,7 +61,7 @@ class RouteFileRegistrar
     }
     protected function getCachedRoutesPath()
     {
-        return 'cache/routes.php';
+        return base_path('cache/routes.php');
     }
 
     /**
@@ -71,7 +71,7 @@ class RouteFileRegistrar
      */
     protected function routesAreCached()
     {
-        return Cache::exists($this->getCachedRoutesPath());
+        return file_exists($this->getCachedRoutesPath());
     }
     /**
      * Load the cached routes for the application.
@@ -80,7 +80,7 @@ class RouteFileRegistrar
      */
     protected function loadCachedRoutes()
     {
-        return require base_path($this->getCachedRoutesPath());
+        return require $this->getCachedRoutesPath();
     }
 
     protected function getRoutesFiles($routesPath)

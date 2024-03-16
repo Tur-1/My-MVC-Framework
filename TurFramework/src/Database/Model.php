@@ -324,6 +324,19 @@ abstract class Model
     }
 
     /**
+     * Handle dynamic static method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public static function __callStatic($method, $parameters)
+    {
+
+        return (new static)->query()->$method(...$parameters);
+    }
+
+    /**
      * Get the primary key for the model.
      *
      * @return string

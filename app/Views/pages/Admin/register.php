@@ -2,7 +2,7 @@
 
 <div class="row mb-3">
     <div class="d-flex align-items-center justify-content-between">
-        <h1>Register</h1>
+        <h1>Register </h1>
     </div>
 </div>
 <div class="row m-auto">
