@@ -2,6 +2,8 @@
 
 namespace TurFramework\Database\Concerns;
 
+use DateTime;
+
 trait ModelTimestamps
 {
     /**
@@ -30,7 +32,7 @@ trait ModelTimestamps
      *
      * @return string|null
      */
-    public function getCreatedAtColumn()
+    protected function getCreatedAtColumn()
     {
         return static::CREATED_AT;
     }
@@ -40,7 +42,7 @@ trait ModelTimestamps
      *
      * @return string|null
      */
-    public function getUpdatedAtColumn()
+    protected function getUpdatedAtColumn()
     {
         return static::UPDATED_AT;
     }
@@ -50,7 +52,7 @@ trait ModelTimestamps
      * @param  mixed  $value
      * @return $this
      */
-    public function setCreatedAt($value)
+    protected function setCreatedAt($value)
     {
 
         // the value of static::CREATED_AT 'created_at' = $value 
@@ -65,7 +67,7 @@ trait ModelTimestamps
      * @param  mixed  $value
      * @return $this
      */
-    public function setUpdatedAt($value)
+    protected function setUpdatedAt($value)
     {
         $this->{$this->getUpdatedAtColumn()} = $value;
 
@@ -76,7 +78,7 @@ trait ModelTimestamps
      *
      * @return bool
      */
-    public function usesTimestamps()
+    protected function usesTimestamps()
     {
         return $this->timestamps;
     }
@@ -84,7 +86,7 @@ trait ModelTimestamps
 
     public function getDateNow()
     {
-        return date('Y-m-d H:i:s');
+        return now();
     }
 
     /**
@@ -92,7 +94,7 @@ trait ModelTimestamps
      *
      * @return $this
      */
-    public function updateTimestamps()
+    protected function updateTimestamps()
     {
 
 

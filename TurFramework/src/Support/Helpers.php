@@ -20,7 +20,17 @@ if (!function_exists('app')) {
         return Container::getInstance()->make($abstract);
     }
 }
-
+if (!function_exists('now')) {
+    /**
+     * Create a new Carbon instance for the current time.
+     *
+     * @param  \DateTimeZone|string|null  $tz
+     */
+    function now($tz = null)
+    {
+        return Carbon\Carbon::now($tz ?? env('APP_TIMEZONE'))->toDateTimeString();
+    }
+}
 if (!function_exists('auth')) {
     /**
      * Get the available auth instance.
