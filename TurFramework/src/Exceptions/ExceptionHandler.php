@@ -22,10 +22,10 @@ class ExceptionHandler
         'password',
         'password_confirmation',
     ];
-    public static function registerExceptions()
+    public static function registerExceptions($app)
     {
-        if (env('APP_DEBUG') == 'false') {
-            self::customExceptionHandler(new HttpException());
+        if ($app->isDebugModeDisabled()) {
+            ini_set('display_errors', 'Off');
         }
 
         set_error_handler([self::class,  'errorHandler']);

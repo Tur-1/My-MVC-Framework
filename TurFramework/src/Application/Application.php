@@ -31,7 +31,7 @@ class Application extends Container
 
 
         // Register exceptions
-        ExceptionHandler::registerExceptions();
+        ExceptionHandler::registerExceptions($this);
 
         // 1- laod Configuration and bind config into the Container 
         $this->loadConfiguration();
@@ -53,6 +53,16 @@ class Application extends Container
 
         $kernel->handle($request);
     }
+
+    /**
+     * Determine if the application is running with debug mode enabled.
+     * 
+     */
+    public function isDebugModeDisabled()
+    {
+        return env('APP_DEBUG', 'false') == 'false';
+    }
+
 
     /**
      * Register all of the base service providers.
