@@ -34,7 +34,7 @@
                                     <form action="<?= route('users.delete', ['id' => $user->id]) ?>" method="post">
                                         <?= csrf_field() ?>
 
-                                        <a href="<?= route('users.edit', ['id' => $user->id]) ?>" class="btn btn-secondary btn-sm"> Edit</a>
+                                        <a href="<?= route('users.edit', ['user' => $user->id]) ?>" class="btn btn-secondary btn-sm"> Edit</a>
 
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete this user ?');">Delete</button>
                                     </form>

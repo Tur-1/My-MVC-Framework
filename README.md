@@ -13,6 +13,7 @@
 - [Route Service Provider](#section-10)
 - [Global Middleware](#section-11)
 - [Route Middleware](#section-12)
+- [Route Model Binding](#section-30)
 - [views](#section-13)
 - [Multiple Database Connections](#section-14)
 - [Models](#section-15)
@@ -467,6 +468,30 @@ Route::get('/about', [AboutController::class, 'index'])
        ->middleware(['auth', 'is_admin']);
 
 
+```
+<a name="section-30"></a>
+
+## Route Model Binding 
+
+automatically resolves model using model id
+
+```php
+Route::get('/users/{user}/edit',  [UserController::class, 'edit'])->name('users.edit');
+```
+```php
+class UserController extends Controller
+{
+   
+    public function edit(Request $request, User $user)
+    {
+
+        if (!$user->exists) {
+            throw UserExeption::notFound();
+        }
+
+        return view('pages.Users.edit')->with('user', $user);
+    }
+}
 ```
 
 <a name="section-13"></a>

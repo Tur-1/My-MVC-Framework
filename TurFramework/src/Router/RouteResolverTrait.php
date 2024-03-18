@@ -2,24 +2,32 @@
 
 namespace TurFramework\Router;
 
+use TurFramework\Database\Model;
 use TurFramework\Router\Exceptions\RouteException;
+use TurFramework\Support\Arr;
 
 trait RouteResolverTrait
 {
-    public function resolveMethodDependencies($parameters)
+    public function resolveMethodDependencies($parameters, $routeParams)
     {
         $dependencies = [];
 
-        foreach ($parameters as  $parameter) {
+        foreach ($parameters as $parameter) {
             $type = $parameter->getType();
-
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                $dependencies[] = app()->make($parameter->getType()?->getName());
+                $dependency = app()->make($type->getName());
+                if ($dependency instanceof Model) {
+                    $modelId = $routeParams[$parameter->getName()] ?? null;
+                    $dependencies[$parameter->getName()] = $dependency::find($modelId);
+                    unset($routeParams[$parameter->getName()]);
+                } else {
+                    $dependencies[$parameter->getName()] = $dependency;
+                }
             }
         }
-
-        return $dependencies;
+        return array_merge($dependencies, $routeParams);
     }
+
 
     protected function resolveControllerAction($route)
     {
@@ -37,6 +45,7 @@ trait RouteResolverTrait
 
         $controllerMethod = $reflectorController->getMethod($method);
 
+
         // Check if the method exists in the controller
         if (!$reflectorController->hasMethod($method)) {
             throw RouteException::methodDoesNotExist($reflectorController->getShortName(),  $method);
@@ -45,11 +54,17 @@ trait RouteResolverTrait
         $parameters = $controllerMethod->getParameters() ?? [];
 
 
-        $resolvedDependencies = $this->resolveMethodDependencies($parameters);
+        $resolvedDependencies = $this->resolveMethodDependencies($parameters, $route['parameters']);
 
-        $this->invokeControllerMethod([$controller, $method], $resolvedDependencies, $route['parameters']);
+        $this->invokeControllerMethod([$controller, $method], $resolvedDependencies);
     }
 
+
+
+    private function invokeControllerMethod($callable, $resolveDependencies)
+    {
+        call_user_func_array($callable, $resolveDependencies);
+    }
     private function resolveClosureAction($route)
     {
         $action = new \ReflectionFunction($route['action']);
@@ -60,12 +75,6 @@ trait RouteResolverTrait
 
         $this->invokeControllerMethod($route['action'], $resolvedDependencies, $route['parameters']);
     }
-
-    private function invokeControllerMethod($callable, $resolveDependencies, $routeParams)
-    {
-        call_user_func($callable, ...array_merge(array_filter($resolveDependencies), array_filter($routeParams)));
-    }
-
     /**
      * Checks if the controller class doesn't exist.
      * @param string $controllerClass Name of the controller class.

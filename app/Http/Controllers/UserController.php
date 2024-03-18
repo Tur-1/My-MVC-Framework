@@ -7,7 +7,6 @@ use App\Models\User;
 use TurFramework\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use TurFramework\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -40,11 +39,10 @@ class UserController extends Controller
         return redirect()->to(route('users.list'))
             ->with('success', 'New User was added successfully.');
     }
-    public function edit($id)
+    public function edit(Request $request, User $user)
     {
 
-        $user = User::query()->find($id);
-        if (is_null($user)) {
+        if (!$user->exists) {
             throw UserExeption::notFound();
         }
 
@@ -66,6 +64,7 @@ class UserController extends Controller
 
     public function delete($id)
     {
+
         $user = User::where('id', $id)->first();
 
         if (is_null($user)) return;

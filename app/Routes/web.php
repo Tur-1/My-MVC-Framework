@@ -18,7 +18,7 @@ Route::controller(UserController::class)->group(function () {
 
     Route::get('/users/create',  'create')->name('users.create');
 
-    Route::get('/users/{id}/edit',  'edit')->name('users.edit');
+    Route::get('/users/{user}/edit',  'edit')->name('users.edit');
 
     Route::post('/users/store',  'store')->name('users.store');
 
