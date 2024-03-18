@@ -2,8 +2,6 @@
 
 namespace TurFramework\Router;
 
-use TurFramework\Facades\Cache;
-
 class RouteFileRegistrar
 {
 

@@ -4,7 +4,7 @@ namespace TurFramework\Auth;
 
 use TurFramework\Session\Session;
 
-class Authentication
+class AuthenticationGuard
 {
     /**
      * The user provider implementation.
@@ -138,8 +138,8 @@ class Authentication
     public function setUser($user)
     {
         $this->user = $user;
-
         $this->loggedOut = false;
+
         return $this;
     }
 
@@ -172,7 +172,7 @@ class Authentication
     {
         $this->session->remove($this->getAuthIdentifierName());
 
-        $this->session->invalidate();
+        $this->session->regenerate();
 
         $this->user = null;
 

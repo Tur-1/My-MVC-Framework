@@ -21,7 +21,7 @@ class AuthManager
      */
     public function guard($name = null)
     {
-        $name = $name ?: $this->getDefaultDriver();
+        $name = $name ?: $this->getDefaultGuard();
 
         if (!isset($this->guards[$name])) {
             $this->guards[$name] = $this->resolve($name);
@@ -32,17 +32,19 @@ class AuthManager
 
     public function resolve($name)
     {
-        $config = $this->getConfig($name);
+        $config = $this->getConfigGuard($name);
 
         $authProvider = new AuthProvider($config);
- 
-        $garud = new Authentication($name, $this->app->make('session'), $authProvider);
 
-        return $garud;
+        return new AuthenticationGuard(
+            $name,
+            $this->app->make('session'),
+            $authProvider
+        );
     }
-  
+
     /**
-     * Dynamically call the default driver instance.
+     * Dynamically call the default Guard instance.
      *
      * @param  string  $method
      * @param  array  $parameters
@@ -52,17 +54,17 @@ class AuthManager
     {
         return $this->guard()->{$method}(...$parameters);
     }
-    protected function getConfig($name)
+    protected function getConfigGuard($name)
     {
         return config('auth.guards.' . $name);
     }
 
     /**
-     * Get the default authentication driver name.
+     * Get the default authentication Guard name.
      *
      * @return string
      */
-    public function getDefaultDriver()
+    public function getDefaultGuard()
     {
         return config('auth.default.guard');
     }

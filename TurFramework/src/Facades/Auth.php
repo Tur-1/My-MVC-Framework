@@ -10,7 +10,7 @@ namespace TurFramework\Facades;
  * @method static \TurFramework\Auth\Authentication logout()
  * @method static \TurFramework\Auth\Authentication login($user)
  * @see \TurFramework\Auth\AuthManager
- * @see \TurFramework\Auth\Authentication
+ * @see \TurFramework\Auth\AuthenticationGuard
  */
 class Auth extends Facade
 {
