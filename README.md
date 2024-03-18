@@ -369,11 +369,9 @@ class RouteServiceProvider extends ServiceProvider
 
         //  Load specific route files using the Route::load() method.
         
-        Route::load([
-            // Load web routes from the 'app/routes/web.php' file.
+        Route::load([ 
             base_path('app/Routes/web.php'),
-
-            // Load Auth Routes from the 'app/Routes/api.php' file.
+ 
             base_path('app/Routes/auth.php')
         ]);
 
@@ -498,7 +496,7 @@ class UserController extends Controller
 
 ## views
  
-To render views ,use the global view helper like so
+To render views, use the global view helper
 
 ```php
  
