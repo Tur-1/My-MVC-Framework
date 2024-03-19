@@ -79,6 +79,10 @@ class MySQLGrammar
         return "select exists({$select}) as record_exists";
     }
 
+    protected function countQuery()
+    {
+        return "SELECT COUNT(*) AS aggregate FROM $this->table";
+    }
     protected function selectQuery()
     {
         $sqlQuery = $this->concatenate($this->compileComponents());

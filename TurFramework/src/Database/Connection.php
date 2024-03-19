@@ -62,31 +62,18 @@ class Connection implements ConnectionInterface
      *
      * @param  string  $query
      * @param  array  $bindings
-     * @return bool
+     * @return \PDOStatement
      */
     public function statement($query, $bindings = [])
     {
         $statement = $this->getPdo()->prepare($query);
 
         $this->bindValues($statement, $bindings);
-        return  $statement->execute();
-    }
-
-    /**
-     * Execute an SQL statement and return the boolean result.
-     *
-     * @param  string  $query
-     * @param  array  $bindings 
-     */
-    public function exists($query, $bindings = [])
-    {
-        $statement = $this->getPdo()->prepare($query);
-
-        $this->bindValues($statement, $bindings);
         $statement->execute();
 
-        return $statement->fetchColumn() ? true : false;
+        return $statement;
     }
+
     /**
      * Run an SQL statement and get the number of rows affected.
      *

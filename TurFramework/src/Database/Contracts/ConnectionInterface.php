@@ -47,7 +47,7 @@ interface ConnectionInterface
      *
      * @param  string  $query
      * @param  array  $bindings
-     * @return bool
+     * @return \PDOStatement
      */
     public function statement($query, $bindings = []);
 
@@ -59,14 +59,6 @@ interface ConnectionInterface
      * @return int
      */
     public function affectingStatement($query, $bindings = []);
-
-    /**
-     * Execute an SQL statement and return the boolean result.
-     *
-     * @param  string  $query
-     * @param  array  $bindings
-     */
-    public function exists($query, $bindings = []);
 
     /**
      * get Pdo instance

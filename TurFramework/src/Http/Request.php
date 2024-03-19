@@ -4,9 +4,7 @@ namespace TurFramework\Http;
 
 use TurFramework\Facades\Route;
 use TurFramework\Support\Arr;
-use TurFramework\Validation\ValidationException;
 use TurFramework\Validation\ValidationHandlerTrait;
-use TurFramework\Validation\Validator;
 use TurFramework\Validation\ValidatorFactory;
 
 class Request
@@ -15,6 +13,8 @@ class Request
 
     protected $validator;
     protected $session;
+    protected $server;
+
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
@@ -23,6 +23,8 @@ class Request
 
     public function __construct()
     {
+        $this->server = new Server();
+
         $this->setSession(app('session'));
     }
 
@@ -35,7 +37,7 @@ class Request
     {
 
         $uri = urldecode(
-            parse_url($this->getServer('REQUEST_URI'), PHP_URL_PATH)
+            parse_url($this->server->get('REQUEST_URI'), PHP_URL_PATH)
         );
 
         return  trim($uri);
@@ -48,7 +50,7 @@ class Request
     public function getHost(): string
     {
 
-        return $this->getServer('HTTP_HOST') ?? '';
+        return $this->server->get('HTTP_HOST') ?? '';
     }
 
     /**
@@ -59,7 +61,7 @@ class Request
     public function previousUrl(): string|null
     {
 
-        $referer = $this->getServer('HTTP_REFERER');
+        $referer = $this->server->get('HTTP_REFERER');
 
         // Parse the referer URL to extract its components
         $parsedReferer = parse_url($referer);
@@ -120,7 +122,7 @@ class Request
     public function previousUrlWithQuery(): string|null
     {
         // Get the referer URL from the server array
-        $referer = $this->getServer('HTTP_REFERER');
+        $referer = $this->server->get('HTTP_REFERER');
 
         if (!$referer) {
             return null; // Return null if no referer URL is found
@@ -150,7 +152,7 @@ class Request
     public function getProtocol(): string
     {
         // Check if HTTPS is on to determine the protocol
-        return !is_null($this->getServer('HTTPS')) && $this->getServer('HTTPS') === 'on' ? 'https://' : 'http://';
+        return !is_null($this->server->get('HTTPS')) && $this->server->get('HTTPS') === 'on' ? 'https://' : 'http://';
     }
 
     /**
@@ -184,7 +186,7 @@ class Request
     public function getQueryString(): string
     {
 
-        return !is_null($this->getServer('QUERY_STRING')) ? $this->getServer('QUERY_STRING') : '';
+        return !is_null($this->server->get('QUERY_STRING')) ? $this->server->get('QUERY_STRING') : '';
     }
     /**
      * Get the full URL of the current request.
@@ -208,7 +210,7 @@ class Request
      */
     public function getMethod(): string
     {
-        return $this->getServer('REQUEST_METHOD');
+        return $this->server->get('REQUEST_METHOD');
     }
 
     /**
@@ -404,18 +406,6 @@ class Request
 
         return $inputs;
     }
-    /**
-     * Get the $_SERVER values.
-     *
-     * @param string $key 
-     *
-     * @return mixed|null The value from the server
-     */
-    private function getServer($key)
-    {
-        return Server::get($key);
-    }
-
 
     public function gerRouteParameter($key = null)
     {

@@ -4,6 +4,8 @@ namespace TurFramework\Database\Managers;
 
 use TurFramework\Support\Arr;
 use TurFramework\Database\Model;
+use TurFramework\Pagination\Paginator;
+use TurFramework\Pagination\PaginatorService;
 use TurFramework\Database\Grammars\MySQLGrammar;
 use TurFramework\Database\Contracts\ConnectionInterface;
 use TurFramework\Database\Contracts\DatabaseManagerInterface;
@@ -145,7 +147,45 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
 
         return $this->connection->delete($this->deleteQuery(), $this->getBindings());
     }
+    /**
+     * Paginate the given query.
+     *
+     */
+    public function paginate($perPage = 10, $pageName = 'page')
+    {
 
+        $page = PaginatorService::resolveCurrentPage($pageName);
+
+        $total = $this->count();
+        $data =  $this->skip(($page - 1) * $perPage)->limit($perPage)->get();
+
+        return new Paginator($data, $total, $perPage, $page, $pageName);
+    }
+    /**
+     * Get the count of the total records.
+     *
+     * @param  array  $columns
+     * @return int
+     */
+    public function count($columns = ['*'])
+    {
+        $this->select($columns);
+        $statement = $this->connection->statement($this->countQuery(), $this->getBindings());
+
+        return $statement->fetchColumn();
+    }
+    /**
+     * Alias to set the "offset" value of the query.
+     *
+     * @param  int  $value
+     * @return $this
+     */
+    public function skip($value)
+    {
+        $this->addComponent('offset', 'offset ' . $value);
+
+        return $this;
+    }
     /**
      * Retrieves records from the database.
      *
@@ -153,7 +193,6 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
      */
     public function get(): array
     {
-
         $models = $this->connection->select($this->selectQuery(), $this->getBindings());
 
         return $this->getModel()
@@ -191,7 +230,10 @@ class MySQLManager extends MySQLGrammar implements DatabaseManagerInterface
         if (!is_null($id)) {
             $this->where('id', $id);
         }
-        return $this->connection->exists($this->existsQuery(), $this->getBindings());
+
+        $statement = $this->connection->statement($this->existsQuery(), $this->getBindings());
+
+        return (bool) $statement->fetchColumn();
     }
     /**
      * Selects specific columns to retrieve.
